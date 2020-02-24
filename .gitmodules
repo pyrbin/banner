@@ -1,3 +1,7 @@
 [submodule "extern/glfw"]
 	path = extern/glfw
 	url = https://github.com/glfw/glfw
+
+[submodule "extern/realm"]
+	path = extern/realm
+	url = https://github.com/pyrbin/realm.hpp
