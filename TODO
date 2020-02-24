@@ -1,1 +1,2 @@
 * fix glw3.dll dependency, currently i just copied the dll to the build folder
+* use vulkan.hpp api (c++) instead of c api

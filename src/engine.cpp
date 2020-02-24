@@ -19,7 +19,7 @@ engine::~engine()
 void
 engine::bootstrap() const
 {
-    _platform->run_loop();
+    _platform->start_loop();
 }
 
 void
