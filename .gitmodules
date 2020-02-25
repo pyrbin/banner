@@ -5,3 +5,6 @@
 [submodule "extern/realm"]
 	path = extern/realm
 	url = https://github.com/pyrbin/realm.hpp
+[submodule "extern/glm"]
+	path = extern/glm
+	url = https://github.com/g-truc/glm

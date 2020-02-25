@@ -15,6 +15,8 @@ project(
 file(GLOB SOURCES
     src/*.h
     src/*.cpp
+    src/render/*.h
+    src/render/*.cpp
 )
 
 # Executable
@@ -38,3 +40,7 @@ target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES})
 # glfw
 add_subdirectory(extern/glfw)
 target_link_libraries(${PROJECT_NAME} glfw)
+
+# glfw
+add_subdirectory(extern/glm)
+target_link_libraries(${PROJECT_NAME} glm)
