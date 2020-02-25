@@ -41,6 +41,6 @@ target_link_libraries(${PROJECT_NAME} ${Vulkan_LIBRARIES})
 add_subdirectory(extern/glfw)
 target_link_libraries(${PROJECT_NAME} glfw)
 
-# glfw
+# glm
 add_subdirectory(extern/glm)
 target_link_libraries(${PROJECT_NAME} glm)

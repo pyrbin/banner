@@ -28,29 +28,29 @@
 #endif
 
 // TODO: add platform specific force inline
-__forceinline void
-report_assert_failed(const char* expr, const char* message, const char* file, int line)
+__forceinline void report_assert_failed(const char* expr, const char* message,
+                                        const char* file, int line)
 {
     std::cerr << "Assertion Failure: " << expr << ", message: '" << message
               << "', in file: " << file << ", line: " << line << "\n";
 }
 
 #define ASSERT(expr)                                                                     \
-{                                                                                    \
-    if (expr) {                                                                      \
-    } else {                                                                         \
-        report_assert_failed(#expr, "", __FILE__, __LINE__);                       \
-        DEBUG_BREAK();                                                                \
-    }                                                                                \
-}
+    {                                                                                    \
+        if (expr) {                                                                      \
+        } else {                                                                         \
+            report_assert_failed(#expr, "", __FILE__, __LINE__);                         \
+            DEBUG_BREAK();                                                               \
+        }                                                                                \
+    }
 
 #define ASSERT_MSG(expr, message)                                                        \
-{                                                                                    \
-    if (expr) {                                                                      \
-    } else {                                                                         \
-        report_assert_failed(#expr, message, __FILE__, __LINE__);                  \
-        DEBUG_BREAK();                                                                \
-    }                                                                                \
-}
+    {                                                                                    \
+        if (expr) {                                                                      \
+        } else {                                                                         \
+            report_assert_failed(#expr, message, __FILE__, __LINE__);                    \
+            DEBUG_BREAK();                                                               \
+        }                                                                                \
+    }
 
 #endif

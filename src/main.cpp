@@ -2,8 +2,7 @@
 #include "engine.h"
 #include "utility.h"
 
-int
-main()
+int main()
 {
     const auto engine = new tde::engine(CFG_ENGINE_NAME);
 

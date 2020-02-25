@@ -22,4 +22,4 @@ private:
     vulkan_renderer* _renderer;
 };
 
-} // namespace tde
+}  // namespace tde

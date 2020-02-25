@@ -49,14 +49,23 @@ private:
     vk::UniqueSurfaceKHR _surface;
     vk::PhysicalDevice _physical_device;
     vk::UniqueDevice _device;
+    vk::RenderPass _renderpass;
 
     vk::Queue _graphics_queue;
     vk::Queue _present_queue;
 
     vk::SwapchainKHR _swapchain;
     vk::SwapchainKHR _old_swapchain{ nullptr };
-    vector<vk::Image> _swapchain_buffers{};
-    vector<vk::ImageView> _swapchain_buffer_views{};
+
+    vk::Extent2D _swap_extent;
+    vk::SurfaceFormatKHR _swap_surface_format;
+    vk::Format _depth_buffer_format;
+
+    vector<vk::Image> _swapchain_images{};
+    vector<vk::ImageView> _swapchain_image_views{};
+
+    vk::UniquePipeline _pipeline;
+    vk::UniquePipelineLayout _pipeline_layout;
 
     vector<const char*> _device_extensions{};
     vector<const char*> _instance_layers{};
@@ -69,16 +78,18 @@ private:
     void create_logical_device();
     void create_swapchain();
     void create_swapchain_images();
+    void create_depth_stencil_image();
+    void create_render_pass();
+    void create_graphics_pipeline();
 
     bool is_device_suitable(const vk::PhysicalDevice&) const;
     queue_family_indices detect_queue_families(const vk::PhysicalDevice&) const;
     bool check_extension_support(const vk::PhysicalDevice&) const;
     swapchain_support_details query_swapchain_details(const vk::PhysicalDevice&) const;
 
-    vk::SurfaceFormatKHR select_swap_format(
-      const std::vector<vk::SurfaceFormatKHR>&) const;
-    vk::PresentModeKHR select_swap_mode(
-      const std::vector<vk::PresentModeKHR>&) const;
+    vk::SurfaceFormatKHR
+    select_swap_format(const std::vector<vk::SurfaceFormatKHR>&) const;
+    vk::PresentModeKHR select_swap_mode(const std::vector<vk::PresentModeKHR>&) const;
     vk::Extent2D select_swap_extent(const vk::SurfaceCapabilitiesKHR&) const;
 
     // Debug
@@ -87,7 +98,6 @@ private:
     void setup_debug();
     void init_debug();
     void destroy_debug();
-
 };
 
-} // namespace tde
+}  // namespace tde

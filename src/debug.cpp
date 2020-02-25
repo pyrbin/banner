@@ -8,12 +8,12 @@ namespace tde {
 
 // TODO: add colored outputs, use std::format instead
 
-static void write_log(const char* prepend, const char* message, va_list args) { 
-	vprintf((std::string(prepend) + message + "\n").c_str(), args);
+static void write_log(const char* prepend, const char* message, va_list args)
+{
+    vprintf((std::string(prepend) + message + "\n").c_str(), args);
 }
 
-void
-debug::trace(const char* message, ...)
+void debug::trace(const char* message, ...)
 {
     va_list args;
     va_start(args, message);
@@ -21,8 +21,7 @@ debug::trace(const char* message, ...)
     va_end(args);
 }
 
-void
-debug::log(const char* message, ...)
+void debug::log(const char* message, ...)
 {
     va_list args;
     va_start(args, message);
@@ -30,8 +29,7 @@ debug::log(const char* message, ...)
     va_end(args);
 }
 
-void
-debug::warn(const char* message, ...)
+void debug::warn(const char* message, ...)
 {
     va_list args;
     va_start(args, message);
@@ -39,8 +37,7 @@ debug::warn(const char* message, ...)
     va_end(args);
 }
 
-void
-debug::err(const char* message, ...)
+void debug::err(const char* message, ...)
 {
     va_list args;
     va_start(args, message);
@@ -48,8 +45,7 @@ debug::err(const char* message, ...)
     va_end(args);
 }
 
-void
-debug::fatal(const char* message, ...)
+void debug::fatal(const char* message, ...)
 {
     va_list args;
     va_start(args, message);
@@ -57,4 +53,4 @@ debug::fatal(const char* message, ...)
     va_end(args);
 }
 
-}
+}  // namespace tde

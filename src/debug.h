@@ -11,4 +11,4 @@ struct debug
     static void fatal(const char* message, ...);
 };
 
-}
+}  // namespace tde
