@@ -1,11 +1,12 @@
 #define GLFW_INCLUDE_VULKAN
+
 #include <GLFW/glfw3.h>
-#include <vulkan/vulkan.h>
 
 #include "debug.h"
 #include "engine.h"
-#include "vulkan_utils.h"
 #include "platform.h"
+
+#include "render/vulkan_utils.hpp"
 
 namespace tde {
 
@@ -51,16 +52,27 @@ platform::game_loop() const
     _engine->tick(0.0);
 }
 
+
 void
-platform::get_required_extensions(u32* count, const char*** names)
+platform::get_instance_extensions(u32* extension_count,
+                                  const char*** extension_names)
 {
-    *names = glfwGetRequiredInstanceExtensions(count);
+    *extension_names = glfwGetRequiredInstanceExtensions(extension_count);
+}
+
+vk::Extent2D
+platform::get_framebuffer_extent() const
+{
+    vk::Extent2D extents;
+    glfwGetFramebufferSize(_window, reinterpret_cast<int*>(&extents.width), reinterpret_cast<int*>(&extents.height));
+    return extents;
 }
 
 void
-platform::create_surface(VkInstance* instance, VkSurfaceKHR* surface) const
+platform::create_surface(vk::Instance* instance, VkSurfaceKHR* surface) const
 {
-    assure_vk(glfwCreateWindowSurface(*instance, _window, nullptr, surface));
+    assert_vk_success(glfwCreateWindowSurface(*instance, _window, nullptr, surface));
 }
+
 
 } // namespace tde

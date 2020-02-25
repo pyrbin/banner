@@ -1,8 +1,8 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
 #include "types.h"
 #include <string>
+#include <vulkan/vulkan.hpp>
 
 struct GLFWwindow;
 
@@ -13,16 +13,18 @@ class engine;
 class platform
 {
 public:
-    platform(engine* engine, const std::string& name);
+    platform(engine*, const std::string&);
     ~platform();
 
     bool start_loop() const;
     void game_loop() const;
 
-    void get_required_extensions(u32* count, const char*** names);
-    void create_surface(VkInstance* instance, VkSurfaceKHR* surface) const;
+    // Vulkan specific
+    void get_instance_extensions(u32*, const char***);
+    vk::Extent2D get_framebuffer_extent() const;
+    void create_surface(vk::Instance*, VkSurfaceKHR*) const;
 
-    GLFWwindow* window() { return _window; }
+    GLFWwindow* window() const { return _window; }
 
 private:
     engine* _engine;
