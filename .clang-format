@@ -1,65 +1,38 @@
-BasedOnStyle: Google
-AccessModifierOffset: -4
-ConstructorInitializerIndentWidth: 4
-AlignEscapedNewlinesLeft: false
-AlignTrailingComments: true
-AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortIfStatementsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: None
-AllowShortLoopsOnASingleLine: false
-AlwaysBreakTemplateDeclarations: true
-AlwaysBreakBeforeMultilineStrings: false
-BreakBeforeBinaryOperators: false
-BreakBeforeTernaryOperators: false
-BreakConstructorInitializersBeforeComma: true
-BinPackParameters: true
+AlignAfterOpenBracket: AlwaysBreak
+AlignConsecutiveMacros: true
+AlignEscapedNewlines: DontAlign
+
+AllowShortFunctionsOnASingleLine: All
+AllowShortLoopsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: All
+
+AlwaysBreakTemplateDeclarations: Yes
+BinPackParameters: false
+BinPackArguments: false
+BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+BreakInheritanceList: BeforeComma
+BreakStringLiterals: false
+
+BreakBeforeBraces: Mozilla
 ColumnLimit: 100
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
-DerivePointerBinding: false
-PointerBindsToType: true
-ExperimentalAutoDetectBinPacking: false
-IndentCaseLabels: true
-MaxEmptyLinesToKeep: 1
-NamespaceIndentation: None
-ObjCSpaceBeforeProtocolList: true
-PenaltyBreakBeforeFirstCallParameter: 19
-PenaltyBreakComment: 60
-PenaltyBreakString: 1
-PenaltyBreakFirstLessLess: 1000
-PenaltyExcessCharacter: 1000
-PenaltyReturnTypeOnItsOwnLine: 90
-BreakStringLiterals: false
-SpacesBeforeTrailingComments: 2
-Cpp11BracedListStyle: false
-Standard: Auto
+ConstructorInitializerIndentWidth: 4
+ContinuationIndentWidth: 4
+AccessModifierOffset: -4
 IndentWidth: 4
+Language: Cpp
+NamespaceIndentation: None
+PointerAlignment: Left
+
+AlwaysBreakAfterReturnType: TopLevel
+SortIncludes: false
+SortUsingDeclarations: false
+SpaceBeforeCtorInitializerColon: true
+SpaceBeforeParens: ControlStatements
+SpacesInParentheses: false
+SpaceBeforeCpp11BracedList: true
 TabWidth: 4
 UseTab: Never
-IndentFunctionDeclarationAfterType: false
-SpacesInParentheses: false
-SpacesInAngles: false
-SpaceInEmptyParentheses: false
-SpacesInCStyleCastParentheses: false
-SpaceAfterControlStatementKeyword: true
-SpaceBeforeAssignmentOperators: true
-ContinuationIndentWidth: 4
-SortIncludes: false
-SpaceAfterCStyleCast: false
 
-# Configure each individual brace in BraceWrapping
-BreakBeforeBraces: Custom
-
-# Control of individual brace wrapping cases
-BraceWrapping: {
-    AfterClass: 'true'
-    AfterControlStatement: 'false'
-    AfterEnum : 'true'
-    AfterFunction : 'true'
-    AfterNamespace : 'false'
-    AfterStruct : 'true'
-    AfterUnion : 'true'
-    BeforeCatch : 'false'
-    BeforeElse : 'false'
-    IndentBraces : 'false'
-}

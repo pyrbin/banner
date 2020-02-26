@@ -2,15 +2,25 @@
 // │ TDEngine                                                         │
 // └──────────────────────────────────────────────────────────────────┘
 
-#include "common/utility.hpp"
 #include "core/engine.hpp"
+#include "debug.hpp"
 
-int main()
+using namespace tde;
+
+int
+main()
 {
-    const auto engine = new tde::engine(TDE_ENGINE_NAME);
+    tde::engine* engine {nullptr};
 
-    engine->bootstrap();
+    try {
+        engine = new tde::engine("Engine");
+        engine->bootstrap();
+    } catch (const std::exception& exc) {
+        debug::fatal(exc.what());
+    }
 
-    delete engine;
+    if (engine != nullptr)
+        delete engine;
+
     return 0;
 }

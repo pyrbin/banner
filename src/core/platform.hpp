@@ -1,8 +1,8 @@
 #pragma once
 
-
 #include <string>
 #include <vulkan/vulkan.hpp>
+#include "../common/types.hpp"
 
 struct GLFWwindow;
 
@@ -24,14 +24,11 @@ public:
     vk::Extent2D get_framebuffer_extent() const;
     void create_surface(vk::Instance*, VkSurfaceKHR*) const;
 
-    GLFWwindow* window() const
-    {
-        return _window;
-    }
+    GLFWwindow* window() const { return _window; }
 
 private:
     engine* _engine;
     GLFWwindow* _window;
 };
 
-}  // namespace tde
+} // namespace tde

@@ -22,9 +22,6 @@ file(GLOB SOURCES
     src/core/*.hpp
     src/core/*.cpp
 
-    src/old_render/*.hpp
-    src/old_render/*.cpp
-
     src/render/*.hpp
     src/render/*.cpp
 )
@@ -52,7 +49,8 @@ endforeach()
 # └──────────────────────────────────────────────────────────────────┘
 
 # realm (ecs)
-target_include_directories(${PROJECT_NAME} PUBLIC extern/realm/include)
+add_subdirectory(extern/realm)
+target_link_libraries(${PROJECT_NAME} realm)
 
 # vulkan
 find_package(Vulkan REQUIRED)

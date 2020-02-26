@@ -3,7 +3,7 @@
 #include "engine.hpp"
 
 #include "../debug.hpp"
-#include "../old_render/vulkan_renderer.hpp"
+#include "../render/vulkan_renderer.hpp"
 
 #include "platform.hpp"
 
@@ -16,18 +16,18 @@ engine::engine(const std::string& name)
     _renderer = new vulkan_renderer(_platform);
 }
 
-engine::~engine()
-{
-}
+engine::~engine() {}
 
-void engine::bootstrap() const
+void
+engine::bootstrap() const
 {
     _platform->start_loop();
 }
 
-void engine::tick(const f32 dt) const
+void
+engine::tick(const f32 dt) const
 {
-    _renderer->draw_frame();
+    //_renderer->draw_frame();
 }
 
-}  // namespace tde
+} // namespace tde
