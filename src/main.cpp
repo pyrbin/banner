@@ -2,6 +2,8 @@
 // │ TDEngine                                                         │
 // └──────────────────────────────────────────────────────────────────┘
 
+#include "renderer.hpp"
+#include "tri_renderer.hpp"
 #include "core/engine.hpp"
 #include "debug.hpp"
 
@@ -13,8 +15,10 @@ main()
     tde::engine* engine {nullptr};
 
     try {
+
         engine = new tde::engine("Engine");
         engine->bootstrap();
+
     } catch (const std::exception& exc) {
         debug::fatal(exc.what());
     }

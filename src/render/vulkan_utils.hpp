@@ -41,9 +41,9 @@ struct queue_family_info
  */
 struct surface_info
 {
-    vk::SurfaceCapabilitiesKHR capabilities;
-    std::vector<vk::SurfaceFormatKHR> formats;
-    std::vector<vk::PresentModeKHR> present_modes;
+    const vk::SurfaceCapabilitiesKHR capabilities;
+    const std::vector<vk::SurfaceFormatKHR> formats;
+    const std::vector<vk::PresentModeKHR> present_modes;
 };
 
 /**
@@ -54,6 +54,23 @@ struct synchronization
     vk::Semaphore lock_render {nullptr};
     vk::Semaphore lock_present {nullptr};
 };
+
+/**
+ * @brief Synchronization
+ */
+struct vulkan_gpu
+{
+    // Device info
+};
+
+/**
+ *
+ */
+bool
+is_device_suitable(
+    const vk::PhysicalDevice device,
+    const vk::SurfaceKHR surface,
+    const string_list& device_extens);
 
 /**
  *
@@ -94,11 +111,11 @@ load_shader(const std::string& filename, vk::Device device);
 /**
  *
  */
-static VKAPI_ATTR VkBool32 VKAPI_CALL
+VKAPI_ATTR vk::Bool32 VKAPI_CALL
 debug_vulkan_callback(
-    const VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
-    VkDebugUtilsMessageTypeFlagsEXT message_types,
-    const VkDebugUtilsMessengerCallbackDataEXT* callback_data,
+    const vk::DebugUtilsMessageSeverityFlagBitsEXT message_severity,
+    vk::DebugUtilsMessageTypeFlagBitsEXT message_types,
+    const vk::DebugUtilsMessengerCallbackDataEXT* callback_data,
     void* user_data);
 
 } // namespace vulkan_utils

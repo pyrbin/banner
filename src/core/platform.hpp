@@ -20,10 +20,9 @@ public:
     void game_loop() const;
 
     // Vulkan specific
-    void get_instance_extensions(u32*, const char***);
+    std::vector<const char*> get_instance_extensions() const;
     vk::Extent2D get_framebuffer_extent() const;
-    void create_surface(vk::Instance*, VkSurfaceKHR*) const;
-
+    vk::SurfaceKHR create_surface(vk::Instance) const;
     GLFWwindow* window() const { return _window; }
 
 private:

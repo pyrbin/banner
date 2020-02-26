@@ -6,7 +6,9 @@
 namespace tde {
 
 class platform;
-class vulkan_renderer;
+class vulkan_graphics;
+class renderer;
+class tri_renderer;
 
 class engine
 {
@@ -15,11 +17,15 @@ public:
     ~engine();
 
     void bootstrap() const;
-    void tick(const f32) const;
+    void tick(f32) const;
+
+    vulkan_graphics* graphics() { return _graphics; };
 
 private:
     platform* _platform;
-    vulkan_renderer* _renderer;
-};
 
+    vulkan_graphics* _graphics;
+    renderer* ren;
+    tri_renderer* tri;
+};
 } // namespace tde

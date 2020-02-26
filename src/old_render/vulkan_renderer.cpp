@@ -567,6 +567,7 @@ vulkan_renderer::create_command_buffers()
             vk::Rect2D(vk::Offset2D(0, 0), _swap_extent),
             u32(2),
             &clear_value);
+
         _command_buffers[i].beginRenderPass(&pass_begin_info, vk::SubpassContents::eInline);
         _command_buffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, _pipeline.get());
         _command_buffers[i].draw(3, 1, 0, 0);

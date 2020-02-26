@@ -2,12 +2,11 @@
 
 #include <GLFW/glfw3.h>
 
-#include "../common/utility.hpp"
+#include "../defines.hpp"
 #include "../debug.hpp"
 
 #include "engine.hpp"
 #include "platform.hpp"
-
 #include "../render/vulkan_utils.hpp"
 
 namespace tde {
@@ -50,10 +49,20 @@ platform::game_loop() const
     _engine->tick(0.0);
 }
 
-void
-platform::get_instance_extensions(u32* extension_count, const char*** extension_names)
+std::vector<const char*>
+platform::get_instance_extensions() const
 {
-    *extension_names = glfwGetRequiredInstanceExtensions(extension_count);
+    std::vector<const char*> extensions;
+
+    u32 extension_count {0};
+    const char** extension_names;
+    extension_names = glfwGetRequiredInstanceExtensions(&extension_count);
+
+    for (auto i {0}; i < extension_count; i++) {
+        extensions.push_back(extension_names[i]);
+    }
+
+    return extensions;
 }
 
 vk::Extent2D
@@ -65,10 +74,12 @@ platform::get_framebuffer_extent() const
     return extents;
 }
 
-void
-platform::create_surface(vk::Instance* instance, VkSurfaceKHR* surface) const
+vk::SurfaceKHR
+platform::create_surface(vk::Instance instance) const
 {
-    VULKAN_CHECK(vk::Result(glfwCreateWindowSurface(*instance, _window, nullptr, surface)));
+    VkSurfaceKHR surface {nullptr};
+    VULKAN_CHECK(vk::Result(glfwCreateWindowSurface(instance, _window, nullptr, &surface)));
+    return static_cast<vk::SurfaceKHR>(surface);
 }
 
 } // namespace tde

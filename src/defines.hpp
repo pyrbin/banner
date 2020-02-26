@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../debug.hpp"
+#include "debug.hpp"
 
 #define TDE_ENGINE_NAME    "tdengine"
 #define TDE_ENGINE_VERSION "0.0.1"
@@ -31,7 +31,7 @@
 
 // TODO: add platform specific force inline
 __forceinline void
-report_assert_failed(const char* expr, const char* message, const char* file, int line)
+__report_assert_failed(const char* expr, const char* message, const char* file, int line)
 {
     std::cerr << "Assertion Failure: " << expr << ", message: '" << message
               << "', in file: " << file << ", line: " << line << "\n";
@@ -41,7 +41,7 @@ report_assert_failed(const char* expr, const char* message, const char* file, in
     { \
         if (expr) { \
         } else { \
-            report_assert_failed(#expr, "", __FILE__, __LINE__); \
+            __report_assert_failed(#expr, "", __FILE__, __LINE__); \
             DEBUG_BREAK(); \
         } \
     }
@@ -50,7 +50,7 @@ report_assert_failed(const char* expr, const char* message, const char* file, in
     { \
         if (expr) { \
         } else { \
-            report_assert_failed(#expr, message, __FILE__, __LINE__); \
+            __report_assert_failed(#expr, message, __FILE__, __LINE__); \
             DEBUG_BREAK(); \
         } \
     }
