@@ -24,6 +24,7 @@ void engine::bootstrap() const
 
 void engine::tick(const f32 dt) const
 {
+    _renderer->draw_frame();
 }
 
 }  // namespace tde

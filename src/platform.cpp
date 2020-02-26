@@ -44,10 +44,10 @@ void platform::game_loop() const
 {
     glfwPollEvents();
     _engine->tick(0.0);
+	
 }
 
-void platform::get_instance_extensions(u32* extension_count,
-                                       const char*** extension_names)
+void platform::get_instance_extensions(u32* extension_count, const char*** extension_names)
 {
     *extension_names = glfwGetRequiredInstanceExtensions(extension_count);
 }
@@ -62,7 +62,7 @@ vk::Extent2D platform::get_framebuffer_extent() const
 
 void platform::create_surface(vk::Instance* instance, VkSurfaceKHR* surface) const
 {
-    assert_vk_success(glfwCreateWindowSurface(*instance, _window, nullptr, surface));
+    assert_vk_success(vk::Result(glfwCreateWindowSurface(*instance, _window, nullptr, surface)));
 }
 
 }  // namespace tde

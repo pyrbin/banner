@@ -26,6 +26,18 @@ add_executable(tdengine ${SOURCES})
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
 # ┌──────────────────────────────────────────────────────────────────┐
+# │  Copy shaders                                                    │
+# └──────────────────────────────────────────────────────────────────┘
+file(GLOB SHADERS ${CMAKE_SOURCE_DIR}/shaders/*.spv)
+
+foreach(shader ${SHADERS})
+  add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                     COMMAND ${CMAKE_COMMAND} -E copy 
+                     ${shader} ${CMAKE_BINARY_DIR})
+endforeach()
+
+
+# ┌──────────────────────────────────────────────────────────────────┐
 # │  Link externals                                                  │
 # └──────────────────────────────────────────────────────────────────┘
 
