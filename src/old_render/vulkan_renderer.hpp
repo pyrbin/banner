@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../types.h"
-
+#include "../common/types.hpp"
 #include <vector>
 #include <vulkan/vulkan.hpp>
 #include <glm/glm.hpp>

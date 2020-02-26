@@ -1,14 +1,14 @@
-#include <stdarg.h>
-#include <stdio.h>
+#include <cstdarg>
+#include <cstdio>
 #include <string>
 
-#include "debug.h"
+#include "debug.hpp"
 
 namespace tde {
 
 // TODO: add colored outputs, use std::format instead
 
-static void write_log(const char* prepend, const char* message, va_list args)
+static void write_log(const char* prepend, const char* message, const va_list args)
 {
     vprintf((std::string(prepend) + message + "\n").c_str(), args);
 }

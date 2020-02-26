@@ -1,7 +1,7 @@
 #pragma once
 
-#define CFG_ENGINE_NAME "tdengine"
-#define CFG_ENGINE_VERSION "0.0.1"
+#define TDE_ENGINE_NAME "tdengine"
+#define TDE_ENGINE_VERSION "0.0.1"
 
 #if _WIN32 || _WIN64
 #define TARGET_WIN

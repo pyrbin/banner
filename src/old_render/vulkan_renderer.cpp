@@ -7,9 +7,10 @@
 #include <set>
 #include <string>
 
-#include "../debug.h"
-#include "../platform.h"
-#include "../utility.h"
+#include "../debug.hpp"
+#include "../debug.hpp"
+#include "../core/platform.hpp"
+#include "../common/utility.hpp"
 #include "vulkan_utils.hpp"
 
 const int MAX_FRAMES_IN_FLIGHT = 2;

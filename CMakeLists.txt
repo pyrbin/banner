@@ -13,9 +13,19 @@ project(
 )
 
 file(GLOB SOURCES
-    src/*.h
+    src/*.hpp
     src/*.cpp
-    src/render/*.h
+
+    src/common/*.hpp
+    src/common/*.cpp
+
+    src/core/*.hpp
+    src/core/*.cpp
+
+    src/old_render/*.hpp
+    src/old_render/*.cpp
+
+    src/render/*.hpp
     src/render/*.cpp
 )
 

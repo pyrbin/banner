@@ -2,11 +2,12 @@
 
 #include <GLFW/glfw3.h>
 
-#include "debug.h"
-#include "engine.h"
-#include "platform.h"
+#include "../common/utility.hpp"
+#include "../debug.hpp"
+#include "engine.hpp"
+#include "platform.hpp"
 
-#include "render/vulkan_utils.hpp"
+#include "../old_render/vulkan_utils.hpp"
 
 namespace tde {
 

@@ -1,8 +1,11 @@
-#include "debug.h"
-#include "platform.h"
-#include "engine.h"
 
-#include "render/vulkan_renderer.hpp"
+
+#include "engine.hpp"
+
+#include "../debug.hpp"
+#include "../old_render/vulkan_renderer.hpp"
+
+#include "platform.hpp"
 
 namespace tde {
 

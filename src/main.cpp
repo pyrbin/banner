@@ -1,10 +1,13 @@
-#include "debug.h"
-#include "engine.h"
-#include "utility.h"
+﻿// ┌──────────────────────────────────────────────────────────────────┐
+// │ TDEngine                                                         │
+// └──────────────────────────────────────────────────────────────────┘
+
+#include "common/utility.hpp"
+#include "core/engine.hpp"
 
 int main()
 {
-    const auto engine = new tde::engine(CFG_ENGINE_NAME);
+    const auto engine = new tde::engine(TDE_ENGINE_NAME);
 
     engine->bootstrap();
 

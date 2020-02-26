@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../utility.h"
+#include "../common/utility.hpp"
 #include <vulkan/vulkan.hpp>
 
 #define assert_vk_success(expr)                                                                    \
