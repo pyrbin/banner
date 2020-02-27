@@ -1,6 +1,6 @@
 #pragma once
 
-#include "debug.hpp"
+#include <banner/util/debug.hpp>
 
 #if _WIN32 || _WIN64
 #define TARGET_WIN

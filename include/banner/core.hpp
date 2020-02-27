@@ -4,5 +4,5 @@
 
 #pragma once
 
-#include <engine/core/math.hpp>
-#include <engine/core/types.hpp>
+#include <banner/core/math.hpp>
+#include <banner/core/types.hpp>
