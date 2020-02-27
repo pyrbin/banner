@@ -1,4 +1,4 @@
-<h1 align="center">tdengine (temp name) </h1>
+<h1 align="center">banner (temp name) </h1>
 <p align="center">A <b>WIP</b> 3D game engine using vulkan & glfw. Written in C++20/17.</p>
 
 ### Table of Contents
