@@ -7,7 +7,6 @@
 project(banner VERSION 0.0.1 LANGUAGES CXX)
 
 file(GLOB BANNER_PROJECT_FILES
-    include/banner/gfx/vma.hpp
 
     include/banner/util/*.hpp
     include/banner/util/*.cpp
@@ -15,6 +14,7 @@ file(GLOB BANNER_PROJECT_FILES
     include/banner/core/*.hpp
     include/banner/core/*.cpp
 
+    include/banner/gfx/vma.hpp
     include/banner/gfx/*.hpp
     include/banner/gfx/*.cpp
 )

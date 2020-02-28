@@ -5,10 +5,8 @@ namespace ban {
 memory::memory(device* dev)
 {
     VmaAllocatorCreateInfo info;
-
     info.device = dev->get();
     info.physicalDevice = dev->get_gpu();
-
     vmaCreateAllocator(&info, &vma_allocator_);
 }
 

@@ -4,7 +4,6 @@
 #include <vulkan/vulkan.hpp>
 #include <banner/core/types.hpp>
 #include <banner/gfx/vk_utils.hpp>
-#include <vk_mem_alloc.h>
 
 namespace ban {
 struct device;

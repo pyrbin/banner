@@ -43,7 +43,7 @@ void
 graphics::create_instance()
 {
     vk::ApplicationInfo app_info{ "TD Engine", VK_MAKE_VERSION(1, 0, 0), "No engine",
-        VK_MAKE_VERSION(1, 0, 0), VK_MAKE_VERSION(1, 0, 0) };
+        VK_MAKE_VERSION(1, 0, 0), VK_MAKE_VERSION(1, 1, 0) };
 
     // Instance extensions
     auto instance_extensions{ platform_->get_instance_extensions() };
