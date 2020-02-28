@@ -33,7 +33,7 @@ __report_assert_failed(const char* expr, const char* message, const char* file, 
               << "', in file: " << file << ", line: " << line << "\n";
 }
 
-#define ASSERT(expr) \
+#define A_ASSERT(expr) \
     { \
         if (expr) { \
         } else { \
@@ -42,7 +42,7 @@ __report_assert_failed(const char* expr, const char* message, const char* file, 
         } \
     }
 
-#define ASSERT_MSG(expr, message) \
+#define ASSERT(expr, message) \
     { \
         if (expr) { \
         } else { \

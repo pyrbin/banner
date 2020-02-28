@@ -1,9 +1,9 @@
 #include <vector>
 #include <string>
 
-namespace tde {
+namespace ban {
 
 std::vector<char>
 read_bytes_from_file(const std::string& filename);
 
-} // namespace tde
+} // namespace ban

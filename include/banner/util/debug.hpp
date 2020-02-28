@@ -1,6 +1,6 @@
 #pragma once
 
-namespace tde {
+namespace ban {
 
 struct debug
 {
@@ -11,4 +11,4 @@ struct debug
     static void fatal(const char* message, ...);
 };
 
-} // namespace tde
+} // namespace ban

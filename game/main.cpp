@@ -2,10 +2,11 @@
 #include <iostream>
 #include <banner/banner.hpp>
 
-using namespace tde;
+using namespace ban;
 
 int
 main()
 {
-    debug::log("Ok lets try this %d", 10);
+    ban::engine* engine = new ban::engine();
+    engine->bootstrap();
 }

@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <string>
 
-namespace tde {
+namespace ban {
 
 // TODO: add colored outputs, use std::format instead
 
@@ -59,4 +59,4 @@ debug::fatal(const char* message, ...)
     va_end(args);
 }
 
-} // namespace tde
+} // namespace ban

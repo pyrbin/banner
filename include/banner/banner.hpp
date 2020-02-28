@@ -4,6 +4,6 @@
 
 #pragma once
 
-#include <banner/core.hpp>
 #include <banner/util.hpp>
+#include <banner/core.hpp>
 #include <banner/gfx.hpp>

@@ -5,6 +5,7 @@ Standard: Auto
 NamespaceIndentation: None
 PointerAlignment: Left
 AlwaysBreakAfterReturnType: TopLevel
+AlwaysBreakTemplateDeclarations: Yes
 SortIncludes: false
 SortUsingDeclarations: false
 SpaceBeforeCtorInitializerColon: true
@@ -13,7 +14,9 @@ SpacesInParentheses: false
 SpaceBeforeCpp11BracedList: false
 AlignConsecutiveMacros: true
 AlignEscapedNewlines: DontAlign
+ColumnLimit: 90
 
+FixNamespaceComments: true
 AccessModifierOffset: -4
 ContinuationIndentWidth: 4
 IndentWidth: 4
