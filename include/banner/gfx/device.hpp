@@ -15,6 +15,7 @@ struct device
 
     explicit device(const vk::PhysicalDevice& device, const vk::SurfaceKHR surface,
         const options opts);
+
     ~device();
 
     struct queues
@@ -24,13 +25,23 @@ struct device
             , present_queue{ device->get().getQueue(pidx, 0) }
             , graphics_index{ gidx }
             , present_index{ pidx }
-        {}
+        { }
 
         const vk::Queue graphics_queue;
         const vk::Queue present_queue;
 
         const u32 graphics_index;
         const u32 present_index;
+
+        [[nodiscard]] void submit(vk::SubmitInfo info, vk::Fence fence) const
+        {
+            graphics_queue.submit(info, fence);
+        }
+
+        [[nodiscard]] vk::Result present(vk::PresentInfoKHR info) const
+        {
+            return present_queue.presentKHR(info);
+        }
 
         [[nodiscard]] void wait() const noexcept
         {
@@ -46,11 +57,12 @@ struct device
 
     vk::PhysicalDevice get_gpu() const { return gpu_; }
     const vk::PhysicalDeviceFeatures& get_features() { return features_; }
+    const vk::PhysicalDeviceMemoryProperties& get_props() { return props_; }
 
 private:
     vk::PhysicalDevice gpu_;
     vk::PhysicalDeviceFeatures features_;
-
+    vk::PhysicalDeviceMemoryProperties props_;
     vk::UniqueDevice vk_device_;
     std::unique_ptr<queues> queues_;
 };

@@ -6,7 +6,7 @@
 
 namespace ban {
 inline vk::SurfaceFormatKHR
-choose_swap_format(const std::vector<vk::SurfaceFormatKHR>& formats)
+choose_format(const std::vector<vk::SurfaceFormatKHR>& formats)
 {
     for (const auto& f : formats) {
         if (f.format == vk::Format::eB8G8R8A8Srgb
@@ -18,7 +18,7 @@ choose_swap_format(const std::vector<vk::SurfaceFormatKHR>& formats)
 }
 
 inline vk::PresentModeKHR
-choose_swap_mode(const std::vector<vk::PresentModeKHR>& modes)
+choose_present_mode(const std::vector<vk::PresentModeKHR>& modes)
 {
     for (const auto& mode : modes) {
         if (mode == vk::PresentModeKHR::eMailbox) {
@@ -29,7 +29,7 @@ choose_swap_mode(const std::vector<vk::PresentModeKHR>& modes)
 }
 
 vk::Extent2D
-choose_swap_extent(const vk::SurfaceCapabilitiesKHR& capabilities, vk::Extent2D extent)
+choose_extent(const vk::SurfaceCapabilitiesKHR& capabilities, vk::Extent2D extent)
 {
     if (capabilities.currentExtent.width != UINT32_MAX) {
         return capabilities.currentExtent;
@@ -51,7 +51,7 @@ swapchain::swapchain(device* dev, vk::SurfaceKHR surface, vk::Extent2D extent)
     create_vk_swapchain();
 }
 
-swapchain::~swapchain() {}
+swapchain::~swapchain() { }
 
 void
 swapchain::create_vk_swapchain()
@@ -59,31 +59,43 @@ swapchain::create_vk_swapchain()
     auto [capabilities, formats, modes]
         = vk_utils::get_surface_info(device_->get_gpu(), surface_);
 
-    mode_ = choose_swap_mode(modes);
-    format_ = choose_swap_format(formats);
-    extent_ = choose_swap_extent(capabilities, extent_);
+    mode_ = choose_present_mode(modes);
+    format_ = choose_format(formats);
+    extent_ = choose_extent(capabilities, extent_);
 
     auto image_count = std::min<u32>(
         std::max<u32>(capabilities.minImageCount, 2), capabilities.maxImageCount);
 
-    std::vector<u32> used_indices{ device_->get_queues().graphics_index };
-    auto sharing_mode = vk::SharingMode::eExclusive;
-
-    if (!device_->get_queues().is_same()) {
-        used_indices = { device_->get_queues().graphics_index,
-            device_->get_queues().present_index };
-        sharing_mode = vk::SharingMode::eConcurrent;
-    }
-
     auto old_swapchain = vk_swapchain_.get();
 
-    vk::SwapchainCreateInfoKHR swapchain_info{ {}, surface_, image_count, format_.format,
-        format_.colorSpace, extent_, 1, vk::ImageUsageFlagBits::eColorAttachment,
-        sharing_mode, u32(used_indices.size()), used_indices.data(),
-        vk::SurfaceTransformFlagBitsKHR::eIdentity,
-        vk::CompositeAlphaFlagBitsKHR::eOpaque, mode_, VK_TRUE, old_swapchain };
+    // Determine transformation to use (preferring no transform)
+    vk::SurfaceTransformFlagBitsKHR surface_transform;
+    if (capabilities.supportedTransforms & vk::SurfaceTransformFlagBitsKHR::eIdentity) {
+        surface_transform = vk::SurfaceTransformFlagBitsKHR::eIdentity;
+    } else {
+        surface_transform = capabilities.currentTransform;
+    }
 
-    vk_swapchain_ = device_->get().createSwapchainKHRUnique(swapchain_info);
+    vk::SwapchainCreateInfoKHR create_info;
+    create_info.setSurface(surface_);
+    create_info.setMinImageCount(image_count);
+    create_info.setImageFormat(format_.format);
+    create_info.setImageColorSpace(format_.colorSpace);
+    create_info.setImageExtent(extent_);
+    create_info.setImageArrayLayers(1);
+    create_info.setImageUsage(
+        vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferDst);
+    // TODO: fix this?
+    create_info.setImageSharingMode(vk::SharingMode::eExclusive);
+    create_info.setQueueFamilyIndexCount(0);
+    create_info.setPQueueFamilyIndices(nullptr);
+    create_info.setPreTransform(surface_transform);
+    create_info.setCompositeAlpha(vk::CompositeAlphaFlagBitsKHR::eOpaque);
+    create_info.setPresentMode(mode_);
+    create_info.setClipped(VK_TRUE);
+    create_info.setOldSwapchain(old_swapchain);
+
+    vk_swapchain_ = device_->get().createSwapchainKHRUnique(create_info);
 
     create_imageviews();
 
@@ -95,12 +107,13 @@ swapchain::create_vk_swapchain()
 void
 swapchain::create_imageviews()
 {
-    const auto images = device_->get().getSwapchainImagesKHR(vk_swapchain_.get());
+    data_.images.clear();
+    data_.views.clear();
 
-    imageviews_.clear();
+    data_.images = device_->get().getSwapchainImagesKHR(vk_swapchain_.get());
 
-    for (const auto& img : images) {
-        imageviews_.push_back(device_->get().createImageViewUnique({
+    for (const auto& img : data_.images) {
+        data_.views.push_back(device_->get().createImageViewUnique({
             vk::ImageViewCreateFlags(), img, vk::ImageViewType::e2D, format_.format,
             vk::ComponentMapping(), // R,G,B,A: Identity Components
             vk::ImageSubresourceRange(vk::ImageAspectFlagBits::eColor,
@@ -116,8 +129,16 @@ void
 swapchain::resize(vk::Extent2D extent)
 {
     device_->get_queues().wait();
+
     extent_ = extent;
     create_vk_swapchain();
+
     on_recreate.fire();
+}
+
+vk::ResultValue<u32>
+swapchain::aquire_image(vk::Semaphore sem, vk::Fence fen, u32 timeout)
+{
+    return device_->get().acquireNextImageKHR(get(), timeout, sem, fen);
 }
 } // namespace ban

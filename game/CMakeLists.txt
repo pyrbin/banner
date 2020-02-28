@@ -6,5 +6,13 @@
 
 project(game)
 
+# engine
 add_executable(game main.cpp)
 target_link_libraries(game PUBLIC banner)
+
+add_executable(test test.cpp)
+target_link_libraries(test PUBLIC banner)
+
+add_executable(clear clear.cpp)
+target_link_libraries(clear PUBLIC banner)
+

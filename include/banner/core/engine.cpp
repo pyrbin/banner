@@ -10,7 +10,7 @@ engine::bootstrap()
 {
     debug::log("Initializing engine");
 
-    platform_ = new platform(this, "test");
+    platform_ = new platform("test");
     graphics_ = new graphics(platform_);
 
     platform_->start_loop();

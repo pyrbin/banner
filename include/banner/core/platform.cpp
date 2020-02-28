@@ -9,8 +9,7 @@
 #include <banner/core/platform.hpp>
 
 namespace ban {
-platform::platform(engine* p_engine, const std::string& name)
-    : engine_{ p_engine }
+platform::platform(const std::string& name)
 {
     debug::trace("Initializing platform layer ...");
 
@@ -47,7 +46,7 @@ void
 platform::update()
 {
     glfwPollEvents();
-
+    on_update.fire();
     if (resized_) {
         resized_ = false;
 

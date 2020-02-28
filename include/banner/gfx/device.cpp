@@ -1,12 +1,10 @@
 #pragma once
-
 #include <unordered_set>
 #include <banner/gfx/device.hpp>
 #include <banner/gfx/vk_utils.hpp>
 #include <banner/defs.hpp>
 
 namespace ban {
-
 device::device(
     const vk::PhysicalDevice& gpu, const vk::SurfaceKHR surface, const options opts)
 
@@ -25,6 +23,7 @@ device::device(
 
     gpu_ = gpu;
     features_ = gpu_.getFeatures();
+    props_ = gpu_.getMemoryProperties();
 
     vk::DeviceCreateInfo device_info{ {}, u32(queue_infos.size()), queue_infos.data(),
         u32(opts.layers.size()), opts.layers.data(), u32(opts.extensions.size()),
@@ -37,5 +36,4 @@ device::device(
 }
 
 device::~device() { }
-
 } // namespace ban

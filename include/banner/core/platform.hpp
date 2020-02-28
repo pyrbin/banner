@@ -17,13 +17,14 @@ class platform
     using window_type = GLFWwindow;
 
 public:
-    platform(engine*, const std::string&);
+    platform(const std::string&);
     ~platform();
 
     bool start_loop();
     void update();
 
     signal<void(u16, u16)> on_resize;
+    signal<void()> on_update;
 
     std::vector<const char*> get_instance_extensions() const;
 
@@ -34,7 +35,7 @@ public:
     window_type* window() const { return window_; }
 
 private:
-    engine* engine_;
+    // engine* engine_;
     GLFWwindow* window_;
 
     bool resized_{ false };

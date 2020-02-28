@@ -47,15 +47,6 @@ struct surface_info
 /**
  * @brief Synchronization
  */
-struct synchronization
-{
-    vk::Semaphore lock_render{ nullptr };
-    vk::Semaphore lock_present{ nullptr };
-};
-
-/**
- * @brief Synchronization
- */
 struct vulkan_gpu
 {
     // Device info
@@ -65,16 +56,15 @@ struct vulkan_gpu
  *
  */
 bool
-is_device_suitable(
-    const vk::PhysicalDevice device,
-    const vk::SurfaceKHR surface,
+is_device_suitable(const vk::PhysicalDevice device, const vk::SurfaceKHR surface,
     const std::vector<const char*>& device_extens);
 
 /**
  *
  */
 bool
-check_device_extensions(const vk::PhysicalDevice device, const std::vector<const char*>& device_extens);
+check_device_extensions(
+    const vk::PhysicalDevice device, const std::vector<const char*>& device_extens);
 
 /**
  *
@@ -110,11 +100,9 @@ load_shader(const std::string& filename, vk::Device device);
  *
  */
 VKAPI_ATTR vk::Bool32 VKAPI_CALL
-debug_vulkan_callback(
-    const vk::DebugUtilsMessageSeverityFlagBitsEXT message_severity,
+debug_vulkan_callback(const vk::DebugUtilsMessageSeverityFlagBitsEXT message_severity,
     vk::DebugUtilsMessageTypeFlagBitsEXT message_types,
-    const vk::DebugUtilsMessengerCallbackDataEXT* callback_data,
-    void* user_data);
+    const vk::DebugUtilsMessengerCallbackDataEXT* callback_data, void* user_data);
 
 } // namespace vk_utils
 } // namespace ban

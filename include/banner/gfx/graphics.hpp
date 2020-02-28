@@ -4,10 +4,11 @@
 #include <vulkan/vulkan.hpp>
 #include <banner/core/types.hpp>
 #include <banner/gfx/vk_utils.hpp>
+#include <banner/gfx/device.hpp>
+#include <banner/gfx/swapchain.hpp>
 
 namespace ban {
-struct device;
-struct swapchain;
+
 struct platform;
 struct memory;
 
@@ -19,6 +20,9 @@ public:
 
     graphics(platform* platform);
     ~graphics();
+
+    swapchain& get_swapchain() { return *swapchain_.get(); }
+    device& get_device() { return *device_.get(); }
 
 private:
     platform* platform_;
