@@ -1,12 +1,16 @@
-#include <banner/gfx/memory.hpp>
 #include <banner/gfx/device.hpp>
+#include <banner/gfx/memory.hpp>
+#include <banner/util/debug.hpp>
 
 namespace ban {
 memory::memory(device* dev)
 {
-    VmaAllocatorCreateInfo info;
-    info.device = dev->get();
-    info.physicalDevice = dev->get_gpu();
+    VmaAllocatorCreateInfo info
+    { 
+        .physicalDevice{ dev->get_gpu() },
+        .device{ dev->get() }
+    };
+
     vmaCreateAllocator(&info, &vma_allocator_);
 }
 

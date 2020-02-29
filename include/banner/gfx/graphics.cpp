@@ -116,7 +116,8 @@ graphics::create_device()
 
     // TODO: Fix VulkanMemoryAllocation bug
     // currently crashes application (some kind of apiVersion error?)
-    // memory_ = std::make_unique<memory>(device_.get());
+    
+    memory_ = std::make_unique<memory>(device_.get());
 
     debug::trace("Initialized vulkan graphics ...");
 }

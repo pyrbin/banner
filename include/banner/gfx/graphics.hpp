@@ -6,11 +6,11 @@
 #include <banner/gfx/vk_utils.hpp>
 #include <banner/gfx/device.hpp>
 #include <banner/gfx/swapchain.hpp>
+#include <banner/gfx/memory.hpp>
 
 namespace ban {
 
 struct platform;
-struct memory;
 
 class graphics
 {
@@ -32,7 +32,6 @@ private:
 
     std::unique_ptr<device> device_;
     std::unique_ptr<swapchain> swapchain_;
-
     std::unique_ptr<memory> memory_;
 
     void create_instance();
