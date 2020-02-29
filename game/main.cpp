@@ -13,13 +13,7 @@ main()
     graphics* gr = new graphics(pl);
     renderer* re = new renderer(&gr->get_swapchain());
 
-    tri_renderer* tr = new tri_renderer(re);
-
-    pl->on_update.connect([&]() {
-        re->pre_render();
-        tr->update();
-        re->render();
-    });
+    pl->on_update.connect([&]() { re->render(); });
 
     pl->start_loop();
     re->wait();

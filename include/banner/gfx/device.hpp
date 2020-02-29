@@ -35,7 +35,7 @@ struct device
 
         [[nodiscard]] void submit(vk::SubmitInfo info, vk::Fence fence) const
         {
-            graphics_queue.submit(info, fence);
+            return graphics_queue.submit(info, fence);
         }
 
         [[nodiscard]] vk::Result present(vk::PresentInfoKHR info) const

@@ -2,6 +2,7 @@
 
 #include <vulkan/vulkan.hpp>
 #include <banner/core/types.hpp>
+#include <vector>
 #include <banner/gfx/vk_utils.hpp>
 
 namespace ban {
@@ -10,7 +11,7 @@ struct swapchain;
 
 struct renderer
 {
-    using cmd_buffers = vk::CommandBuffer*;
+    using cmd_buffers = std::vector<vk::CommandBuffer>;
     using fences = std::vector<vk::Fence>;
 
     renderer(swapchain* swapc);
@@ -33,8 +34,11 @@ struct renderer
     u32 get_index() const { return index_; }
 
 private:
+    void create_cmd_buffers();
+
     swapchain* swapchain_;
     fences fences_;
+    vk::UniqueCommandPool cmd_pool_;
     synchronization sync_;
     cmd_buffers cmd_buffers_;
     u32 index_{ 0 };

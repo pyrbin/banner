@@ -34,7 +34,7 @@ struct tri_renderer
         create_pipeline_layout();
         create_pipeline();
 
-        renderer_->set_cmd_buffers(cmd_buffs_.data());
+        // renderer_->set_cmd_buffers(cmd_buffs_.data());
     }
 
     void update()
