@@ -1,24 +1,19 @@
 #include <GLFW/glfw3.h>
-
 #include <algorithm>
 #include <memory>
 #include <numeric>
 
 #include <banner/core/platform.hpp>
+#include <banner/defs.hpp>
 #include <banner/gfx/graphics.hpp>
 #include <banner/gfx/memory.hpp>
-#include <banner/defs.hpp>
 
 namespace ban {
-const std::vector<const char*> graphics::device_extensions{
-    VK_KHR_SWAPCHAIN_EXTENSION_NAME
-};
-const std::vector<const char*> graphics::validation_layers{
-    "VK_LAYER_KHRONOS_validation"
-};
+const std::vector<const char*> graphics::device_extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+const std::vector<const char*> graphics::validation_layers{"VK_LAYER_KHRONOS_validation"};
 
 graphics::graphics(platform* platform)
-    : platform_{ platform }
+    : platform_{platform}
 {
     create_instance();
     create_debugger();
@@ -37,11 +32,17 @@ graphics::~graphics()
     }
 }
 
-void
-graphics::create_instance()
+void graphics::create_instance()
 {
-    vk::ApplicationInfo app_info{ "TD Engine", VK_MAKE_VERSION(1, 0, 0), "No engine",
-        VK_MAKE_VERSION(1, 0, 0), VK_API_VERSION_1_1 };
+    // clang-format off
+    vk::ApplicationInfo application_info
+    { 
+        "TD Engine", 
+        VK_MAKE_VERSION(1, 0, 0), 
+        "No engine",
+        VK_MAKE_VERSION(1, 0, 0), 
+        VK_API_VERSION_1_1
+    };
 
     // Instance extensions
     auto instance_extensions{ platform_->get_instance_extensions() };
@@ -55,9 +56,16 @@ graphics::create_instance()
     ASSERT(vk_utils::check_validation_layers(validation_layers),
         "Required validation layers not present!");
 
-    vk::InstanceCreateInfo instance_info{ {}, &app_info, u32(validation_layers.size()),
-        validation_layers.data(), u32(instance_extensions.size()),
-        instance_extensions.data() };
+    // clang-format off
+    vk::InstanceCreateInfo instance_info
+    { 
+        vk::InstanceCreateFlags(), 
+        &application_info,
+        u32(validation_layers.size()),
+        validation_layers.data(),
+        u32(instance_extensions.size()),
+        instance_extensions.data()
+    };
 
     instance_ = vk::createInstanceUnique(instance_info);
 
@@ -114,9 +122,7 @@ graphics::create_device()
 
     swapchain_->on_recreate.connect([&]() { debug::log("Recreated swapchain"); });
 
-    // TODO: Fix VulkanMemoryAllocation bug
-    // currently crashes application (some kind of apiVersion error?)
-    
+    // Initializing VMA
     memory_ = std::make_unique<memory>(device_.get());
 
     debug::trace("Initialized vulkan graphics ...");

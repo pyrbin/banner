@@ -1,24 +1,22 @@
 #pragma once
 
-#include <banner/gfx/swapchain.hpp>
 #include <banner/gfx/device.hpp>
+#include <banner/gfx/swapchain.hpp>
 #include <banner/gfx/vk_utils.hpp>
 
 namespace ban {
-inline vk::SurfaceFormatKHR
-choose_format(const std::vector<vk::SurfaceFormatKHR>& formats)
+inline vk::SurfaceFormatKHR choose_format(const std::vector<vk::SurfaceFormatKHR>& formats)
 {
     for (const auto& f : formats) {
-        if (f.format == vk::Format::eB8G8R8A8Srgb
-            && f.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
+        if (f.format == vk::Format::eB8G8R8A8Srgb &&
+            f.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear) {
             return f;
         }
     }
     return formats[0];
 }
 
-inline vk::PresentModeKHR
-choose_present_mode(const std::vector<vk::PresentModeKHR>& modes)
+inline vk::PresentModeKHR choose_present_mode(const std::vector<vk::PresentModeKHR>& modes)
 {
     for (const auto& mode : modes) {
         if (mode == vk::PresentModeKHR::eMailbox) {
@@ -28,8 +26,7 @@ choose_present_mode(const std::vector<vk::PresentModeKHR>& modes)
     return vk::PresentModeKHR::eFifoRelaxed;
 }
 
-vk::Extent2D
-choose_extent(const vk::SurfaceCapabilitiesKHR& capabilities, vk::Extent2D extent)
+vk::Extent2D choose_extent(const vk::SurfaceCapabilitiesKHR& capabilities, vk::Extent2D extent)
 {
     if (capabilities.currentExtent.width != UINT32_MAX) {
         return capabilities.currentExtent;
@@ -51,20 +48,18 @@ swapchain::swapchain(device* dev, vk::SurfaceKHR surface, vk::Extent2D extent)
     create_vk_swapchain();
 }
 
-swapchain::~swapchain() { }
+swapchain::~swapchain() {}
 
-void
-swapchain::create_vk_swapchain()
+void swapchain::create_vk_swapchain()
 {
-    auto [capabilities, formats, modes]
-        = vk_utils::get_surface_info(device_->get_gpu(), surface_);
+    auto [capabilities, formats, modes] = vk_utils::get_surface_info(device_->get_gpu(), surface_);
 
     mode_ = choose_present_mode(modes);
     format_ = choose_format(formats);
     extent_ = choose_extent(capabilities, extent_);
 
-    auto image_count = std::min<u32>(
-        std::max<u32>(capabilities.minImageCount, 2), capabilities.maxImageCount);
+    auto image_count =
+        std::min<u32>(std::max<u32>(capabilities.minImageCount, 2), capabilities.maxImageCount);
 
     auto old_swapchain = vk_swapchain_.get();
 
@@ -85,7 +80,6 @@ swapchain::create_vk_swapchain()
     create_info.setImageArrayLayers(1);
     create_info.setImageUsage(
         vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eTransferDst);
-    // TODO: fix this?
     create_info.setImageSharingMode(vk::SharingMode::eExclusive);
     create_info.setQueueFamilyIndexCount(0);
     create_info.setPQueueFamilyIndices(nullptr);
@@ -104,17 +98,15 @@ swapchain::create_vk_swapchain()
     }
 }
 
-void
-swapchain::create_imageviews()
+void swapchain::create_imageviews()
 {
     data_.images.clear();
     data_.views.clear();
-
     data_.images = device_->get().getSwapchainImagesKHR(vk_swapchain_.get());
 
-    for (const auto& img : data_.images) {
+    for (const auto& image : data_.images) {
         data_.views.push_back(device_->get().createImageViewUnique({
-            vk::ImageViewCreateFlags(), img, vk::ImageViewType::e2D, format_.format,
+            vk::ImageViewCreateFlags(), image, vk::ImageViewType::e2D, format_.format,
             vk::ComponentMapping(), // R,G,B,A: Identity Components
             vk::ImageSubresourceRange(vk::ImageAspectFlagBits::eColor,
                 0, // baseMiplevel
@@ -125,8 +117,7 @@ swapchain::create_imageviews()
     }
 }
 
-void
-swapchain::resize(vk::Extent2D extent)
+void swapchain::resize(vk::Extent2D extent)
 {
     device_->get_queues().wait();
 
@@ -136,8 +127,7 @@ swapchain::resize(vk::Extent2D extent)
     on_recreate.fire();
 }
 
-vk::ResultValue<u32>
-swapchain::aquire_image(vk::Semaphore sem, vk::Fence fen, u32 timeout)
+vk::ResultValue<u32> swapchain::aquire_image(vk::Semaphore sem, vk::Fence fen, u32 timeout)
 {
     return device_->get().acquireNextImageKHR(get(), timeout, sem, fen);
 }

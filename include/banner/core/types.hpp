@@ -13,4 +13,6 @@ using i16 = signed short;
 using f64 = double;
 using f32 = float;
 
+#define mut mutable
+
 } // namespace ban

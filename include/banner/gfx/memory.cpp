@@ -5,10 +5,11 @@
 namespace ban {
 memory::memory(device* dev)
 {
+    // clang-format off
     VmaAllocatorCreateInfo info
     { 
-        .physicalDevice{ dev->get_gpu() },
-        .device{ dev->get() }
+        .physicalDevice = dev->get_gpu(),
+        .device = dev->get()
     };
 
     vmaCreateAllocator(&info, &vma_allocator_);

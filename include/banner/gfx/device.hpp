@@ -1,31 +1,32 @@
 #pragma once
 
 #include <vector>
-#include <vulkan/vulkan.hpp>
+
 #include <banner/core/types.hpp>
+#include <vulkan/vulkan.hpp>
 
 namespace ban {
 struct device
 {
     struct options
     {
-        std::vector<const char*> extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-        std::vector<const char*> layers{ "VK_LAYER_KHRONOS_validation" };
+        std::vector<const char*> extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+        std::vector<const char*> layers{"VK_LAYER_KHRONOS_validation"};
     };
 
-    explicit device(const vk::PhysicalDevice& device, const vk::SurfaceKHR surface,
-        const options opts);
+    explicit device(
+        const vk::PhysicalDevice& device, const vk::SurfaceKHR surface, const options opts);
 
     ~device();
 
     struct queues
     {
         inline queues(const device* device, u32 gidx, u32 pidx)
-            : graphics_queue{ device->get().getQueue(gidx, 0) }
-            , present_queue{ device->get().getQueue(pidx, 0) }
-            , graphics_index{ gidx }
-            , present_index{ pidx }
-        { }
+            : graphics_queue{device->get().getQueue(gidx, 0)}
+            , present_queue{device->get().getQueue(pidx, 0)}
+            , graphics_index{gidx}
+            , present_index{pidx}
+        {}
 
         const vk::Queue graphics_queue;
         const vk::Queue present_queue;
@@ -53,6 +54,8 @@ struct device
     };
 
     vk::Device get() const { return vk_device_.get(); }
+    operator vk::Device() const { return get(); }
+
     const queues& get_queues() const { return *queues_.get(); }
 
     vk::PhysicalDevice get_gpu() const { return gpu_; }
@@ -68,4 +71,5 @@ private:
 };
 
 using device_ptr = device*;
+
 } // namespace ban

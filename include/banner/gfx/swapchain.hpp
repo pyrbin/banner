@@ -49,4 +49,8 @@ private:
     void create_vk_swapchain();
     void create_imageviews();
 };
+
+using swapchain_ptr = swapchain*;
+
+
 } // namespace ban

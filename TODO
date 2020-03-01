@@ -1,2 +1,5 @@
+* vulkan renderer of a simple triangle
+
+* memory cleanup of vulkan objects
+
 * fix glw3.dll dependency, currently i just copied the dll to the build folder
-* fix vma bugs
