@@ -1,5 +1,10 @@
+[todo]
 
-[Renderer]
+draw a triangle
+engine class mirroring liblava
+window class that wraps glfw window
+
+[renderer]
 
 * vulkan renderer of a simple triangle
 * add imgui

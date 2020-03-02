@@ -10,9 +10,12 @@ int main()
     platform* pl = new platform("BANNER");
     graphics* gr = new graphics(pl);
 
+    world* wo = new world(2000);
+
     renderer* rend = new renderer(gr->get_swap());
 
-    srand(time(NULL));
+    srand(time(nullptr));
+
     vk::ClearColorValue clear_values = { std::array<float, 4>{
         rnd(0.f, 1.f), rnd(0.f, 1.f), rnd(0.f, 1.f), 1.f } };
 
@@ -40,7 +43,10 @@ int main()
             image_barrier);
     });
 
-    pl->on_update.connect([&]() { rend->render(); });
+    pl->on_update.connect([&]() {
+        wo->update();
+        rend->render();
+    });
 
     pl->start_loop();
 }

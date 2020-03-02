@@ -3,7 +3,6 @@
 #include <functional>
 
 namespace ban {
-
 using u64 = unsigned long long;
 using u32 = unsigned int;
 using u16 = unsigned short;
@@ -17,7 +16,4 @@ using f32 = float;
 
 template<typename T>
 using fn = std::function<T>;
-
-#define mut mutable
-
 } // namespace ban
