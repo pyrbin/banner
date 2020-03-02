@@ -4,9 +4,7 @@
 #include <banner/util/debug.hpp>
 
 namespace ban {
-
-void
-engine::bootstrap()
+void engine::bootstrap()
 {
     debug::log("Initializing engine");
 
@@ -16,8 +14,5 @@ engine::bootstrap()
     platform_->start_loop();
 }
 
-void
-engine::tick(f32 dt) const
-{ }
-
+void engine::tick(f32 dt) const {}
 } // namespace ban

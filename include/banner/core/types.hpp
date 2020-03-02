@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 namespace ban {
 
 using u64 = unsigned long long;
@@ -12,6 +14,9 @@ using i16 = signed short;
 
 using f64 = double;
 using f32 = float;
+
+template<typename T>
+using fn = std::function<T>;
 
 #define mut mutable
 

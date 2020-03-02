@@ -2,11 +2,11 @@
 
 #include <GLFW/glfw3.h>
 
-#include <banner/util/debug.hpp>
-#include <banner/defs.hpp>
 #include <banner/core/engine.hpp>
-#include <banner/gfx/vk_utils.hpp>
 #include <banner/core/platform.hpp>
+#include <banner/defs.hpp>
+#include <banner/gfx/vk_utils.hpp>
+#include <banner/util/debug.hpp>
 
 namespace ban {
 platform::platform(const std::string& name)
@@ -32,8 +32,7 @@ platform::~platform()
     glfwTerminate();
 }
 
-bool
-platform::start_loop()
+bool platform::start_loop()
 {
     while (!glfwWindowShouldClose(window_)) {
         update();
@@ -42,8 +41,7 @@ platform::start_loop()
     return true;
 }
 
-void
-platform::update()
+void platform::update()
 {
     glfwPollEvents();
     on_update.fire();
@@ -56,15 +54,13 @@ platform::update()
     }
 }
 
-void
-platform::on_window_resize(GLFWwindow* window, int width, int height)
+void platform::on_window_resize(GLFWwindow* window, int width, int height)
 {
     platform* ptr = static_cast<platform*>(glfwGetWindowUserPointer(window));
     ptr->resized_ = true;
 }
 
-std::vector<const char*>
-platform::get_instance_extensions() const
+std::vector<const char*> platform::get_instance_extensions() const
 {
     std::vector<const char*> extensions;
 
@@ -79,21 +75,18 @@ platform::get_instance_extensions() const
     return extensions;
 }
 
-vk::Extent2D
-platform::get_framebuffer_extent()
+vk::Extent2D platform::get_framebuffer_extent()
 {
     vk::Extent2D extents;
-    glfwGetFramebufferSize(window_, reinterpret_cast<int*>(&extents.width),
-        reinterpret_cast<int*>(&extents.height));
+    glfwGetFramebufferSize(
+        window_, reinterpret_cast<int*>(&extents.width), reinterpret_cast<int*>(&extents.height));
     return extents;
 }
 
-vk::SurfaceKHR
-platform::create_surface(vk::Instance instance) const
+vk::SurfaceKHR platform::create_surface(vk::Instance instance) const
 {
     VkSurfaceKHR surface{ nullptr };
-    VULKAN_CHECK(
-        vk::Result(glfwCreateWindowSurface(instance, window_, nullptr, &surface)));
+    VULKAN_CHECK(vk::Result(glfwCreateWindowSurface(instance, window_, nullptr, &surface)));
     return static_cast<vk::SurfaceKHR>(surface);
 }
 } // namespace ban

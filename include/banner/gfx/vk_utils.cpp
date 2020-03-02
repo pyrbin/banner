@@ -1,16 +1,14 @@
-#include <set>
 #include <algorithm>
+#include <set>
 
-#include <banner/util/file.hpp>
-#include <banner/gfx/vk_utils.hpp>
 #include <banner/defs.hpp>
+#include <banner/gfx/vk_utils.hpp>
+#include <banner/util/file.hpp>
 
 namespace ban {
 namespace vk_utils {
-
-bool
-is_device_suitable(
-    const vk::PhysicalDevice device, const vk::SurfaceKHR surface, const std::vector<const char*>& device_extens)
+bool is_device_suitable(const vk::PhysicalDevice device, const vk::SurfaceKHR surface,
+    const std::vector<const char*>& device_extens)
 {
     const auto indices = get_queue_family_info(device, surface);
     const auto supports_ext = check_device_extensions(device, device_extens);
@@ -19,14 +17,15 @@ is_device_suitable(
 
     if (supports_ext) {
         const auto swapchain_support = get_surface_info(device, surface);
-        swapchain_valid = !swapchain_support.formats.empty() && !swapchain_support.present_modes.empty();
+        swapchain_valid =
+            !swapchain_support.formats.empty() && !swapchain_support.present_modes.empty();
     }
 
     return indices.has_values() && supports_ext && swapchain_valid;
 }
 
-bool
-check_device_extensions(const vk::PhysicalDevice device, const std::vector<const char*>& device_extens)
+bool check_device_extensions(
+    const vk::PhysicalDevice device, const std::vector<const char*>& device_extens)
 {
     const auto extensions = device.enumerateDeviceExtensionProperties();
 
@@ -34,14 +33,12 @@ check_device_extensions(const vk::PhysicalDevice device, const std::vector<const
         return false;
 
     return std::all_of(device_extens.begin(), device_extens.end(), [&](const auto& name) {
-        return std::any_of(extensions.begin(), extensions.end(), [&](const auto& props) {
-            return strcmp(name, props.extensionName) == 0;
-        });
+        return std::any_of(extensions.begin(), extensions.end(),
+            [&](const auto& props) { return strcmp(name, props.extensionName) == 0; });
     });
 }
 
-bool
-check_validation_layers(const std::vector<const char*>& validation_layers)
+bool check_validation_layers(const std::vector<const char*>& validation_layers)
 {
     auto const layers = vk::enumerateInstanceLayerProperties();
 
@@ -49,14 +46,12 @@ check_validation_layers(const std::vector<const char*>& validation_layers)
         return false;
 
     return std::all_of(validation_layers.begin(), validation_layers.end(), [&](const auto& name) {
-        return std::any_of(layers.begin(), layers.end(), [&](const auto& props) {
-            return strcmp(name, props.layerName) == 0;
-        });
+        return std::any_of(layers.begin(), layers.end(),
+            [&](const auto& props) { return strcmp(name, props.layerName) == 0; });
     });
 }
 
-bool
-check_instance_extensions(const std::vector<const char*>& instance_extens)
+bool check_instance_extensions(const std::vector<const char*>& instance_extens)
 {
     const auto extensions = vk::enumerateInstanceExtensionProperties();
 
@@ -64,14 +59,13 @@ check_instance_extensions(const std::vector<const char*>& instance_extens)
         return false;
 
     return std::all_of(instance_extens.begin(), instance_extens.end(), [&](const auto& name) {
-        return std::any_of(extensions.begin(), extensions.end(), [&](const auto& props) {
-            return strcmp(name, props.extensionName) == 0;
-        });
+        return std::any_of(extensions.begin(), extensions.end(),
+            [&](const auto& props) { return strcmp(name, props.extensionName) == 0; });
     });
 }
 
-queue_family_info
-get_queue_family_info(const vk::PhysicalDevice device, const vk::SurfaceKHR surface)
+queue_family_info get_queue_family_info(
+    const vk::PhysicalDevice device, const vk::SurfaceKHR surface)
 {
     queue_family_info indices{};
     const auto queue_families = device.getQueueFamilyProperties();
@@ -98,30 +92,23 @@ get_queue_family_info(const vk::PhysicalDevice device, const vk::SurfaceKHR surf
     return indices;
 }
 
-surface_info
-get_surface_info(const vk::PhysicalDevice device, const vk::SurfaceKHR surface)
+surface_info get_surface_info(const vk::PhysicalDevice device, const vk::SurfaceKHR surface)
 {
-    return {
-        device.getSurfaceCapabilitiesKHR(surface),
-        device.getSurfaceFormatsKHR(surface),
-        device.getSurfacePresentModesKHR(surface)
-    };
+    return { device.getSurfaceCapabilitiesKHR(surface), device.getSurfaceFormatsKHR(surface),
+        device.getSurfacePresentModesKHR(surface) };
 }
 
-vk::ShaderModule
-load_shader(const std::string& filename, vk::Device device)
+vk::ShaderModule load_shader(const std::string& filename, vk::Device device)
 {
     auto bytes = read_bytes_from_file(filename);
     return device.createShaderModule(
         { vk::ShaderModuleCreateFlags(), bytes.size(), reinterpret_cast<u32*>(bytes.data()) });
 }
 
-VKAPI_ATTR vk::Bool32 VKAPI_CALL
-debug_vulkan_callback(
+VKAPI_ATTR vk::Bool32 VKAPI_CALL debug_vulkan_callback(
     const vk::DebugUtilsMessageSeverityFlagBitsEXT message_severity,
     vk::DebugUtilsMessageTypeFlagBitsEXT message_types,
-    const vk::DebugUtilsMessengerCallbackDataEXT* callback_data,
-    void* user_data)
+    const vk::DebugUtilsMessengerCallbackDataEXT* callback_data, void* user_data)
 {
     switch (message_severity) {
     default:
@@ -132,7 +119,7 @@ debug_vulkan_callback(
         debug::warn(callback_data->pMessage);
         break;
     case vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo:
-        debug::log(callback_data->pMessage);
+        // debug::log(callback_data->pMessage);
         break;
     case vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose:
         debug::trace(callback_data->pMessage);
@@ -141,6 +128,5 @@ debug_vulkan_callback(
 
     return VK_FALSE;
 }
-
 } // namespace vk_utils
 } // namespace ban

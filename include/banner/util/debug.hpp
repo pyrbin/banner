@@ -1,7 +1,6 @@
 #pragma once
 
 namespace ban {
-
 struct debug
 {
     static void trace(const char* message, ...);
@@ -10,5 +9,4 @@ struct debug
     static void err(const char* message, ...);
     static void fatal(const char* message, ...);
 };
-
 } // namespace ban

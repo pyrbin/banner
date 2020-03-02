@@ -1,12 +1,12 @@
 #pragma once
 #include <unordered_set>
+
+#include <banner/defs.hpp>
 #include <banner/gfx/device.hpp>
 #include <banner/gfx/vk_utils.hpp>
-#include <banner/defs.hpp>
 
 namespace ban {
-device::device(
-    const vk::PhysicalDevice& gpu, const vk::SurfaceKHR surface, const options opts)
+device::device(const vk::PhysicalDevice& gpu, const vk::SurfaceKHR surface, const options opts)
 
 {
     std::vector<vk::DeviceQueueCreateInfo> queue_infos;
@@ -25,17 +25,9 @@ device::device(
     features_ = gpu_.getFeatures();
     props_ = gpu_.getMemoryProperties();
 
-    vk::DeviceCreateInfo device_info
-    { 
-        vk::DeviceCreateFlags(), 
-        u32(queue_infos.size()),
-        queue_infos.data(),
-        u32(opts.layers.size()),
-        opts.layers.data(),
-        u32(opts.extensions.size()),
-        opts.extensions.data(),
-        &features_
-    };
+    vk::DeviceCreateInfo device_info{ vk::DeviceCreateFlags(), u32(queue_infos.size()),
+        queue_infos.data(), u32(opts.layers.size()), opts.layers.data(),
+        u32(opts.extensions.size()), opts.extensions.data(), &features_ };
 
     vk_device_ = gpu_.createDeviceUnique(device_info);
 
@@ -43,5 +35,5 @@ device::device(
         this, indices.graphics_family.value(), indices.present_family.value());
 }
 
-device::~device() { }
+device::~device() {}
 } // namespace ban

@@ -39,10 +39,10 @@ vk::Extent2D choose_extent(const vk::SurfaceCapabilitiesKHR& capabilities, vk::E
     }
 }
 
-swapchain::swapchain(device* dev, vk::SurfaceKHR surface, vk::Extent2D extent)
+swapchain::swapchain(device::ptr device, vk::SurfaceKHR surface, vk::Extent2D extent)
 {
     surface_ = surface;
-    device_ = dev;
+    device_ = device;
     extent_ = extent;
 
     create_vk_swapchain();
@@ -119,7 +119,7 @@ void swapchain::create_imageviews()
 
 void swapchain::resize(vk::Extent2D extent)
 {
-    device_->get_queues().wait();
+    device_->get().waitIdle();
 
     extent_ = extent;
     create_vk_swapchain();

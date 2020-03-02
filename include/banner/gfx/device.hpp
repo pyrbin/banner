@@ -8,10 +8,14 @@
 namespace ban {
 struct device
 {
+    using ptr = device*;
+
+    struct queues;
+
     struct options
     {
-        std::vector<const char*> extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
-        std::vector<const char*> layers{"VK_LAYER_KHRONOS_validation"};
+        std::vector<const char*> extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+        std::vector<const char*> layers{ "VK_LAYER_KHRONOS_validation" };
     };
 
     explicit device(
@@ -19,13 +23,20 @@ struct device
 
     ~device();
 
+    auto get() const { return vk_device_.get(); }
+    auto get_gpu() const { return gpu_; }
+
+    const auto& get_queues() const { return *queues_.get(); }
+    const auto& get_features() { return features_; }
+    const auto& get_props() { return props_; }
+
     struct queues
     {
-        inline queues(const device* device, u32 gidx, u32 pidx)
-            : graphics_queue{device->get().getQueue(gidx, 0)}
-            , present_queue{device->get().getQueue(pidx, 0)}
-            , graphics_index{gidx}
-            , present_index{pidx}
+        inline queues(const device::ptr device, u32 gidx, u32 pidx)
+            : graphics_queue{ device->get().getQueue(gidx, 0) }
+            , present_queue{ device->get().getQueue(pidx, 0) }
+            , graphics_index{ gidx }
+            , present_index{ pidx }
         {}
 
         const vk::Queue graphics_queue;
@@ -53,15 +64,6 @@ struct device
         [[nodiscard]] bool is_same() const { return graphics_index == present_index; }
     };
 
-    vk::Device get() const { return vk_device_.get(); }
-    operator vk::Device() const { return get(); }
-
-    const queues& get_queues() const { return *queues_.get(); }
-
-    vk::PhysicalDevice get_gpu() const { return gpu_; }
-    const vk::PhysicalDeviceFeatures& get_features() { return features_; }
-    const vk::PhysicalDeviceMemoryProperties& get_props() { return props_; }
-
 private:
     vk::PhysicalDevice gpu_;
     vk::PhysicalDeviceFeatures features_;
@@ -69,7 +71,4 @@ private:
     vk::UniqueDevice vk_device_;
     std::unique_ptr<queues> queues_;
 };
-
-using device_ptr = device*;
-
 } // namespace ban

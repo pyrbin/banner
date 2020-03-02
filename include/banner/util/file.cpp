@@ -1,11 +1,10 @@
 #include <fstream>
-#include <banner/util/file.hpp>
+
 #include <banner/util/debug.hpp>
+#include <banner/util/file.hpp>
 
 namespace ban {
-
-std::vector<char>
-read_bytes_from_file(const std::string& filename)
+std::vector<char> read_bytes_from_file(const std::string& filename)
 {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
@@ -21,5 +20,4 @@ read_bytes_from_file(const std::string& filename)
 
     return buffer;
 }
-
 } // namespace ban

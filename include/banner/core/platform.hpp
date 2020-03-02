@@ -1,11 +1,11 @@
 #pragma once
 
-#include <string>
 #include <functional>
+#include <string>
 
-#include <vulkan/vulkan.hpp>
 #include <banner/core/types.hpp>
 #include <banner/util/signal.hpp>
+#include <vulkan/vulkan.hpp>
 
 struct GLFWwindow;
 

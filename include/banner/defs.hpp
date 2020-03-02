@@ -26,8 +26,8 @@
 #endif
 
 // TODO: add platform specific force inline
-__forceinline void
-__report_assert_failed(const char* expr, const char* message, const char* file, int line)
+__forceinline void __report_assert_failed(
+    const char* expr, const char* message, const char* file, int line)
 {
     std::cerr << "Assertion Failure: " << expr << ", message: '" << message
               << "', in file: " << file << ", line: " << line << "\n";

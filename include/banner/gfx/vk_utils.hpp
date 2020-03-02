@@ -1,20 +1,19 @@
 #pragma once
 
-#include <vector>
 #include <optional>
-#include <vulkan/vulkan.hpp>
+#include <vector>
 
 #include <banner/core/types.hpp>
 #include <banner/defs.hpp>
+#include <vulkan/vulkan.hpp>
 
 #define VULKAN_CHECK(expr) \
     { \
-        A_ASSERT(expr == vk::Result::eSuccess); \
+        A_ASSERT(vk_utils::success(expr)); \
     }
 
 namespace ban {
 namespace vk_utils {
-
 /**
  * @brief Queue family info
  */
@@ -55,54 +54,58 @@ struct vulkan_gpu
 /**
  *
  */
-bool
-is_device_suitable(const vk::PhysicalDevice device, const vk::SurfaceKHR surface,
+bool is_device_suitable(const vk::PhysicalDevice device, const vk::SurfaceKHR surface,
     const std::vector<const char*>& device_extens);
 
 /**
  *
  */
-bool
-check_device_extensions(
+bool check_device_extensions(
     const vk::PhysicalDevice device, const std::vector<const char*>& device_extens);
 
 /**
  *
  */
-bool
-check_validation_layers(const std::vector<const char*>& validation_layers);
+bool check_validation_layers(const std::vector<const char*>& validation_layers);
 
 /**
  *
  */
-bool
-check_instance_extensions(const std::vector<const char*>& instance_extens);
+bool check_instance_extensions(const std::vector<const char*>& instance_extens);
+
+inline constexpr bool success(vk::Result result)
+{
+    return result == vk::Result::eSuccess;
+}
+
+template<typename T>
+inline constexpr bool success(vk::ResultValue<T> result)
+{
+    return result.result == vk::Result::eSuccess;
+}
 
 /**
  *
  */
-queue_family_info
-get_queue_family_info(const vk::PhysicalDevice device, const vk::SurfaceKHR surface);
+queue_family_info get_queue_family_info(
+    const vk::PhysicalDevice device, const vk::SurfaceKHR surface);
 
 /**
  *
  */
-surface_info
-get_surface_info(const vk::PhysicalDevice device, const vk::SurfaceKHR surface);
+surface_info get_surface_info(const vk::PhysicalDevice device, const vk::SurfaceKHR surface);
 
 /**
  *
  */
-vk::ShaderModule
-load_shader(const std::string& filename, vk::Device device);
+vk::ShaderModule load_shader(const std::string& filename, vk::Device device);
 
 /**
  *
  */
-VKAPI_ATTR vk::Bool32 VKAPI_CALL
-debug_vulkan_callback(const vk::DebugUtilsMessageSeverityFlagBitsEXT message_severity,
+VKAPI_ATTR vk::Bool32 VKAPI_CALL debug_vulkan_callback(
+    const vk::DebugUtilsMessageSeverityFlagBitsEXT message_severity,
     vk::DebugUtilsMessageTypeFlagBitsEXT message_types,
     const vk::DebugUtilsMessengerCallbackDataEXT* callback_data, void* user_data);
-
 } // namespace vk_utils
 } // namespace ban

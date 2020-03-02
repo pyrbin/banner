@@ -3,7 +3,7 @@
 #include <banner/util/debug.hpp>
 
 namespace ban {
-memory::memory(device* dev)
+memory::memory(device::ptr dev)
 {
     // clang-format off
     VmaAllocatorCreateInfo info

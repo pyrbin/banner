@@ -1,6 +1,7 @@
 AccessModifierOffset: -4
 AlignAfterOpenBracket: DontAlign
-AlignEscapedNewlines: Left
+AlignConsecutiveMacros: true
+AlignEscapedNewlines: DontAlign
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: false
 AllowShortCaseLabelsOnASingleLine: false
@@ -19,8 +20,8 @@ BreakConstructorInitializers: BeforeComma
 SpaceAfterTemplateKeyword: false
 ColumnLimit: 100
 CommentPragmas:  '^/'
-Cpp11BracedListStyle: true
-FixNamespaceComments: false
+Cpp11BracedListStyle: false
+FixNamespaceComments: true
 IncludeBlocks: Regroup
 IncludeCategories:
   - Regex: '^<.*\.hpp>'

@@ -1,12 +1,13 @@
 #pragma once
 
 #include <vector>
-#include <vulkan/vulkan.hpp>
+
 #include <banner/core/types.hpp>
-#include <banner/gfx/vk_utils.hpp>
 #include <banner/gfx/device.hpp>
-#include <banner/gfx/swapchain.hpp>
 #include <banner/gfx/memory.hpp>
+#include <banner/gfx/swapchain.hpp>
+#include <banner/gfx/vk_utils.hpp>
+#include <vulkan/vulkan.hpp>
 
 namespace ban {
 
@@ -21,8 +22,8 @@ public:
     graphics(platform* platform);
     ~graphics();
 
-    swapchain& get_swapchain() { return *swapchain_.get(); }
-    device& get_device() { return *device_.get(); }
+    auto get_swap() { return swapchain_.get(); }
+    auto get_device() { return device_.get(); }
 
 private:
     platform* platform_;

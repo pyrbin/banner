@@ -1,10 +1,10 @@
 #pragma once
 
-#include <banner/core/types.hpp>
 #include <string>
 
-namespace ban {
+#include <banner/core/types.hpp>
 
+namespace ban {
 class platform;
 class graphics;
 

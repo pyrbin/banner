@@ -9,11 +9,11 @@
 #include <banner/gfx/memory.hpp>
 
 namespace ban {
-const std::vector<const char*> graphics::device_extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
-const std::vector<const char*> graphics::validation_layers{"VK_LAYER_KHRONOS_validation"};
+const std::vector<const char*> graphics::device_extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+const std::vector<const char*> graphics::validation_layers{ "VK_LAYER_KHRONOS_validation" };
 
 graphics::graphics(platform* platform)
-    : platform_{platform}
+    : platform_{ platform }
 {
     create_instance();
     create_debugger();
@@ -36,11 +36,11 @@ void graphics::create_instance()
 {
     // clang-format off
     vk::ApplicationInfo application_info
-    { 
-        "TD Engine", 
-        VK_MAKE_VERSION(1, 0, 0), 
+    {
+        "TD Engine",
+        VK_MAKE_VERSION(1, 0, 0),
         "No engine",
-        VK_MAKE_VERSION(1, 0, 0), 
+        VK_MAKE_VERSION(1, 0, 0),
         VK_API_VERSION_1_1
     };
 
@@ -58,8 +58,8 @@ void graphics::create_instance()
 
     // clang-format off
     vk::InstanceCreateInfo instance_info
-    { 
-        vk::InstanceCreateFlags(), 
+    {
+        vk::InstanceCreateFlags(),
         &application_info,
         u32(validation_layers.size()),
         validation_layers.data(),
