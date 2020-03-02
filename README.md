@@ -8,6 +8,13 @@
 ## Introduction
 Currently following this [guide](https://www.youtube.com/watch?v=3lwC5WgcNDk) to get started.
 
+TODO:
+
+create some simple flow of the program
+
+world_update() -> render_loop
+
+
 ## Developer
 
 <table>
