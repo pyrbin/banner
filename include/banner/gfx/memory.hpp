@@ -2,13 +2,15 @@
 
 #include <vk_mem_alloc.h>
 
-namespace ban {
-struct device;
+#include <banner/gfx/device.hpp>
 
-class memory
+namespace ban {
+struct memory
 {
-public:
-    explicit memory(device* dev);
+    using ptr = memory*;
+    using uptr = std::unique_ptr<memory>;
+
+    explicit memory(device::ptr dev);
     virtual ~memory();
 
     VmaAllocator get() const { return vma_allocator_; }

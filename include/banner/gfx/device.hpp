@@ -9,6 +9,7 @@ namespace ban {
 struct device
 {
     using ptr = device*;
+    using uptr = std::unique_ptr<device>;
 
     struct queues;
 

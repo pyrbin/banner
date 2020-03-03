@@ -1,4 +1,3 @@
-#include <banner/gfx/device.hpp>
 #include <banner/gfx/memory.hpp>
 #include <banner/util/debug.hpp>
 
@@ -7,7 +6,7 @@ memory::memory(device::ptr dev)
 {
     // clang-format off
     VmaAllocatorCreateInfo info
-    { 
+    {
         .physicalDevice = dev->get_gpu(),
         .device = dev->get()
     };

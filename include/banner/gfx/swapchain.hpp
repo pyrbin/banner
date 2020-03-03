@@ -12,6 +12,7 @@ struct device;
 struct swapchain
 {
     using ptr = swapchain*;
+    using uptr = std::unique_ptr<swapchain>;
 
     explicit swapchain(device::ptr device, vk::SurfaceKHR surface, vk::Extent2D extent);
     ~swapchain();
@@ -35,7 +36,6 @@ struct swapchain
     auto get_image_count() const { return u32(data_.images.size()); }
     const auto& get_data() const { return data_; }
 
-
 private:
     device::ptr device_;
     vk::SurfaceKHR surface_;
@@ -51,6 +51,4 @@ private:
     void create_vk_swapchain();
     void create_imageviews();
 };
-
-
 } // namespace ban

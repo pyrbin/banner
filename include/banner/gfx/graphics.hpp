@@ -10,7 +10,6 @@
 #include <vulkan/vulkan.hpp>
 
 namespace ban {
-
 struct platform;
 
 class graphics
@@ -31,9 +30,9 @@ private:
     vk::UniqueInstance instance_;
     vk::UniqueSurfaceKHR surface_;
 
-    std::unique_ptr<device> device_;
-    std::unique_ptr<swapchain> swapchain_;
-    std::unique_ptr<memory> memory_;
+    device::uptr device_;
+    swapchain::uptr swapchain_;
+    memory::uptr memory_;
 
     void create_instance();
     void create_surface();
