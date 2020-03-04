@@ -7,7 +7,7 @@ renderer::task::task(device* device, task::fn fn, vk::CommandPool pool, u32 coun
 {
     // Allocate command buffers
     cmd_buffers.resize(count);
-    cmd_buffers = device->get().allocateCommandBuffersUnique(
+    cmd_buffers = device->vk().allocateCommandBuffersUnique(
         { pool, vk::CommandBufferLevel::ePrimary, count });
 }
 
@@ -18,24 +18,24 @@ renderer::renderer(swapchain* swapchain)
 {
     // Create command pools
     for (u32 i = 0; i < swapchain_->get_image_count(); i++) {
-        cmd_pools_.push_back(device_->get().createCommandPoolUnique(
+        cmd_pools_.push_back(device_->vk().createCommandPoolUnique(
             { vk::CommandPoolCreateFlags(), device_->get_queues().present_index }));
     }
 
     // Create sync objects
     for (u32 i = 0; i < swapchain_->get_image_count(); i++) {
         vk::FenceCreateInfo info = { vk::FenceCreateFlagBits::eSignaled };
-        fences_.push_back(device_->get().createFence(info));
+        fences_.push_back(device_->vk().createFence(info));
     }
 
-    sync_.aquire = device_->get().createSemaphoreUnique({});
-    sync_.render = device_->get().createSemaphoreUnique({});
+    sync_.aquire = device_->vk().createSemaphoreUnique({});
+    sync_.render = device_->vk().createSemaphoreUnique({});
 }
 
 renderer::~renderer()
 {
     for (u32 i = 0; i < fences_.size(); i++) {
-        device_->get().destroyFence(fences_[i]);
+        device_->vk().destroyFence(fences_[i]);
     }
     fences_.clear();
 }
@@ -48,12 +48,12 @@ void renderer::add_task(task::fn task)
 
 auto renderer::wait() const
 {
-    return swapchain_->get_device()->get().waitForFences(fences_, true, -1);
+    return swapchain_->get_device()->vk().waitForFences(fences_, true, -1);
 }
 
 auto renderer::wait(u32 idx) const
 {
-    return swapchain_->get_device()->get().waitForFences(fences_[idx], true, -1);
+    return swapchain_->get_device()->vk().waitForFences(fences_[idx], true, -1);
 }
 
 bool renderer::aquire()
@@ -68,13 +68,13 @@ bool renderer::aquire()
     }
 
     current_ = image_index.value;
-    swapchain_->get_device()->get().resetFences(fences_[current_]);
+    swapchain_->get_device()->vk().resetFences(fences_[current_]);
     return true;
 }
 
 void renderer::process()
 {
-    device_->get().resetCommandPool(cmd_pools_[current_].get(), (vk::CommandPoolResetFlagBits)0);
+    device_->vk().resetCommandPool(cmd_pools_[current_].get(), (vk::CommandPoolResetFlagBits)0);
 
     for (auto& [proc, buffs] : tasks_) {
         auto cmd_buff = buffs[current_].get();
@@ -110,7 +110,7 @@ void renderer::present()
     vk::PresentInfoKHR present_info;
     present_info.setPImageIndices(&current_);
     present_info.setSwapchainCount(1);
-    present_info.setPSwapchains(&swapchain_->get());
+    present_info.setPSwapchains(&swapchain_->vk());
     present_info.setWaitSemaphoreCount(1);
     present_info.setPWaitSemaphores(&sync_.render.get());
     present_info.setPResults(nullptr);

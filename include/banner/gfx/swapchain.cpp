@@ -89,12 +89,12 @@ void swapchain::create_vk_swapchain()
     create_info.setClipped(VK_TRUE);
     create_info.setOldSwapchain(old_swapchain);
 
-    vk_swapchain_ = device_->get().createSwapchainKHRUnique(create_info);
+    vk_swapchain_ = device_->vk().createSwapchainKHRUnique(create_info);
 
     create_imageviews();
 
     if (old_swapchain) {
-        device_->get().destroySwapchainKHR(old_swapchain);
+        device_->vk().destroySwapchainKHR(old_swapchain);
     }
 }
 
@@ -102,10 +102,10 @@ void swapchain::create_imageviews()
 {
     data_.images.clear();
     data_.views.clear();
-    data_.images = device_->get().getSwapchainImagesKHR(vk_swapchain_.get());
+    data_.images = device_->vk().getSwapchainImagesKHR(vk_swapchain_.get());
 
     for (const auto& image : data_.images) {
-        data_.views.push_back(device_->get().createImageViewUnique({
+        data_.views.push_back(device_->vk().createImageViewUnique({
             vk::ImageViewCreateFlags(), image, vk::ImageViewType::e2D, format_.format,
             vk::ComponentMapping(), // R,G,B,A: Identity Components
             vk::ImageSubresourceRange(vk::ImageAspectFlagBits::eColor,
@@ -119,7 +119,7 @@ void swapchain::create_imageviews()
 
 void swapchain::resize(vk::Extent2D extent)
 {
-    device_->get().waitIdle();
+    device_->vk().waitIdle();
 
     extent_ = extent;
     create_vk_swapchain();
@@ -129,6 +129,6 @@ void swapchain::resize(vk::Extent2D extent)
 
 vk::ResultValue<u32> swapchain::aquire_image(vk::Semaphore sem, vk::Fence fen, u32 timeout)
 {
-    return device_->get().acquireNextImageKHR(get(), timeout, sem, fen);
+    return device_->vk().acquireNextImageKHR(vk(), timeout, sem, fen);
 }
 } // namespace ban

@@ -23,7 +23,7 @@ struct device
 
     ~device();
 
-    auto get() const { return vk_device_.get(); }
+    auto vk() const { return vk_device_.get(); }
     auto get_gpu() const { return gpu_; }
 
     const auto& get_queues() const { return *queues_.get(); }
@@ -33,8 +33,8 @@ struct device
     struct queues
     {
         inline queues(const device* device, u32 gidx, u32 pidx)
-            : graphics_queue{ device->get().getQueue(gidx, 0) }
-            , present_queue{ device->get().getQueue(pidx, 0) }
+            : graphics_queue{ device->vk().getQueue(gidx, 0) }
+            , present_queue{ device->vk().getQueue(pidx, 0) }
             , graphics_index{ gidx }
             , present_index{ pidx }
         {}

@@ -8,7 +8,7 @@ memory::memory(device* device)
     VmaAllocatorCreateInfo info
     {
         .physicalDevice = device->get_gpu(),
-        .device = device->get()
+        .device = device->vk()
     };
 
     vmaCreateAllocator(&info, &vma_allocator_);

@@ -26,7 +26,7 @@ struct swapchain
     void resize(vk::Extent2D extent);
     signal<void()> on_recreate;
 
-    auto get() const { return vk_swapchain_.get(); }
+    auto vk() const { return vk_swapchain_.get(); }
     auto get_device() { return device_; }
 
     const auto& get_format() const { return format_; }
