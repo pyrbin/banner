@@ -4,7 +4,6 @@
 #include <vulkan/vulkan.hpp>
 
 namespace ban {
-
 struct swapchain;
 struct render_pass;
 struct renderer;
@@ -52,13 +51,18 @@ struct subpass
 
     void set_render_pass(render_pass* render_pass) { owner = render_pass; }
 
-    void process(vk::CommandBuffer buffer, vk::Extent2D extent) { on_process.fire(buffer, extent); }
+    void process(vk::CommandBuffer buffer, vk::Extent2D extent)
+    {
+        if (activated_)
+            on_process.fire(buffer, extent);
+    }
 
     signal<void(render_pass*)> on_create;
     signal<void(vk::CommandBuffer, vk::Extent2D)> on_process;
 
 private:
     render_pass* owner{ nullptr };
+    bool activated_{ false };
 
     std::vector<vk::AttachmentReference> color_attachments_;
     vk::AttachmentReference resolve_attachment_;
@@ -102,7 +106,6 @@ struct render_pass
             return *this;
         }
 
-
         ref set_layout(vk::ImageLayout initial, vk::ImageLayout final)
         {
             description_.setInitialLayout(initial);
@@ -127,7 +130,6 @@ struct render_pass
 
         ref set_subpass(u32 src, u32 dst)
         {
-
             dependency_.setSrcSubpass(src);
             dependency_.setDstSubpass(dst);
             return *this;
@@ -135,12 +137,10 @@ struct render_pass
 
         ref set_stage_mask(vk::PipelineStageFlags src, vk::PipelineStageFlags dst)
         {
-
             dependency_.setSrcStageMask(src);
             dependency_.setDstStageMask(dst);
             return *this;
         }
-
 
         ref set_access_mask(vk::AccessFlags src, vk::AccessFlags dst)
         {
@@ -169,7 +169,6 @@ struct render_pass
     void add(attachment attachment);
     void add(dependency dependency);
 
-
     void set_clear_color(std::array<f32, 4> values)
     {
         clear_value_ = vk::ClearValue(vk::ClearColorValue{ values });
@@ -193,5 +192,4 @@ private:
     dependencies dependencies_;
     subpass::list subpasses_;
 };
-
 } // namespace ban

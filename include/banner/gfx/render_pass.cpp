@@ -7,14 +7,12 @@
 #include <banner/gfx/swapchain.hpp>
 
 namespace ban {
-
 void subpass::add_pipeline(pipeline* pipeline)
 {
     pipelines_.emplace_back(pipeline);
     on_process.connect<&pipeline::process>(pipeline);
     on_create.connect<&pipeline::create>(pipeline);
 }
-
 
 render_pass::render_pass(swapchain* swapchain)
     : swapchain_{ swapchain }
@@ -24,21 +22,14 @@ render_pass::render_pass(swapchain* swapchain)
 
 void render_pass::create()
 {
-    bool first_time{ true };
-
-    if (vk_render_pass_) {
-        first_time = false;
-    }
-
     create_render_pass();
     create_framebuffers();
 
     swapchain_->on_recreate.connect<&render_pass::create_framebuffers>(*this);
 
-    if (first_time) {
-        for (auto& subpass : subpasses_) {
-            subpass->on_create.fire(this);
-        }
+    for (auto& subpass : subpasses_) {
+        subpass->on_create.fire(this);
+        subpass->activated_ = true;
     }
 }
 
@@ -63,11 +54,6 @@ void render_pass::add(subpass* subpass)
 {
     subpasses_.emplace_back(std::move(subpass));
     subpass->set_render_pass(this);
-
-    if (vk_render_pass_) {
-        create();
-        subpass->on_create.fire(this);
-    }
 }
 
 void render_pass::add(attachment attachment)
@@ -114,6 +100,4 @@ void render_pass::create_framebuffers()
                 framebuffer_attachments.data(), extent_.width, extent_.height, 1 }));
     }
 }
-
-
 } // namespace ban

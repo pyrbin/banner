@@ -17,7 +17,7 @@ int main()
     vk::ShaderModule frag_shader_module =
         vk_utils::load_shader("shaders/shader.frag.spv", &gr->get_device()->vk());
 
-    ////////////////////////////////////////////////
+    ////////////////// RENDER PASS //////////////////////
 
     render_pass* pass = new render_pass(gr->get_swap());
     {
@@ -31,31 +31,18 @@ int main()
         sub->set_color_attachment({ 0, vk::ImageLayout::eColorAttachmentOptimal });
 
         pipe->add_color_blend_attachment();
-
         pipe->add_vertex("main", vert_shader_module);
         pipe->add_fragment("main", frag_shader_module);
-
         pipe->on_process([&](vk::CommandBuffer cmd_buf) { cmd_buf.draw(3, 1, 0, 0); });
 
         sub->add_pipeline(pipe);
-
         pass->add(sub);
-
-        pass->add(render_pass::dependency()
-                      .set_subpass(VK_SUBPASS_EXTERNAL, 0)
-                      .set_stage_mask(vk::PipelineStageFlagBits::eColorAttachmentOutput,
-                          vk::PipelineStageFlagBits::eColorAttachmentOutput)
-                      .set_access_mask({},
-                          vk::AccessFlagBits::eColorAttachmentRead |
-                              vk::AccessFlagBits::eColorAttachmentWrite));
-
         pass->create();
     }
 
-    //////////////////////////////////////////////
+    //////////////////////////////////////////////////
 
     re->add_task([&](vk::CommandBuffer buff) { pass->process(re->get_current(), buff); });
-
     pl->on_update.connect([&]() { re->render(); });
     pl->start_loop();
 }

@@ -4,6 +4,7 @@
 - memory cleanup of vulkan objects
 - window class that wraps glfw window
 - initial engine class (@see liblava app.hpp for inspiration)
+- cleaner shader loading
 
 - lookup deps for model rendering & input?
 - render a model
