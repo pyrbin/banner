@@ -119,7 +119,7 @@ VKAPI_ATTR vk::Bool32 VKAPI_CALL debug_vulkan_callback(
         debug::warn(callback_data->pMessage);
         break;
     case vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo:
-        // debug::log(callback_data->pMessage);
+        debug::log(callback_data->pMessage);
         break;
     case vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose:
         debug::trace(callback_data->pMessage);

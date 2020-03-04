@@ -11,9 +11,8 @@ namespace ban {
 struct subpass
 {
     friend class render_pass;
+    using ptr = subpass*;
 
-    explicit subpass();
-    ~subpass();
 
     void add_pipeline(pipeline::ptr pipeline)
     {
@@ -34,21 +33,18 @@ private:
 
 struct render_pass
 {
-    explicit render_pass(device::ptr device);
-    ~render_pass();
 
     void add(const vk::AttachmentDescription& attachment);
     // void add(const vk::SubpassDescription& description);
     void add(const vk::SubpassDependency& dependecy);
-    void add_subpass(subpass* subpass) { subpasses_.push_back(subpass); }
+    void add_subpass(subpass::ptr subpass) { subpasses_.push_back(subpass); }
 
     void create(swapchain::ptr);
     void process(u32 frame, vk::CommandBuffer buff);
 
-    auto get() { return vk_render_pass_.get(); }
+    auto& get() { return vk_render_pass_.get(); }
 
 private:
-    device::ptr device_;
     vk::UniqueRenderPass vk_render_pass_;
 
     vk::Extent2D extent_;

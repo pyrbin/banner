@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <banner/gfx/device.hpp>
+#include <banner/gfx/swapchain.hpp>
 
 namespace ban {
 struct subpass;
@@ -16,18 +17,15 @@ struct pipeline
     using list = std::vector<pipeline*>;
     using shader_stages = std::vector<vk::PipelineShaderStageCreateInfo>;
 
-    explicit pipeline(device::ptr device);
-    ~pipeline() {}
-
-    void build(vk::Extent2D extent, vk::RenderPass render_pass);
+    void build(swapchain::ptr swap, vk::RenderPass render_pass);
 
     bool ready() const { return on_process != nullptr && vk_pipeline_; }
 
     void add_shader_stage(
         const std::string& name, vk::ShaderStageFlagBits flags, vk::ShaderModule module)
     {
-        shader_stages_.emplace_back(
-            vk::PipelineShaderStageCreateFlags(), flags, module, name.c_str());
+        shader_stages_.push_back(
+            { vk::PipelineShaderStageCreateFlags(), flags, module, name.c_str() });
     }
     void add_vertex_stage(const std::string& name, vk::ShaderModule module)
     {
@@ -41,20 +39,9 @@ struct pipeline
     fn<void(vk::CommandBuffer)> on_process;
 
 private:
-    void process(vk::CommandBuffer buff)
-    {
-        if (ready()) {
-            bind_buffer(buff);
-            on_process(buff);
-        }
-    }
+    void process(vk::CommandBuffer buff);
+    void bind_buffer(vk::CommandBuffer buff);
 
-    void bind_buffer(vk::CommandBuffer buff)
-    {
-        buff.bindPipeline(vk::PipelineBindPoint::eGraphics, vk_pipeline_.get());
-    }
-
-    device::ptr device_;
     vk::UniquePipeline vk_pipeline_;
     shader_stages shader_stages_{};
 

@@ -6,13 +6,6 @@
 #include <banner/util/debug.hpp>
 
 namespace ban {
-subpass::subpass() {}
-subpass::~subpass() {}
-
-render_pass::render_pass(device::ptr device)
-    : device_{ device }
-{}
-render_pass::~render_pass() {}
 
 void render_pass::add(const vk::AttachmentDescription& attachment)
 {
@@ -31,12 +24,14 @@ void render_pass::add(const vk::SubpassDependency& dependecy)
 
 void render_pass::create(swapchain::ptr swap)
 {
+    auto device = swap->get_device();
+
     std::vector<vk::SubpassDescription> desc{};
 
     std::transform(subpasses_.begin(), subpasses_.end(), std::back_inserter(desc),
         [&](subpass* pass) { return pass->get_desc(); });
 
-    vk_render_pass_ = device_->get().createRenderPassUnique(
+    vk_render_pass_ = device->get().createRenderPassUnique(
         { vk::RenderPassCreateFlags(), u32(attachments_.size()), attachments_.data(),
             u32(desc.size()), desc.data(), u32(dependencies_.size()), dependencies_.data() });
 
@@ -47,7 +42,7 @@ void render_pass::create(swapchain::ptr swap)
     for (auto& img_view : swap->get_data().views) {
         std::vector<vk::ImageView> framebuffer_attachments = { img_view.get() };
         framebuffers_.push_back(
-            device_->get().createFramebufferUnique({ vk::FramebufferCreateFlags(),
+            device->get().createFramebufferUnique({ vk::FramebufferCreateFlags(),
                 vk_render_pass_.get(), u32(framebuffer_attachments.size()),
                 framebuffer_attachments.data(), extent_.width, extent_.height, 1 }));
     }
