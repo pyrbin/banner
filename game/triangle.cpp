@@ -18,20 +18,23 @@ int main()
 
     ////////////////////////////////////////////////
 
-    render_pass* pass = new render_pass();
+    render_pass* pass = new render_pass(gr->get_swap());
     {
-        auto color_attach = vk::AttachmentDescription{ {}, gr->get_swap()->get_format().format,
-            vk::SampleCountFlagBits::e1, vk::AttachmentLoadOp::eClear,
-            vk::AttachmentStoreOp::eStore, {}, {}, {}, vk::ImageLayout::ePresentSrcKHR };
+        // auto color_ref = vk::AttachmentReference{ 0, vk::ImageLayout::eColorAttachmentOptimal };
 
-        auto color_ref = vk::AttachmentReference{ 0, vk::ImageLayout::eColorAttachmentOptimal };
 
-        auto sp = new subpass({ {}, vk::PipelineBindPoint::eGraphics,
-            /*inAttachmentCount*/ 0, nullptr, 1, &color_ref });
+        pass->add(render_pass::attachment()
+                      .set_op(vk::AttachmentLoadOp::eClear, vk::AttachmentStoreOp::eStore)
+                      .set_layout({}, vk::ImageLayout::ePresentSrcKHR));
 
-        pass->add(color_attach);
-        pass->add(sp);
-        pass->create(gr->get_swap());
+        auto sub = new subpass();
+        auto pipe = new pipeline();
+
+        sub->set_color_attachment({ 0, vk::ImageLayout::eColorAttachmentOptimal });
+        sub->add_pipeline(pipe);
+
+        pass->add(sub);
+        pass->create();
     }
 
     //////////////////////////////////////////////

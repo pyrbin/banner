@@ -17,6 +17,7 @@
 #include <banner/gfx/device.hpp>
 #include <banner/gfx/graphics.hpp>
 #include <banner/gfx/memory.hpp>
+#include <banner/gfx/pipeline.hpp>
 #include <banner/gfx/render_pass.hpp>
 #include <banner/gfx/renderer.hpp>
 #include <banner/gfx/swapchain.hpp>

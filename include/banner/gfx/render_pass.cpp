@@ -2,16 +2,28 @@
 
 #include <banner/defs.hpp>
 #include <banner/gfx/device.hpp>
+#include <banner/gfx/pipeline.hpp>
 #include <banner/gfx/render_pass.hpp>
 #include <banner/gfx/swapchain.hpp>
 
 namespace ban {
 
-render_pass::render_pass() {}
-
-void render_pass::create(swapchain* swapchain)
+void subpass::add_pipeline(pipeline* pipeline)
 {
-    swapchain_ = swapchain;
+    pipelines_.emplace_back(pipeline);
+    on_process.connect<&pipeline::process>(pipeline);
+    on_create.connect<&pipeline::create>(pipeline);
+}
+
+
+render_pass::render_pass(swapchain* swapchain)
+    : swapchain_{ swapchain }
+{
+    set_clear_color({ 0, 1, 0, 1 });
+}
+
+void render_pass::create()
+{
     create_render_pass();
     create_framebuffers();
 }
@@ -25,15 +37,24 @@ void render_pass::process(u32 frame, vk::CommandBuffer buffer)
         vk::Rect2D(vk::Offset2D(0, 0), extent_), u32(1), &clear_value_ };
 
     buffer.beginRenderPass(&begin_info, vk::SubpassContents::eInline);
-    /*
+
     for (auto& subpass : subpasses_) {
-        subpass->process(buffer);
+        subpass->process(buffer, extent_);
     }
-    */
 
     buffer.endRenderPass();
 }
 
+void render_pass::add(attachment attachment)
+{
+    attachment.description_.setFormat(swapchain_->get_format().format);
+    attachments_.push_back(attachment.vk());
+}
+
+void render_pass::add(dependency dependency)
+{
+    dependencies_.push_back(dependency.vk());
+}
 
 void render_pass::create_render_pass()
 {
@@ -41,8 +62,7 @@ void render_pass::create_render_pass()
 
     std::vector<vk::SubpassDescription> subpasses;
     std::transform(subpasses_.begin(), subpasses_.end(), std::back_inserter(subpasses),
-        [&](subpass::uptr& pass) { return pass->get_desc(); });
-
+        [&](subpass::uptr& pass) { return pass->vk(); });
 
     vk_render_pass_ = device->createRenderPassUnique(
         { {}, u32(attachments_.size()), attachments_.data(), u32(subpasses.size()),
@@ -64,9 +84,6 @@ void render_pass::create_framebuffers()
             device->createFramebufferUnique({ {}, vk(), u32(framebuffer_attachments.size()),
                 framebuffer_attachments.data(), extent_.width, extent_.height, 1 }));
     }
-
-    clear_value_ =
-        vk::ClearValue(vk::ClearColorValue{ std::array<float, 4>({ 1.0f, 0.0f, 1.0f, 1.0f }) });
 }
 
 
