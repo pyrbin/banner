@@ -100,33 +100,35 @@ surface_info get_surface_info(const vk::PhysicalDevice device, const vk::Surface
 
 vk::ShaderModule load_shader(const std::string& filename, vk::Device* device)
 {
-    auto bytes = read_file(filename);
-    return device->createShaderModule(
-        { vk::ShaderModuleCreateFlags(), bytes.size(), reinterpret_cast<u32*>(bytes.data()) });
+    auto code = read_file(filename);
+    vk::ShaderModuleCreateInfo create_info{ {}, code.size(), reinterpret_cast<u32*>(code.data()) };
+    return device->createShaderModule(create_info);
 }
 
-VKAPI_ATTR vk::Bool32 VKAPI_CALL debug_vulkan_callback(
-    const vk::DebugUtilsMessageSeverityFlagBitsEXT message_severity,
-    vk::DebugUtilsMessageTypeFlagBitsEXT message_types,
-    const vk::DebugUtilsMessengerCallbackDataEXT* callback_data, void* user_data)
+
+VKAPI_ATTR VkBool32 VKAPI_CALL debug_vulkan_callback(
+    VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
+    VkDebugUtilsMessageTypeFlagsEXT messageType,
+    const VkDebugUtilsMessengerCallbackDataEXT* cb_data, void* pUserData)
 {
     switch (message_severity) {
+
     default:
-    case vk::DebugUtilsMessageSeverityFlagBitsEXT::eError:
-        debug::err(callback_data->pMessage);
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT:
+        debug::err(cb_data->pMessage);
         break;
-    case vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning:
-        debug::warn(callback_data->pMessage);
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT:
+        debug::warn(cb_data->pMessage);
         break;
-    case vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo:
-        debug::log(callback_data->pMessage);
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT:
+        debug::log(cb_data->pMessage);
         break;
-    case vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose:
-        debug::trace(callback_data->pMessage);
+    case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
+        debug::trace(cb_data->pMessage);
         break;
     }
-
     return VK_FALSE;
 }
+
 } // namespace vk_utils
 } // namespace ban

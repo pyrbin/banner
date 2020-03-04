@@ -1,12 +1,11 @@
-
 #include <banner/gfx/device.hpp>
 #include <banner/gfx/pipeline.hpp>
 #include <banner/gfx/render_pass.hpp>
 #include <banner/gfx/swapchain.hpp>
 #include <banner/util/debug.hpp>
+#include <banner\defs.hpp>
 
 namespace ban {
-
 pipeline::pipeline()
     : info_{}
 {
@@ -16,14 +15,19 @@ pipeline::pipeline()
         vk::FrontFace::eCounterClockwise };
     info_.rasterizer.setLineWidth(1.f);
     info_.multisample = { {}, vk::SampleCountFlagBits::e1, false, 1.0 };
+
+    info_.viewport.setScissorCount(1);
+    info_.viewport.setViewportCount(1);
+    info_.viewport.setPScissors(&scissor_);
+    info_.viewport.setPViewports(&viewport_);
 }
 
 void pipeline::create(render_pass* render_pass)
 {
-
-    debug::log("Trying to create pipeline!");
-
     const auto device = render_pass->get_swap()->get_device();
+    const auto extent = render_pass->get_swap()->get_extent();
+
+    set_viewport(nullptr, extent);
 
     const auto [viewport, rasterization, multisample, depth_stencil, input_assembly,
         vertex_input_state, color_blend, dynamic_state] = info_;
@@ -35,6 +39,10 @@ void pipeline::create(render_pass* render_pass)
             &input_assembly, nullptr, &viewport, &rasterization, &multisample,
             nullptr /*&depth_stencil*/, &color_blend, nullptr, layout_.get(), render_pass->vk(),
             0 });
+
+    ASSERT(vk_pipeline_, "Failed to create pipeline!");
+
+    debug::log("Created a pipeline!");
 }
 
 vk::PipelineColorBlendAttachmentState pipeline::default_color_blend_attachment()
@@ -53,13 +61,12 @@ void pipeline::add_color_blend_attachment(vk::PipelineColorBlendAttachmentState 
     info_.color_blend.setPAttachments(color_blend_attachments_.data());
 }
 
-
 void pipeline::process(vk::CommandBuffer buffer, vk::Extent2D extent)
 {
     if (ready()) {
         set_viewport(buffer, extent);
         bind_buffer(buffer);
-        on_process(buffer);
+        on_process_sig.fire(buffer);
     }
 }
 
@@ -71,13 +78,14 @@ void pipeline::set_viewport(vk::CommandBuffer buffer, vk::Extent2D extent)
     // scissor
     scissor_ = { { 0, 0 }, extent };
 
-    buffer.setViewport(0, viewport_);
-    buffer.setScissor(0, scissor_);
+    if (buffer) {
+        buffer.setViewport(0, viewport_);
+        buffer.setScissor(0, scissor_);
+    }
 }
 
 void pipeline::bind_buffer(vk::CommandBuffer buffer)
 {
     buffer.bindPipeline(vk::PipelineBindPoint::eGraphics, vk_pipeline_.get());
 }
-
 } // namespace ban

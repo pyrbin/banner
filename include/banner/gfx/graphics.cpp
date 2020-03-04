@@ -9,6 +9,7 @@
 #include <banner/gfx/memory.hpp>
 
 namespace ban {
+
 const std::vector<const char*> graphics::device_extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME,
     VK_EXT_PIPELINE_CREATION_FEEDBACK_EXTENSION_NAME };
 const std::vector<const char*> graphics::validation_layers{ "VK_LAYER_KHRONOS_validation" };
@@ -140,18 +141,17 @@ graphics::create_debugger()
 {
     using callback_type = PFN_vkDebugUtilsMessengerCallbackEXT;
 
-    vk::DebugUtilsMessengerCreateInfoEXT debug_info;
+    VkDebugUtilsMessengerCreateInfoEXT debug_info;
 
-    debug_info.setMessageSeverity((vk::DebugUtilsMessageSeverityFlagBitsEXT::eError
-            | vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning,
-        vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo));
-
-    debug_info.setMessageType((vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral
-        | vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance
-        | vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation));
-
-    debug_info.setPfnUserCallback((callback_type)vk_utils::debug_vulkan_callback);
-    debug_info.setPUserData(this);
+    debug_info = {};
+    debug_info.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    debug_info.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+        VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    debug_info.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+        VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+        VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+    debug_info.pfnUserCallback = (callback_type)vk_utils::debug_vulkan_callback;
 
     const auto create = PFN_vkCreateDebugUtilsMessengerEXT(
         vkGetInstanceProcAddr(instance_.get(), "vkCreateDebugUtilsMessengerEXT"));
@@ -160,6 +160,8 @@ graphics::create_debugger()
 
     create(instance_.get(), (VkDebugUtilsMessengerCreateInfoEXT*)&debug_info, nullptr,
         (VkDebugUtilsMessengerEXT*)&debugger_);
+
+    ASSERT(debugger_, "Failed to create debug messenger");
 
     debug::trace("Initialized validation layers ...");
 }
