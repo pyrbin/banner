@@ -9,7 +9,8 @@
 #include <banner/gfx/memory.hpp>
 
 namespace ban {
-const std::vector<const char*> graphics::device_extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+const std::vector<const char*> graphics::device_extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+    VK_EXT_PIPELINE_CREATION_FEEDBACK_EXTENSION_NAME };
 const std::vector<const char*> graphics::validation_layers{ "VK_LAYER_KHRONOS_validation" };
 
 graphics::graphics(platform* platform)
@@ -41,7 +42,7 @@ void graphics::create_instance()
         VK_MAKE_VERSION(1, 0, 0),
         "No engine",
         VK_MAKE_VERSION(1, 0, 0),
-        VK_API_VERSION_1_1
+        VK_API_VERSION_1_2
     };
 
     // Instance extensions

@@ -10,7 +10,6 @@ namespace ban {
 pipeline::pipeline()
     : info_{}
 {
-
     info_.vertex_input_state = { {}, 0, nullptr, 0, nullptr };
     info_.input_assembly = { {}, vk::PrimitiveTopology::eTriangleList, false };
     info_.rasterizer = { {}, false, false, vk::PolygonMode::eFill, {},
@@ -21,12 +20,15 @@ pipeline::pipeline()
 
 void pipeline::create(render_pass* render_pass)
 {
+
+    debug::log("Trying to create pipeline!");
+
     const auto device = render_pass->get_swap()->get_device();
 
     const auto [viewport, rasterization, multisample, depth_stencil, input_assembly,
         vertex_input_state, color_blend, dynamic_state] = info_;
 
-    layout_ = device->vk().createPipelineLayoutUnique({}, nullptr);
+    layout_ = device->vk().createPipelineLayoutUnique({});
 
     vk_pipeline_ = device->vk().createGraphicsPipelineUnique({},
         { {}, u32(shader_stages_.size()), shader_stages_.data(), &vertex_input_state,

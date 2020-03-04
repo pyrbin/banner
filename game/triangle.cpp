@@ -20,8 +20,6 @@ int main()
 
     render_pass* pass = new render_pass(gr->get_swap());
     {
-        // auto color_ref = vk::AttachmentReference{ 0, vk::ImageLayout::eColorAttachmentOptimal };
-
 
         pass->add(render_pass::attachment()
                       .set_op(vk::AttachmentLoadOp::eClear, vk::AttachmentStoreOp::eStore)

@@ -25,12 +25,16 @@ render_pass::render_pass(swapchain* swapchain)
 void render_pass::create()
 {
     bool first_time{ true };
+
     if (vk_render_pass_) {
         first_time = false;
     }
+
     create_render_pass();
     create_framebuffers();
+
     swapchain_->on_recreate.connect<&render_pass::create_framebuffers>(*this);
+
     if (first_time) {
         for (auto& subpass : subpasses_) {
             subpass->on_create.fire(this);
