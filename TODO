@@ -1,13 +1,12 @@
 [todo]
 
-draw a triangle
-engine class mirroring liblava
-window class that wraps glfw window
+- fix validation errors
+- memory cleanup of vulkan objects
+- window class that wraps glfw window
+- initial engine class (@see liblava app.hpp for inspiration)
 
-[renderer]
+- lookup deps for model rendering & input?
+- render a model
 
-* vulkan renderer of a simple triangle
-* add imgui
-* memory cleanup of vulkan objects
-
-* fix glw3.dll dependency, currently i just copied the dll to the build folder
+- add imgui
+- fix glw3.dll dependency, currently i just copied the dll to the build folder
