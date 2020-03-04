@@ -20,7 +20,40 @@ struct pipeline
 
     explicit pipeline();
 
+    struct create_info
+    {
+        vk::PipelineViewportStateCreateInfo viewport = {};
+        vk::PipelineRasterizationStateCreateInfo rasterization = {};
+        vk::PipelineMultisampleStateCreateInfo multisample = {};
+        vk::PipelineDepthStencilStateCreateInfo depth_stencil = {};
+        vk::PipelineInputAssemblyStateCreateInfo input_assembly = {};
+
+        vk::PipelineVertexInputStateCreateInfo vertex_input_state = {};
+        std::vector<vk::VertexInputBindingDescription> vertex_input_bindings = {};
+        std::vector<vk::VertexInputAttributeDescription> vertex_input_attributes = {};
+
+        vk::PipelineColorBlendStateCreateInfo color_blend = {};
+        std::vector<vk::PipelineColorBlendAttachmentState> color_blend_attachments = {};
+
+        vk::PipelineDynamicStateCreateInfo dynamic_state = {};
+        std::vector<vk::DynamicState> dynamic_states = {};
+    };
+
     bool ready() const { return on_process != nullptr && vk_pipeline_; }
+
+    void add_shader(const std::string& name, vk::ShaderStageFlagBits flags, vk::ShaderModule module)
+    {
+        shader_stages_.emplace_back(
+            vk::PipelineShaderStageCreateFlags(), flags, module, name.c_str());
+    }
+    void add_vertex(const std::string& name, vk::ShaderModule module)
+    {
+        add_shader(name, vk::ShaderStageFlagBits::eVertex, module);
+    }
+    void add_fragment(const std::string& name, vk::ShaderModule module)
+    {
+        add_shader(name, vk::ShaderStageFlagBits::eFragment, module);
+    }
 
     fn<void(vk::CommandBuffer)> on_process;
 
@@ -31,6 +64,9 @@ private:
     void set_viewport(vk::Extent2D extent);
 
     vk::UniquePipeline vk_pipeline_;
+    vk::UniquePipelineLayout layout_;
+
+    create_info info_;
     shader_stages shader_stages_{};
 
     bool flip_y{ true };

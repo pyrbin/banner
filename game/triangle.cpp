@@ -30,6 +30,9 @@ int main()
         auto sub = new subpass();
         auto pipe = new pipeline();
 
+        pipe->add_fragment("main", frag_shader_module);
+        pipe->add_vertex("main", vert_shader_module);
+
         sub->set_color_attachment({ 0, vk::ImageLayout::eColorAttachmentOptimal });
         sub->add_pipeline(pipe);
 

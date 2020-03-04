@@ -50,7 +50,7 @@ struct subpass
         description_.setPPreserveAttachments(preserve_attachments_.data());
     }
 
-    void set_render_pass(render_pass* render_pass) { render_pass_ = render_pass; }
+    void set_render_pass(render_pass* render_pass) { owner = render_pass; }
 
     void process(vk::CommandBuffer buffer, vk::Extent2D extent) { on_process.fire(buffer, extent); }
 
@@ -58,7 +58,7 @@ struct subpass
     signal<void(vk::CommandBuffer, vk::Extent2D)> on_process;
 
 private:
-    render_pass* render_pass_{ nullptr };
+    render_pass* owner{ nullptr };
 
     std::vector<vk::AttachmentReference> color_attachments_;
     vk::AttachmentReference resolve_attachment_;
@@ -165,11 +165,7 @@ struct render_pass
     auto get_clear_color() const { return clear_value_; }
     auto get_swap() const { return swapchain_; }
 
-    void add(subpass* subpass)
-    {
-        subpasses_.emplace_back(std::move(subpass));
-        subpass->set_render_pass(this);
-    }
+    void add(subpass* subpass);
     void add(attachment attachment);
     void add(dependency dependency);
 

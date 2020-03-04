@@ -19,18 +19,28 @@ void subpass::add_pipeline(pipeline* pipeline)
 render_pass::render_pass(swapchain* swapchain)
     : swapchain_{ swapchain }
 {
-    set_clear_color({ 0, 1, 0, 1 });
+    set_clear_color({ 0.13f, 0.03f, 0.11f, 1 });
 }
 
 void render_pass::create()
 {
+    bool first_time{ true };
+    if (vk_render_pass_) {
+        first_time = false;
+    }
     create_render_pass();
     create_framebuffers();
+    swapchain_->on_recreate.connect<&render_pass::create_framebuffers>(*this);
+    if (first_time) {
+        for (auto& subpass : subpasses_) {
+            subpass->on_create.fire(this);
+        }
+    }
 }
 
 void render_pass::process(u32 frame, vk::CommandBuffer buffer)
 {
-    if (!swapchain_)
+    if (!vk_render_pass_ || subpasses_.size() <= 0)
         return;
 
     vk::RenderPassBeginInfo begin_info{ vk(), framebuffers_[frame].get(),
@@ -43,6 +53,17 @@ void render_pass::process(u32 frame, vk::CommandBuffer buffer)
     }
 
     buffer.endRenderPass();
+}
+
+void render_pass::add(subpass* subpass)
+{
+    subpasses_.emplace_back(std::move(subpass));
+    subpass->set_render_pass(this);
+
+    if (vk_render_pass_) {
+        create();
+        subpass->on_create.fire(this);
+    }
 }
 
 void render_pass::add(attachment attachment)
@@ -63,6 +84,10 @@ void render_pass::create_render_pass()
     std::vector<vk::SubpassDescription> subpasses;
     std::transform(subpasses_.begin(), subpasses_.end(), std::back_inserter(subpasses),
         [&](subpass::uptr& pass) { return pass->vk(); });
+
+    if (vk_render_pass_) {
+        vk_render_pass_.release();
+    }
 
     vk_render_pass_ = device->createRenderPassUnique(
         { {}, u32(attachments_.size()), attachments_.data(), u32(subpasses.size()),

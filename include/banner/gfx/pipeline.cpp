@@ -1,4 +1,5 @@
 
+#include <banner/gfx/device.hpp>
 #include <banner/gfx/pipeline.hpp>
 #include <banner/gfx/render_pass.hpp>
 #include <banner/gfx/swapchain.hpp>
@@ -25,14 +26,14 @@ void pipeline::process(vk::CommandBuffer buffer, vk::Extent2D extent)
 
 void pipeline::set_viewport(vk::Extent2D extent)
 {
-    // Viewport
+    // viewport
     viewport_ = vk::Viewport{ f32(0), f32(extent.height), f32(extent.width), -f32(extent.width),
         f32(0), f32(1) };
 
-    // Scissor
+    // scissor
     scissor_ = vk::Rect2D{ { 0, 0 }, { extent.width, extent.height } };
 
-    // Viewport state
+    // viewport state
     auto viewport_info =
         vk::PipelineViewportStateCreateInfo{ vk::PipelineViewportStateCreateFlags(), 1, &viewport_,
             1, &scissor_ };
