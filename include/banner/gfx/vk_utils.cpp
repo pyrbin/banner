@@ -98,10 +98,10 @@ surface_info get_surface_info(const vk::PhysicalDevice device, const vk::Surface
         device.getSurfacePresentModesKHR(surface) };
 }
 
-vk::ShaderModule load_shader(const std::string& filename, vk::Device device)
+vk::ShaderModule load_shader(const std::string& filename, vk::Device* device)
 {
-    auto bytes = read_bytes_from_file(filename);
-    return device.createShaderModule(
+    auto bytes = read_file(filename);
+    return device->createShaderModule(
         { vk::ShaderModuleCreateFlags(), bytes.size(), reinterpret_cast<u32*>(bytes.data()) });
 }
 
