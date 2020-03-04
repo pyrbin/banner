@@ -8,7 +8,6 @@
 namespace ban {
 struct device
 {
-    using ptr = device*;
     using uptr = std::unique_ptr<device>;
 
     struct queues;
@@ -33,7 +32,7 @@ struct device
 
     struct queues
     {
-        inline queues(const device::ptr device, u32 gidx, u32 pidx)
+        inline queues(const device* device, u32 gidx, u32 pidx)
             : graphics_queue{ device->get().getQueue(gidx, 0) }
             , present_queue{ device->get().getQueue(pidx, 0) }
             , graphics_index{ gidx }

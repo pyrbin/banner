@@ -2,13 +2,13 @@
 #include <banner/util/debug.hpp>
 
 namespace ban {
-memory::memory(device::ptr dev)
+memory::memory(device* device)
 {
     // clang-format off
     VmaAllocatorCreateInfo info
     {
-        .physicalDevice = dev->get_gpu(),
-        .device = dev->get()
+        .physicalDevice = device->get_gpu(),
+        .device = device->get()
     };
 
     vmaCreateAllocator(&info, &vma_allocator_);

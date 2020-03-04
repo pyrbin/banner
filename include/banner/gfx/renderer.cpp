@@ -2,7 +2,7 @@
 #include <banner/gfx/vk_utils.hpp>
 
 namespace ban {
-renderer::task::task(device::ptr device, task::fn fn, vk::CommandPool pool, u32 count)
+renderer::task::task(device* device, task::fn fn, vk::CommandPool pool, u32 count)
     : process{ fn }
 {
     // Allocate command buffers
@@ -11,7 +11,7 @@ renderer::task::task(device::ptr device, task::fn fn, vk::CommandPool pool, u32 
         { pool, vk::CommandBufferLevel::ePrimary, count });
 }
 
-renderer::renderer(swapchain::ptr swapchain)
+renderer::renderer(swapchain* swapchain)
     : swapchain_{ swapchain }
     , device_{ swapchain->get_device() }
 

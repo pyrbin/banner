@@ -11,10 +11,9 @@ struct device;
 
 struct swapchain
 {
-    using ptr = swapchain*;
     using uptr = std::unique_ptr<swapchain>;
 
-    explicit swapchain(device::ptr device, vk::SurfaceKHR surface, vk::Extent2D extent);
+    explicit swapchain(device* device, vk::SurfaceKHR surface, vk::Extent2D extent);
     ~swapchain();
 
     struct swapchain_data
@@ -37,7 +36,7 @@ struct swapchain
     const auto& get_data() const { return data_; }
 
 private:
-    device::ptr device_;
+    device* device_;
     vk::SurfaceKHR surface_;
 
     vk::SurfaceFormatKHR format_;

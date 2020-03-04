@@ -39,7 +39,7 @@ vk::Extent2D choose_extent(const vk::SurfaceCapabilitiesKHR& capabilities, vk::E
     }
 }
 
-swapchain::swapchain(device::ptr device, vk::SurfaceKHR surface, vk::Extent2D extent)
+swapchain::swapchain(device* device, vk::SurfaceKHR surface, vk::Extent2D extent)
 {
     surface_ = surface;
     device_ = device;

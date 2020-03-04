@@ -14,7 +14,7 @@ using fences = std::vector<vk::Fence>;
 
 struct renderer
 {
-    using ptr = renderer*;
+    using uptr = std::unique_ptr<renderer>;
 
     struct task
     {
@@ -24,7 +24,7 @@ struct renderer
         task::fn process;
         cmd_buffers cmd_buffers;
 
-        task(device::ptr, task::fn, vk::CommandPool, u32);
+        task(device*, task::fn, vk::CommandPool, u32);
     };
 
     struct sync
@@ -33,7 +33,7 @@ struct renderer
         vk::UniqueSemaphore render{ nullptr };
     };
 
-    explicit renderer(swapchain::ptr swapchain);
+    explicit renderer(swapchain* swapchain);
     ~renderer();
 
     void add_task(task::fn task);
@@ -62,8 +62,8 @@ private:
     void process();
     void present();
 
-    device::ptr device_{ nullptr };
-    swapchain::ptr swapchain_{ nullptr };
+    device* device_{ nullptr };
+    swapchain* swapchain_{ nullptr };
 
     task::list tasks_;
     cmd_pools cmd_pools_;
