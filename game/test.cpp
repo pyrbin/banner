@@ -463,10 +463,10 @@ private:
         // VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
         // VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
 
-        VkShaderModule vertShaderModule = (VkShaderModule)ban::vk_utils::load_shader(
-            "shaders/shader.vert.spv", &vk::Device(device));
-        VkShaderModule fragShaderModule = (VkShaderModule)ban::vk_utils::load_shader(
-            "shaders/shader.frag.spv", &vk::Device(device));
+        VkShaderModule vertShaderModule =
+            (VkShaderModule)::vk_utils::load_shader("shaders/shader.vert.spv", &vk::Device(device));
+        VkShaderModule fragShaderModule =
+            (VkShaderModule)::vk_utils::load_shader("shaders/shader.frag.spv", &vk::Device(device));
 
         VkPipelineShaderStageCreateInfo vertShaderStageInfo = {};
         vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;

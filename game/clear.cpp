@@ -2,7 +2,7 @@
 #include <vector>
 
 #define GLFW_INCLUDE_VULKAN
-#define VK_USE_PLATFORM_WIN32_KHR
+#define VK_USE_PLATFORM_WIN64_KHR
 #include <GLFW/glfw3.h>
 
 #define GLFW_EXPOSE_NATIVE_WIN32
@@ -26,8 +26,8 @@ public:
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-        window = glfwCreateWindow(
-            640, 480, "The 630 line cornflower blue window", nullptr, nullptr);
+        window =
+            glfwCreateWindow(640, 480, "The 630 line cornflower blue window", nullptr, nullptr);
 
         // Use Vulkan
         setupVulkan();
@@ -84,8 +84,8 @@ private:
 
         // Note: this is done implicitly when the command pool is freed, but nice to know
         // about
-        vkFreeCommandBuffers(device, commandPool, presentCommandBuffers.size(),
-            presentCommandBuffers.data());
+        vkFreeCommandBuffers(
+            device, commandPool, presentCommandBuffers.size(), presentCommandBuffers.data());
         vkDestroyCommandPool(device, commandPool, nullptr);
 
         vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
@@ -153,8 +153,7 @@ private:
 
     void createWindowSurface()
     {
-        if (glfwCreateWindowSurface(instance, window, NULL, &windowSurface)
-            != VK_SUCCESS) {
+        if (glfwCreateWindowSurface(instance, window, NULL, &windowSurface) != VK_SUCCESS) {
             std::cerr << "failed to create window surface!" << std::endl;
             exit(1);
         }
@@ -168,8 +167,7 @@ private:
         // Note: perhaps refactor to loop through devices and find first one that supports
         // all required features and extensions
         uint32_t deviceCount = 1;
-        VkResult res
-            = vkEnumeratePhysicalDevices(instance, &deviceCount, &physicalDevice);
+        VkResult res = vkEnumeratePhysicalDevices(instance, &deviceCount, &physicalDevice);
         if (res != VK_SUCCESS && res != VK_INCOMPLETE) {
             std::cerr << "enumerating physical devices failed!" << std::endl;
             exit(1);
@@ -200,8 +198,7 @@ private:
     void checkSwapChainSupport()
     {
         uint32_t extensionCount = 0;
-        vkEnumerateDeviceExtensionProperties(
-            physicalDevice, nullptr, &extensionCount, nullptr);
+        vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, nullptr);
 
         if (extensionCount == 0) {
             std::cerr << "physical device doesn't support any extensions" << std::endl;
@@ -227,8 +224,7 @@ private:
     {
         // Check queue families
         uint32_t queueFamilyCount = 0;
-        vkGetPhysicalDeviceQueueFamilyProperties(
-            physicalDevice, &queueFamilyCount, nullptr);
+        vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
 
         if (queueFamilyCount == 0) {
             std::cout << "physical device has no queue families!" << std::endl;
@@ -242,19 +238,17 @@ private:
         vkGetPhysicalDeviceQueueFamilyProperties(
             physicalDevice, &queueFamilyCount, queueFamilies.data());
 
-        std::cout << "physical device has " << queueFamilyCount << " queue families"
-                  << std::endl;
+        std::cout << "physical device has " << queueFamilyCount << " queue families" << std::endl;
 
         bool foundGraphicsQueueFamily = false;
         bool foundPresentQueueFamily = false;
 
         for (uint32_t i = 0; i < queueFamilyCount; i++) {
             VkBool32 presentSupport = false;
-            vkGetPhysicalDeviceSurfaceSupportKHR(
-                physicalDevice, i, windowSurface, &presentSupport);
+            vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, windowSurface, &presentSupport);
 
-            if (queueFamilies[i].queueCount > 0
-                && queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+            if (queueFamilies[i].queueCount > 0 &&
+                queueFamilies[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
                 graphicsQueueFamily = i;
                 foundGraphicsQueueFamily = true;
 
@@ -276,16 +270,15 @@ private:
                       << std::endl;
 
             if (foundPresentQueueFamily) {
-                std::cout << "queue family #" << presentQueueFamily
-                          << " supports presentation" << std::endl;
+                std::cout << "queue family #" << presentQueueFamily << " supports presentation"
+                          << std::endl;
             } else {
                 std::cerr << "could not find a valid queue family with present support"
                           << std::endl;
                 exit(1);
             }
         } else {
-            std::cerr << "could not find a valid queue family with graphics support"
-                      << std::endl;
+            std::cerr << "could not find a valid queue family with graphics support" << std::endl;
             exit(1);
         }
     }
@@ -323,8 +316,7 @@ private:
         deviceCreateInfo.enabledExtensionCount = 1;
         deviceCreateInfo.ppEnabledExtensionNames = &deviceExtensions;
 
-        if (vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &device)
-            != VK_SUCCESS) {
+        if (vkCreateDevice(physicalDevice, &deviceCreateInfo, nullptr, &device) != VK_SUCCESS) {
             std::cerr << "failed to create logical device" << std::endl;
             exit(1);
         }
@@ -343,11 +335,10 @@ private:
         VkSemaphoreCreateInfo createInfo = {};
         createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
-        if (vkCreateSemaphore(device, &createInfo, nullptr, &imageAvailableSemaphore)
-                != VK_SUCCESS
-            || vkCreateSemaphore(
-                   device, &createInfo, nullptr, &renderingFinishedSemaphore)
-                != VK_SUCCESS) {
+        if (vkCreateSemaphore(device, &createInfo, nullptr, &imageAvailableSemaphore) !=
+                VK_SUCCESS ||
+            vkCreateSemaphore(device, &createInfo, nullptr, &renderingFinishedSemaphore) !=
+                VK_SUCCESS) {
             std::cerr << "failed to create semaphores" << std::endl;
             exit(1);
         } else {
@@ -360,27 +351,23 @@ private:
         // Find surface capabilities
         VkSurfaceCapabilitiesKHR surfaceCapabilities;
         if (vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-                physicalDevice, windowSurface, &surfaceCapabilities)
-            != VK_SUCCESS) {
-            std::cerr << "failed to acquire presentation surface capabilities"
-                      << std::endl;
+                physicalDevice, windowSurface, &surfaceCapabilities) != VK_SUCCESS) {
+            std::cerr << "failed to acquire presentation surface capabilities" << std::endl;
             exit(1);
         }
 
         // Find supported surface formats
         uint32_t formatCount;
         if (vkGetPhysicalDeviceSurfaceFormatsKHR(
-                physicalDevice, windowSurface, &formatCount, nullptr)
-                != VK_SUCCESS
-            || formatCount == 0) {
+                physicalDevice, windowSurface, &formatCount, nullptr) != VK_SUCCESS ||
+            formatCount == 0) {
             std::cerr << "failed to get number of supported surface formats" << std::endl;
             exit(1);
         }
 
         std::vector<VkSurfaceFormatKHR> surfaceFormats(formatCount);
         if (vkGetPhysicalDeviceSurfaceFormatsKHR(
-                physicalDevice, windowSurface, &formatCount, surfaceFormats.data())
-            != VK_SUCCESS) {
+                physicalDevice, windowSurface, &formatCount, surfaceFormats.data()) != VK_SUCCESS) {
             std::cerr << "failed to get supported surface formats" << std::endl;
             exit(1);
         }
@@ -388,26 +375,23 @@ private:
         // Find supported present modes
         uint32_t presentModeCount;
         if (vkGetPhysicalDeviceSurfacePresentModesKHR(
-                physicalDevice, windowSurface, &presentModeCount, nullptr)
-                != VK_SUCCESS
-            || presentModeCount == 0) {
-            std::cerr << "failed to get number of supported presentation modes"
-                      << std::endl;
+                physicalDevice, windowSurface, &presentModeCount, nullptr) != VK_SUCCESS ||
+            presentModeCount == 0) {
+            std::cerr << "failed to get number of supported presentation modes" << std::endl;
             exit(1);
         }
 
         std::vector<VkPresentModeKHR> presentModes(presentModeCount);
-        if (vkGetPhysicalDeviceSurfacePresentModesKHR(
-                physicalDevice, windowSurface, &presentModeCount, presentModes.data())
-            != VK_SUCCESS) {
+        if (vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, windowSurface,
+                &presentModeCount, presentModes.data()) != VK_SUCCESS) {
             std::cerr << "failed to get supported presentation modes" << std::endl;
             exit(1);
         }
 
         // Determine number of images for swap chain
         uint32_t imageCount = surfaceCapabilities.minImageCount + 1;
-        if (surfaceCapabilities.maxImageCount != 0
-            && imageCount > surfaceCapabilities.maxImageCount) {
+        if (surfaceCapabilities.maxImageCount != 0 &&
+            imageCount > surfaceCapabilities.maxImageCount) {
             imageCount = surfaceCapabilities.maxImageCount;
         }
 
@@ -422,8 +406,7 @@ private:
         // Check if swap chain supports being the destination of an image transfer
         // Note: AMD driver bug, though it would be nice to implement a workaround that
         // doesn't use transfering
-        if (!(surfaceCapabilities.supportedUsageFlags
-                & VK_IMAGE_USAGE_TRANSFER_DST_BIT)) {
+        if (!(surfaceCapabilities.supportedUsageFlags & VK_IMAGE_USAGE_TRANSFER_DST_BIT)) {
             std::cerr << "swap chain image does not support VK_IMAGE_TRANSFER_DST usage"
                       << std::endl;
             // exit(1);
@@ -431,8 +414,7 @@ private:
 
         // Determine transformation to use (preferring no transform)
         VkSurfaceTransformFlagBitsKHR surfaceTransform;
-        if (surfaceCapabilities.supportedTransforms
-            & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) {
+        if (surfaceCapabilities.supportedTransforms & VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR) {
             surfaceTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
         } else {
             surfaceTransform = surfaceCapabilities.currentTransform;
@@ -450,8 +432,8 @@ private:
         createInfo.imageColorSpace = surfaceFormat.colorSpace;
         createInfo.imageExtent = swapChainExtent;
         createInfo.imageArrayLayers = 1;
-        createInfo.imageUsage
-            = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+        createInfo.imageUsage =
+            VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
         createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
         createInfo.queueFamilyIndexCount = 0;
         createInfo.pQueueFamilyIndices = nullptr;
@@ -461,8 +443,7 @@ private:
         createInfo.clipped = VK_TRUE;
         createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-        if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain)
-            != VK_SUCCESS) {
+        if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &swapChain) != VK_SUCCESS) {
             std::cerr << "failed to create swap chain" << std::endl;
             exit(1);
         } else {
@@ -474,18 +455,16 @@ private:
         // Note: actual number of images may differ from requested number, since it's a
         // lower bound
         uint32_t actualImageCount = 0;
-        if (vkGetSwapchainImagesKHR(device, swapChain, &actualImageCount, nullptr)
-                != VK_SUCCESS
-            || actualImageCount == 0) {
+        if (vkGetSwapchainImagesKHR(device, swapChain, &actualImageCount, nullptr) != VK_SUCCESS ||
+            actualImageCount == 0) {
             std::cerr << "failed to acquire number of swap chain images" << std::endl;
             exit(1);
         }
 
         swapChainImages.resize(actualImageCount);
 
-        if (vkGetSwapchainImagesKHR(
-                device, swapChain, &actualImageCount, swapChainImages.data())
-            != VK_SUCCESS) {
+        if (vkGetSwapchainImagesKHR(device, swapChain, &actualImageCount, swapChainImages.data()) !=
+            VK_SUCCESS) {
             std::cerr << "failed to acquire swap chain images" << std::endl;
             exit(1);
         }
@@ -493,12 +472,10 @@ private:
         std::cout << "acquired swap chain images" << std::endl;
     }
 
-    VkSurfaceFormatKHR chooseSurfaceFormat(
-        const std::vector<VkSurfaceFormatKHR>& availableFormats)
+    VkSurfaceFormatKHR chooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats)
     {
         // We can either choose any format
-        if (availableFormats.size() == 1
-            && availableFormats[0].format == VK_FORMAT_UNDEFINED) {
+        if (availableFormats.size() == 1 && availableFormats[0].format == VK_FORMAT_UNDEFINED) {
             return { VK_FORMAT_R8G8B8A8_UNORM, VK_COLORSPACE_SRGB_NONLINEAR_KHR };
         }
 
@@ -518,12 +495,10 @@ private:
         if (surfaceCapabilities.currentExtent.width == -1) {
             VkExtent2D swapChainExtent = {};
 
-            swapChainExtent.width
-                = min(max(640, surfaceCapabilities.minImageExtent.width),
-                    surfaceCapabilities.maxImageExtent.width);
-            swapChainExtent.height
-                = min(max(480, surfaceCapabilities.minImageExtent.height),
-                    surfaceCapabilities.maxImageExtent.height);
+            swapChainExtent.width = min(max(640, surfaceCapabilities.minImageExtent.width),
+                surfaceCapabilities.maxImageExtent.width);
+            swapChainExtent.height = min(max(480, surfaceCapabilities.minImageExtent.height),
+                surfaceCapabilities.maxImageExtent.height);
 
             return swapChainExtent;
         } else {
@@ -552,14 +527,12 @@ private:
         poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
         poolCreateInfo.queueFamilyIndex = presentQueueFamily;
 
-        if (vkCreateCommandPool(device, &poolCreateInfo, nullptr, &commandPool)
-            != VK_SUCCESS) {
+        if (vkCreateCommandPool(device, &poolCreateInfo, nullptr, &commandPool) != VK_SUCCESS) {
             std::cerr << "failed to create command queue for presentation queue family"
                       << std::endl;
             exit(1);
         } else {
-            std::cout << "created command pool for presentation queue family"
-                      << std::endl;
+            std::cout << "created command pool for presentation queue family" << std::endl;
         }
 
         // Get number of swap chain images and create vector to hold command queue for
@@ -574,8 +547,8 @@ private:
         allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
         allocInfo.commandBufferCount = (uint32_t)swapChainImages.size();
 
-        if (vkAllocateCommandBuffers(device, &allocInfo, presentCommandBuffers.data())
-            != VK_SUCCESS) {
+        if (vkAllocateCommandBuffers(device, &allocInfo, presentCommandBuffers.data()) !=
+            VK_SUCCESS) {
             std::cerr << "failed to allocate presentation command buffers" << std::endl;
             exit(1);
         } else {
@@ -654,8 +627,8 @@ private:
     {
         // Acquire image
         uint32_t imageIndex;
-        VkResult res = vkAcquireNextImageKHR(device, swapChain, UINT64_MAX,
-            imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+        VkResult res = vkAcquireNextImageKHR(
+            device, swapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
 
         if (res != VK_SUCCESS && res != VK_SUBOPTIMAL_KHR) {
             std::cerr << "failed to acquire image" << std::endl;
@@ -712,8 +685,7 @@ private:
     }
 };
 
-int
-main()
+int main()
 {
     ClearScreenApplication app;
     app.run();

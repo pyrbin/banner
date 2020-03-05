@@ -15,7 +15,7 @@
 #include <glm\ext\vector_uint3_sized.hpp>
 #include <glm\ext\vector_uint4_sized.hpp>
 
-namespace ban {
+namespace bnr {
 using u64 = unsigned long long;
 using u32 = unsigned int;
 using u16 = unsigned short;
@@ -80,4 +80,11 @@ inline auto to_str(T&& t)
 {
     return std::to_string(t);
 }
-} // namespace ban
+
+template<typename T, typename... Args>
+inline auto make_uptr(Args&&... args) -> std::unique_ptr<T>
+{
+    return std::make_unique<T>(std::forward<Args>(args)...);
+}
+
+} // namespace bnr

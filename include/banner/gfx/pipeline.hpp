@@ -4,7 +4,7 @@
 #include <banner/util/signal.hpp>
 #include <vulkan/vulkan.hpp>
 
-namespace ban {
+namespace bnr {
 struct subpass;
 struct swapchain;
 struct render_pass;
@@ -81,4 +81,4 @@ private:
     vk::Viewport viewport_;
     vk::Rect2D scissor_;
 };
-} // namespace ban
+} // namespace bnr

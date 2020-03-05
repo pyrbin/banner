@@ -4,7 +4,7 @@
 #include <banner/gfx/swapchain.hpp>
 #include <banner/gfx/vk_utils.hpp>
 
-namespace ban {
+namespace bnr {
 inline vk::SurfaceFormatKHR choose_format(const vector<vk::SurfaceFormatKHR>& formats)
 {
     for (const auto& f : formats) {
@@ -142,4 +142,4 @@ vk::ResultValue<u32> swapchain::aquire_image(vk::Semaphore sem, vk::Fence fence,
 
     return device_->vk().acquireNextImageKHR(vk(), timeout, sem, fence);
 }
-} // namespace ban
+} // namespace bnr

@@ -8,7 +8,7 @@
 #include <banner/gfx/window.hpp>
 #include <banner/util/debug.hpp>
 
-namespace ban {
+namespace bnr {
 window::window(str_ref title, vec2 size, str_ref icon_path, bool fullscreen)
     : title_{ title }
     , fullscreen_{ fullscreen }
@@ -57,10 +57,13 @@ window::~window()
     glfwTerminate();
 }
 
-void window::update()
+void window::handle_events()
 {
     glfwPollEvents();
+}
 
+void window::render()
+{
     if (!inner_ || is_minimized()) {
         return;
     }
@@ -73,7 +76,7 @@ void window::update()
         on_resize.fire(u16(buffer_size.x), u16(buffer_size.y));
     }
 
-    on_update.fire();
+    on_render.fire();
 }
 
 bool window::should_close() const
@@ -221,4 +224,4 @@ window* window::to_window(GLFWwindow* inner)
 {
     return static_cast<window*>(glfwGetWindowUserPointer(inner));
 }
-} // namespace ban
+} // namespace bnr

@@ -8,7 +8,7 @@
 #include <banner/gfx/swapchain.hpp>
 #include <vulkan/vulkan.hpp>
 
-namespace ban {
+namespace bnr {
 
 using cmd_buffers = vector<vk::CommandBuffer>;
 using fences = vector<vk::Fence>;
@@ -55,7 +55,7 @@ struct renderer
     auto& get_sync() const { return sync_; }
     auto& get_pool() { return cmd_pool; }
 
-    void update();
+    void render();
     auto wait() const;
     auto wait(u32 idx) const;
     auto fence_reset(u32 idx) const;
@@ -77,4 +77,4 @@ private:
 
     u32 current_{ 0 };
 };
-} // namespace ban
+} // namespace bnr

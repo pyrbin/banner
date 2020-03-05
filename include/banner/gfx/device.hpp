@@ -5,7 +5,7 @@
 #include <banner/core/types.hpp>
 #include <vulkan/vulkan.hpp>
 
-namespace ban {
+namespace bnr {
 struct device
 {
 
@@ -68,4 +68,4 @@ private:
     vk::UniqueDevice vk_device_;
     uptr<queues> queues_;
 };
-} // namespace ban
+} // namespace bnr

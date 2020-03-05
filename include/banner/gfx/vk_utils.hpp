@@ -12,7 +12,7 @@
         A_ASSERT(vk_utils::success(expr)); \
     }
 
-namespace ban {
+namespace bnr {
 namespace vk_utils {
 /**
  * @brief Queue family info
@@ -107,4 +107,4 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debug_vulkan_callback(
     VkDebugUtilsMessageTypeFlagsEXT messageType,
     const VkDebugUtilsMessengerCallbackDataEXT* cb_data, void* pUserData);
 } // namespace vk_utils
-} // namespace ban
+} // namespace bnr

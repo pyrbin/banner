@@ -4,7 +4,7 @@
 
 #include <banner/util/debug.hpp>
 
-namespace ban {
+namespace bnr {
 // TODO: add colored outputs, use std::format instead
 
 static void write_log(cstr prepend, cstr message, const va_list args)
@@ -51,4 +51,4 @@ void debug::fatal(cstr message, ...)
     write_log("[fatal]: ", message, args);
     va_end(args);
 }
-} // namespace ban
+} // namespace bnr

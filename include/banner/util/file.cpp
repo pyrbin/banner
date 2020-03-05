@@ -3,7 +3,7 @@
 #include <banner/util/debug.hpp>
 #include <banner/util/file.hpp>
 
-namespace ban {
+namespace bnr {
 vector<char> read_file(str_ref filename)
 {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
@@ -23,4 +23,4 @@ vector<char> read_file(str_ref filename)
     file.close();
     return buffer;
 }
-} // namespace ban
+} // namespace bnr

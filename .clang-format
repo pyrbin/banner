@@ -18,7 +18,7 @@ BreakBeforeInheritanceComma: false
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializers: BeforeComma
 SpaceAfterTemplateKeyword: false
-ColumnLimit: 100
+ColumnLimit: 90
 CommentPragmas:  '^/'
 Cpp11BracedListStyle: false
 FixNamespaceComments: true

@@ -1,7 +1,7 @@
 #include <banner/gfx/renderer.hpp>
 #include <banner/gfx/vk_utils.hpp>
 
-namespace ban {
+namespace bnr {
 renderer::task::task(device* device, task::fn fn, vk::CommandPool pool, u32 count)
     : process{ fn }
 {
@@ -27,7 +27,6 @@ renderer::renderer(graphics* graphics)
         (device_->vk().createCommandPool({ vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
             device_->get_queues().present_index }));
 
-
     // Create sync objects
     for (u32 i = 0; i < swapchain_->get_image_count(); i++) {
         vk::FenceCreateInfo info = { vk::FenceCreateFlagBits::eSignaled };
@@ -37,7 +36,6 @@ renderer::renderer(graphics* graphics)
     sync_.aquire = device_->vk().createSemaphoreUnique({});
     sync_.render = device_->vk().createSemaphoreUnique({});
 }
-
 
 auto renderer::wait() const
 {
@@ -65,7 +63,6 @@ renderer::~renderer()
 
     device_->vk().destroyCommandPool(cmd_pool);
 
-
     for (u32 i{ 0 }; i < flight_fences_.size(); i++) {
         device_->vk().destroyFence(flight_fences_[i]);
     }
@@ -80,9 +77,11 @@ void renderer::add_task(task::fn task)
     tasks_.push_back(new renderer::task(device_, task, cmd_pool, swapchain_->get_image_count()));
 }
 
-
-void renderer::update()
+void renderer::render()
 {
+    if (tasks_.size() <= 0)
+        return;
+
     if (!aquire_next_image())
         return;
 
@@ -116,7 +115,6 @@ void renderer::process_tasks()
     device_->vk().resetCommandPool(cmd_pool, (vk::CommandPoolResetFlagBits)0);
 
     for (auto& task : tasks_) {
-
         auto& [proc, buffs] = *task;
 
         auto cmd_buff = buffs[current_];
@@ -159,4 +157,4 @@ void renderer::end_frame()
 
     VULKAN_CHECK(device_->get_queues().present(present_info));
 }
-} // namespace ban
+} // namespace bnr

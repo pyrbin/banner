@@ -6,12 +6,13 @@
 #include <banner/gfx/render_pass.hpp>
 #include <banner/gfx/swapchain.hpp>
 
-namespace ban {
-void subpass::add_pipeline(pipeline* pipeline)
+namespace bnr {
+subpass::ref subpass::add_pipeline(pipeline* pipeline)
 {
     pipelines_.emplace_back(pipeline);
     on_process.connect<&pipeline::process>(pipeline);
     on_create.connect<&pipeline::create>(pipeline);
+    return *this;
 }
 
 render_pass::render_pass(swapchain* swapchain)
@@ -95,12 +96,11 @@ void render_pass::create_framebuffers()
     framebuffers_.resize(0);
 
     for (auto& img_view : swapchain_->get_data().views) {
-
         vector<vk::ImageView> framebuffer_attachments = { img_view.get() };
 
-        framebuffers_.push_back(
-            device->createFramebufferUnique({ {}, vk(), u32(framebuffer_attachments.size()),
+        framebuffers_.push_back(device->createFramebufferUnique(
+            { {}, vk(), u32(framebuffer_attachments.size()),
                 framebuffer_attachments.data(), extent_.width, extent_.height, 1 }));
     }
 }
-} // namespace ban
+} // namespace bnr

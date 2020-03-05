@@ -1,19 +1,19 @@
 #pragma once
 #include <banner/core/types.hpp>
+#include <banner/gfx/pipeline.hpp>
 #include <banner/util/signal.hpp>
 #include <vulkan/vulkan.hpp>
 
-namespace ban {
-
+namespace bnr {
 struct swapchain;
 struct render_pass;
 struct renderer;
-struct pipeline;
 
 struct subpass
 {
     friend class render_pass;
     using list = vector<uptr<subpass>>;
+    using ref = subpass&;
 
     explicit subpass()
         : description_{}
@@ -23,32 +23,40 @@ struct subpass
 
     auto vk() const { return description_; }
 
-    void add_pipeline(pipeline* pipeline);
+    ref add_pipeline(pipeline* pipeline);
 
-    void set_color_attachment(vk::AttachmentReference attachment)
+    ref set_color_attachment(vk::AttachmentReference attachment)
     {
         color_attachments_.push_back(attachment);
         description_.setColorAttachmentCount(u32(color_attachments_.size()));
         description_.setPColorAttachments(color_attachments_.data());
+        return *this;
     }
-    void set_resolve_attachment(vk::AttachmentReference attachment)
+    ref set_resolve_attachment(vk::AttachmentReference attachment)
     {
         resolve_attachment_ = attachment;
         description_.setPResolveAttachments(&resolve_attachment_);
+        return *this;
     }
-    void set_depth_stencil_attachment(vk::AttachmentReference attachment)
+    ref set_depth_stencil_attachment(vk::AttachmentReference attachment)
     {
         depth_stencil_attachment_ = attachment;
         description_.setPDepthStencilAttachment(&depth_stencil_attachment_);
+        return *this;
     }
-    void set_preserve_attachment(u32 attachment)
+    ref set_preserve_attachment(u32 attachment)
     {
         preserve_attachments_.push_back(attachment);
         description_.setPreserveAttachmentCount(u32(preserve_attachments_.size()));
         description_.setPPreserveAttachments(preserve_attachments_.data());
+        return *this;
     }
 
-    void set_render_pass(render_pass* render_pass) { owner = render_pass; }
+    ref set_render_pass(render_pass* render_pass)
+    {
+        owner = render_pass;
+        return *this;
+    }
 
     void process(vk::CommandBuffer buffer, vk::Extent2D extent)
     {
@@ -85,9 +93,15 @@ struct render_pass
         friend class render_pass;
         using ref = attachment&;
 
-        explicit attachment(vk::AttachmentDescription description = {})
+        attachment(vk::AttachmentDescription description = {})
             : description_{ description }
         {}
+
+        attachment(vk::Format format)
+            : description_{}
+        {
+            description_.setFormat(format);
+        }
 
         auto vk() { return description_; }
 
@@ -112,6 +126,12 @@ struct render_pass
             return *this;
         }
 
+        ref set_format(vk::Format format)
+        {
+            description_.setFormat(format);
+            return *this;
+        }
+
     private:
         vk::AttachmentDescription description_;
     };
@@ -121,9 +141,15 @@ struct render_pass
         friend class render_pass;
         using ref = dependency&;
 
-        explicit dependency(vk::SubpassDependency dep = {})
+        dependency(vk::SubpassDependency dep = {})
             : dependency_{ dep }
         {}
+
+        dependency(u32 src, u32 dst)
+            : dependency_{}
+        {
+            set_subpass(src, dst);
+        }
 
         auto vk() { return dependency_; }
 
@@ -191,4 +217,4 @@ private:
     dependencies dependencies_;
     subpass::list subpasses_;
 };
-} // namespace ban
+} // namespace bnr

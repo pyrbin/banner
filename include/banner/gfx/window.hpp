@@ -10,7 +10,7 @@
 struct GLFWwindow;
 struct GLFWmonitor;
 
-namespace ban {
+namespace bnr {
 struct window
 {
     using window_inner = GLFWwindow;
@@ -44,14 +44,16 @@ struct window
     bool is_minimized() const;
     bool is_maximized() const;
 
-    void update();
+    void render();
+    void handle_events();
+
     bool should_close() const;
 
     vk::SurfaceKHR create_surface(vk::Instance) const;
     vector<cstr> get_instance_ext() const;
 
     signal<void(u16, u16)> on_resize;
-    signal<void()> on_update;
+    signal<void()> on_render;
 
 private:
     void create_window(str_ref title, vec2 size);
@@ -69,4 +71,4 @@ private:
     window_inner* inner_{ nullptr };
     window_monitor* monitor_{ nullptr };
 };
-} // namespace ban
+} // namespace bnr

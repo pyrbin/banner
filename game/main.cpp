@@ -3,17 +3,19 @@
 #include <crtdbg.h>
 #include <stdlib.h>
 
-using namespace ban;
+using namespace bnr;
 
 int main()
 {
-    window* window = new ban::window("My window :)", { 800, 600 }, "icon.png");
+    engine* engine;
 
-    while (!window->should_close()) {
-        window->update();
+    {
+        engine = new bnr::engine({ "My game :)", { 800, 600 }, "icon.png" });
+
+        engine->run();
     }
 
-    delete window;
+    delete engine;
 
     _CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF);
 }

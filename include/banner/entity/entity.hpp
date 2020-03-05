@@ -2,11 +2,11 @@
 
 #include <realm/realm.hpp>
 
-namespace ban {
+namespace bnr {
 using realm::archetype;
 using realm::component;
 using realm::entity;
 using realm::query;
 using realm::view;
 using realm::world;
-} // namespace ban
+} // namespace bnr

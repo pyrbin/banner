@@ -5,7 +5,7 @@
 #include <banner/gfx/vk_utils.hpp>
 #include <banner/util/file.hpp>
 
-namespace ban {
+namespace bnr {
 namespace vk_utils {
 bool is_device_suitable(const vk::PhysicalDevice device, const vk::SurfaceKHR surface,
     const vector<cstr>& device_extens)
@@ -130,4 +130,4 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debug_vulkan_callback(
 }
 
 } // namespace vk_utils
-} // namespace ban
+} // namespace bnr

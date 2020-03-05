@@ -5,7 +5,7 @@
 #include <banner/gfx/device.hpp>
 #include <banner/gfx/vk_utils.hpp>
 
-namespace ban {
+namespace bnr {
 device::device(const vk::PhysicalDevice& gpu, const vk::SurfaceKHR surface, const options opts)
 
 {
@@ -35,4 +35,4 @@ device::device(const vk::PhysicalDevice& gpu, const vk::SurfaceKHR surface, cons
         this, indices.graphics_family.value(), indices.present_family.value());
 }
 
-} // namespace ban
+} // namespace bnr

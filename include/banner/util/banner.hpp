@@ -7,6 +7,7 @@
 // Core
 #include <banner/core/engine.hpp>
 #include <banner/core/math.hpp>
+#include <banner/core/time.hpp>
 #include <banner/core/types.hpp>
 
 // Entity (ECS)
@@ -28,4 +29,3 @@
 #include <banner/util/file.hpp>
 #include <banner/util/random.hpp>
 #include <banner/util/signal.hpp>
-#include <banner/util/time.hpp>

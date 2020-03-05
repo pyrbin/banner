@@ -2,7 +2,7 @@
 
 #include <banner/core/types.hpp>
 
-namespace ban {
+namespace bnr {
 struct debug
 {
     static void trace(cstr message, ...);
@@ -11,4 +11,4 @@ struct debug
     static void err(cstr message, ...);
     static void fatal(cstr message, ...);
 };
-} // namespace ban
+} // namespace bnr

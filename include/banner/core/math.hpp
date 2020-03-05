@@ -7,9 +7,9 @@
 #include <glm/mat3x3.hpp>
 #include <glm/mat4x4.hpp>
 
-namespace ban {
+namespace bnr {
 using glm::mat2;
 using glm::mat3;
 using glm::mat4;
 using glm::quat;
-} // namespace ban
+} // namespace bnr

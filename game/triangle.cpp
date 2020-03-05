@@ -4,12 +4,11 @@
 #include <crtdbg.h>
 #include <stdlib.h>
 
-using namespace ban;
+using namespace bnr;
 
 int main()
 {
-    window* wnd = new ban::window("Triangle /\\", { 800, 600 }, "icon.png");
-
+    window* wnd = new bnr::window("Triangle /\\", { 800, 600 }, "icon.png");
 
     graphics* gr = new graphics(wnd);
 
@@ -47,12 +46,12 @@ int main()
     //////////////////////////////////////////////////
 
     re->add_task([&](vk::CommandBuffer buff) { pass->process(re->get_current(), buff); });
-    wnd->on_update.connect([&]() { re->update(); });
+    wnd->on_render.connect([&]() { re->render(); });
 
     while (!wnd->should_close()) {
-        wnd->update();
+        wnd->handle_events();
+        wnd->render();
     }
-
 
     gr->get_device()->vk().destroyShaderModule(vert_shader_module);
     gr->get_device()->vk().destroyShaderModule(frag_shader_module);

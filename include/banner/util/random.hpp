@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <type_traits>
 
-namespace ban {
+namespace bnr {
 template<typename T>
 std::enable_if_t<std::is_arithmetic_v<T>, T> rnd(T lo, T hi)
 {

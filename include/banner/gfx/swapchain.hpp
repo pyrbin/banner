@@ -6,7 +6,7 @@
 #include <banner/util/signal.hpp>
 #include <vulkan/vulkan.hpp>
 
-namespace ban {
+namespace bnr {
 struct device;
 
 struct swapchain
@@ -51,4 +51,4 @@ private:
     void create_vk_swapchain();
     void create_imageviews();
 };
-} // namespace ban
+} // namespace bnr

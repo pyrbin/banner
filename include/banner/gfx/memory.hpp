@@ -4,7 +4,7 @@
 
 #include <banner/gfx/device.hpp>
 
-namespace ban {
+namespace bnr {
 struct memory
 {
     explicit memory(device* device);
@@ -15,4 +15,4 @@ struct memory
 private:
     VmaAllocator vma_allocator_;
 };
-} // namespace ban
+} // namespace bnr

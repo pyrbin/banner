@@ -9,7 +9,7 @@
 #include <banner/gfx/vk_utils.hpp>
 #include <vulkan/vulkan.hpp>
 
-namespace ban {
+namespace bnr {
 struct window;
 
 class graphics
@@ -45,4 +45,4 @@ private:
     vk::DebugUtilsMessengerEXT debugger_;
     void create_debugger();
 };
-} // namespace ban
+} // namespace bnr

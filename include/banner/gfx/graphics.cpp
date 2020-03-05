@@ -8,7 +8,7 @@
 #include <banner/gfx/memory.hpp>
 #include <banner/gfx/window.hpp>
 
-namespace ban {
+namespace bnr {
 
 const vector<cstr> graphics::device_extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 const vector<cstr> graphics::validation_layers{ "VK_LAYER_KHRONOS_validation" };
@@ -156,4 +156,4 @@ void graphics::create_debugger()
 
     debug::trace("Initialized validation layers ...");
 }
-} // namespace ban
+} // namespace bnr

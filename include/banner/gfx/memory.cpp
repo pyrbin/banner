@@ -1,7 +1,7 @@
 #include <banner/gfx/memory.hpp>
 #include <banner/util/debug.hpp>
 
-namespace ban {
+namespace bnr {
 memory::memory(device* device)
 {
     // clang-format off
@@ -21,4 +21,4 @@ memory::~memory()
         vma_allocator_ = nullptr;
     }
 };
-} // namespace ban
+} // namespace bnr

@@ -5,7 +5,7 @@
 #include <banner/util/debug.hpp>
 #include <banner\defs.hpp>
 
-namespace ban {
+namespace bnr {
 pipeline::pipeline()
     : info_{}
 {
@@ -88,4 +88,4 @@ void pipeline::bind_buffer(vk::CommandBuffer buffer)
 {
     buffer.bindPipeline(vk::PipelineBindPoint::eGraphics, vk_pipeline_.get());
 }
-} // namespace ban
+} // namespace bnr
