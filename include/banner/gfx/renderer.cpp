@@ -7,8 +7,13 @@ renderer::task::task(device* device, task::fn fn, vk::CommandPool pool, u32 coun
 {
     // Allocate command buffers
     cmd_buffers.resize(count);
-    cmd_buffers = device->vk().allocateCommandBuffersUnique(
-        { pool, vk::CommandBufferLevel::ePrimary, count });
+    cmd_buffers =
+        device->vk().allocateCommandBuffers({ pool, vk::CommandBufferLevel::ePrimary, count });
+}
+
+void renderer::task::free(device* device, vk::CommandPool pool)
+{
+    device->vk().freeCommandBuffers(pool, cmd_buffers);
 }
 
 renderer::renderer(graphics* graphics)
@@ -17,51 +22,64 @@ renderer::renderer(graphics* graphics)
     , swapchain_{ graphics->get_swap() }
 
 {
-    // Create command pools
-    for (u32 i = 0; i < swapchain_->get_image_count(); i++) {
-        cmd_pools_.push_back(device_->vk().createCommandPoolUnique(
-            { vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
-                device_->get_queues().present_index }));
-    }
+    // Create command pool
+    cmd_pool =
+        (device_->vk().createCommandPool({ vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
+            device_->get_queues().present_index }));
+
 
     // Create sync objects
     for (u32 i = 0; i < swapchain_->get_image_count(); i++) {
         vk::FenceCreateInfo info = { vk::FenceCreateFlagBits::eSignaled };
-        fences_.push_back(device_->vk().createFence(info));
+        flight_fences_.push_back(device_->vk().createFence(info));
     }
 
     sync_.aquire = device_->vk().createSemaphoreUnique({});
     sync_.render = device_->vk().createSemaphoreUnique({});
 }
 
+
+auto renderer::wait() const
+{
+    return swapchain_->get_device()->vk().waitForFences(flight_fences_, true, -1);
+}
+
+auto renderer::wait(u32 idx) const
+{
+    return swapchain_->get_device()->vk().waitForFences(flight_fences_[idx], true, -1);
+}
+
+auto renderer::fence_reset(u32 idx) const
+{
+    return swapchain_->get_device()->vk().resetFences(flight_fences_[idx]);
+}
+
 renderer::~renderer()
 {
-    for (u32 i = 0; i < fences_.size(); i++) {
-        device_->vk().destroyFence(fences_[i]);
+    wait();
+
+    for (auto& task : tasks_) {
+        task->free(device_, cmd_pool);
+        delete task;
     }
-    fences_.clear();
+
+    device_->vk().destroyCommandPool(cmd_pool);
+
+
+    for (u32 i{ 0 }; i < flight_fences_.size(); i++) {
+        device_->vk().destroyFence(flight_fences_[i]);
+    }
+
+    flight_fences_.clear();
+    tasks_.clear();
 }
 
 void renderer::add_task(task::fn task)
 {
     // Create task
-    tasks_.emplace_back(device_, task, cmd_pools_.back().get(), swapchain_->get_image_count());
+    tasks_.push_back(new renderer::task(device_, task, cmd_pool, swapchain_->get_image_count()));
 }
 
-auto renderer::wait() const
-{
-    return swapchain_->get_device()->vk().waitForFences(fences_, true, -1);
-}
-
-auto renderer::wait(u32 idx) const
-{
-    return swapchain_->get_device()->vk().waitForFences(fences_[idx], true, -1);
-}
-
-auto renderer::fence_reset(u32 idx) const
-{
-    return swapchain_->get_device()->vk().resetFences(fences_[idx]);
-}
 
 void renderer::update()
 {
@@ -95,10 +113,13 @@ bool renderer::aquire_next_image()
 
 void renderer::process_tasks()
 {
-    device_->vk().resetCommandPool(cmd_pools_[current_].get(), (vk::CommandPoolResetFlagBits)0);
+    device_->vk().resetCommandPool(cmd_pool, (vk::CommandPoolResetFlagBits)0);
 
-    for (auto& [proc, buffs] : tasks_) {
-        auto cmd_buff = buffs[current_].get();
+    for (auto& task : tasks_) {
+
+        auto& [proc, buffs] = *task;
+
+        auto cmd_buff = buffs[current_];
 
         cmd_buff.begin({ vk::CommandBufferUsageFlagBits::eOneTimeSubmit });
 
@@ -125,7 +146,7 @@ void renderer::end_frame()
     submit_info.setSignalSemaphoreCount(1);
     submit_info.setPSignalSemaphores(&sync_.render.get());
 
-    device_->get_queues().submit(submit_info, fences_[current_]);
+    device_->get_queues().submit(submit_info, flight_fences_[current_]);
 
     // Present stage
     vk::PresentInfoKHR present_info;

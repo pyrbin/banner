@@ -16,14 +16,13 @@ struct window
     using window_inner = GLFWwindow;
     using window_monitor = GLFWmonitor;
 
-    explicit window(
-        const std::string& title, vec2 size, str_ref icon_path = "", bool fullscreen = false);
+    explicit window(str_ref title, vec2 size, str_ref icon_path = "", bool fullscreen = false);
     ~window();
 
     window_inner* get_inner() const { return inner_; }
     static window* to_window(GLFWwindow* inner);
 
-    void set_title(const std::string& text);
+    void set_title(str_ref text);
     auto& get_title() const { return title_; }
 
     void set_icon(str_ref filename);
@@ -62,7 +61,7 @@ private:
     template<int hint>
     static void set_hint(int val);
 
-    std::string title_;
+    str title_;
 
     bool update_viewport_{ false };
     bool fullscreen_{ false };

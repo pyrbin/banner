@@ -9,7 +9,7 @@
 #include <banner/util/debug.hpp>
 
 namespace ban {
-window::window(const std::string& title, vec2 size, str_ref icon_path, bool fullscreen)
+window::window(str_ref title, vec2 size, str_ref icon_path, bool fullscreen)
     : title_{ title }
     , fullscreen_{ fullscreen }
 {
@@ -28,6 +28,7 @@ void window::create_window(str_ref title, vec2 size)
 {
     title_ = title;
 
+    // TODO: don't call init/terminate from window
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
@@ -51,6 +52,9 @@ window::~window()
 {
     glfwDestroyWindow(inner_);
     inner_ = nullptr;
+    monitor_ = nullptr;
+    // TODO: don't call init/terminate from window
+    glfwTerminate();
 }
 
 void window::update()
@@ -133,7 +137,7 @@ bool window::is_maximized() const
     return is_attri_set(GLFW_MAXIMIZED);
 }
 
-void window::set_title(const std::string& title)
+void window::set_title(str_ref title)
 {
     title_ = title;
     glfwSetWindowTitle(inner_, title_.c_str());
@@ -141,9 +145,9 @@ void window::set_title(const std::string& title)
 
 void window::set_icon(str_ref filename)
 {
-    int w, h;
-    bytes img{ stbi_load(filename.c_str(), &w, &h, 0, 4) };
-    GLFWimage image{ w, h, (uc8*)img };
+    i32 w, h;
+    bytes bytes{ stbi_load(filename.c_str(), &w, &h, 0, 4) };
+    GLFWimage image{ w, h, (uc8*)bytes };
     glfwSetWindowIcon(inner_, 1, { &image });
     stbi_image_free(image.pixels);
 }

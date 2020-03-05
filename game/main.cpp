@@ -1,7 +1,7 @@
-#include <iostream>
-#include <time.h>
-
 #include <banner/banner.hpp>
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#include <stdlib.h>
 
 using namespace ban;
 
@@ -12,4 +12,8 @@ int main()
     while (!window->should_close()) {
         window->update();
     }
+
+    delete window;
+
+    _CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF);
 }

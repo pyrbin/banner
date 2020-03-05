@@ -4,6 +4,7 @@
 #include <vulkan/vulkan.hpp>
 
 namespace ban {
+
 struct swapchain;
 struct render_pass;
 struct renderer;
@@ -13,7 +14,7 @@ struct subpass
 {
     friend class render_pass;
 
-    using uptr = std::unique_ptr<subpass>;
+    using uptr = uptr<subpass>;
     using list = std::vector<uptr>;
 
     explicit subpass()

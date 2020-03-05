@@ -1,7 +1,8 @@
-#include <iostream>
-#include <time.h>
-
 #include <banner/banner.hpp>
+
+#define _CRTDBG_MAP_ALLOC
+#include <crtdbg.h>
+#include <stdlib.h>
 
 using namespace ban;
 
@@ -9,7 +10,9 @@ int main()
 {
     window* wnd = new ban::window("My window :)", { 800, 600 }, "icon.png");
 
+
     graphics* gr = new graphics(wnd);
+
     renderer* re = new renderer(gr);
 
     vk::ShaderModule vert_shader_module =
@@ -49,4 +52,18 @@ int main()
     while (!wnd->should_close()) {
         wnd->update();
     }
+
+
+    gr->get_device()->vk().destroyShaderModule(vert_shader_module);
+    gr->get_device()->vk().destroyShaderModule(frag_shader_module);
+
+    delete re;
+
+    delete pass;
+
+    delete gr;
+
+    delete wnd;
+
+    _CrtSetDbgFlag(_CRTDBG_LEAK_CHECK_DF);
 }

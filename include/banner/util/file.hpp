@@ -1,6 +1,6 @@
-#include <string>
+#include <banner/core/types.hpp>
 #include <vector>
 
 namespace ban {
-std::vector<char> read_file(const std::string& filename);
+std::vector<char> read_file(str_ref filename);
 } // namespace ban

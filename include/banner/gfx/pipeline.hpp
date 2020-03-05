@@ -13,7 +13,7 @@ struct pipeline
 {
     friend struct subpass;
 
-    using uptr = std::unique_ptr<pipeline>;
+    using uptr = uptr<pipeline>;
     using list = std::vector<uptr>;
     using shader_stages = std::vector<vk::PipelineShaderStageCreateInfo>;
     using cb_signature = void(vk::CommandBuffer);

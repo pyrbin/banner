@@ -48,7 +48,13 @@ swapchain::swapchain(device* device, vk::SurfaceKHR surface, const uv2& size)
     create_vk_swapchain();
 }
 
-swapchain::~swapchain() {}
+swapchain::~swapchain()
+{
+    data_.images.clear();
+    data_.views.clear();
+    surface_ = nullptr;
+    device_ = nullptr;
+}
 
 void swapchain::create_vk_swapchain()
 {
@@ -95,11 +101,13 @@ void swapchain::create_vk_swapchain()
 
     if (old_swapchain) {
         device_->vk().destroySwapchainKHR(old_swapchain);
+        old_swapchain = nullptr;
     }
 }
 
 void swapchain::create_imageviews()
 {
+
     data_.images.clear();
     data_.views.clear();
     data_.images = device_->vk().getSwapchainImagesKHR(vk_swapchain_.get());

@@ -35,5 +35,4 @@ device::device(const vk::PhysicalDevice& gpu, const vk::SurfaceKHR surface, cons
         this, indices.graphics_family.value(), indices.present_family.value());
 }
 
-device::~device() {}
 } // namespace ban

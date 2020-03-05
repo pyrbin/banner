@@ -9,13 +9,14 @@
 #include <banner/gfx/window.hpp>
 
 namespace ban {
-const std::vector<cstr> graphics::device_extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-    VK_EXT_PIPELINE_CREATION_FEEDBACK_EXTENSION_NAME };
+
+const std::vector<cstr> graphics::device_extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 const std::vector<cstr> graphics::validation_layers{ "VK_LAYER_KHRONOS_validation" };
 
 graphics::graphics(window* window)
     : window_{ window }
 {
+
     create_instance();
     create_debugger();
     create_device();
@@ -25,18 +26,22 @@ graphics::graphics(window* window)
 
 graphics::~graphics()
 {
+
     // Destroy debugger
     if (debugger_) {
         const auto destroy = PFN_vkDestroyDebugUtilsMessengerEXT(
             vkGetInstanceProcAddr(instance_.get(), "vkDestroyDebugUtilsMessengerEXT"));
         destroy(instance_.get(), debugger_, nullptr);
     }
+
+    window_->on_resize.disconnect<&graphics::resize_swapchain>(*this);
+    window_ = nullptr;
 }
 
 void graphics::create_instance()
 {
     vk::ApplicationInfo application_info{ "TD Engine", VK_MAKE_VERSION(1, 0, 0), "No engine",
-        VK_MAKE_VERSION(1, 0, 0), VK_API_VERSION_1_1 };
+        VK_MAKE_VERSION(1, 0, 0), VK_API_VERSION_1_2 };
 
     // Instance extensions
     auto instance_extensions{ window_->get_instance_ext() };

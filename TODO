@@ -1,7 +1,7 @@
 [ todo ]
 
-- fix validation errors
 - memory cleanup of vulkan objects
+
 - initial engine class (@see liblava app.hpp for inspiration)
 - cleaner shader loading
 
@@ -9,6 +9,7 @@
 - render a model
 - camera & inputs
 
+- fix validation errors
 - replace vulkan_checks with runtime errors
 
 [ extras ]

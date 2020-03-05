@@ -4,7 +4,7 @@
 #include <banner/util/file.hpp>
 
 namespace ban {
-std::vector<char> read_file(const std::string& filename)
+std::vector<char> read_file(str_ref filename)
 {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
 

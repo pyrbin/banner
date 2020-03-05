@@ -7,10 +7,8 @@
 namespace ban {
 struct memory
 {
-    using uptr = std::unique_ptr<memory>;
-
     explicit memory(device* device);
-    virtual ~memory();
+    ~memory();
 
     VmaAllocator get() const { return vma_allocator_; }
 

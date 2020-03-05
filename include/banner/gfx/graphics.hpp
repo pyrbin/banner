@@ -32,9 +32,9 @@ private:
     vk::UniqueInstance instance_;
     vk::UniqueSurfaceKHR surface_;
 
-    device::uptr device_;
-    swapchain::uptr swapchain_;
-    memory::uptr memory_;
+    uptr<device> device_;
+    uptr<swapchain> swapchain_;
+    uptr<memory> memory_;
 
     void create_instance();
     void create_surface();

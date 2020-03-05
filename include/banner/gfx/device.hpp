@@ -8,7 +8,6 @@
 namespace ban {
 struct device
 {
-    using uptr = std::unique_ptr<device>;
 
     struct queues;
 
@@ -20,8 +19,6 @@ struct device
 
     explicit device(
         const vk::PhysicalDevice& device, const vk::SurfaceKHR surface, const options opts);
-
-    ~device();
 
     auto vk() const { return vk_device_.get(); }
     auto get_gpu() const { return gpu_; }
@@ -69,6 +66,6 @@ private:
     vk::PhysicalDeviceFeatures features_;
     vk::PhysicalDeviceMemoryProperties props_;
     vk::UniqueDevice vk_device_;
-    std::unique_ptr<queues> queues_;
+    uptr<queues> queues_;
 };
 } // namespace ban
