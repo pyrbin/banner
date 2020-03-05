@@ -48,7 +48,7 @@ struct window
     bool should_close() const;
 
     vk::SurfaceKHR create_surface(vk::Instance) const;
-    std::vector<cstr> get_instance_ext() const;
+    vector<cstr> get_instance_ext() const;
 
     signal<void(u16, u16)> on_resize;
     signal<void()> on_update;

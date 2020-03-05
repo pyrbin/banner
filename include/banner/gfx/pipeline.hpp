@@ -14,8 +14,8 @@ struct pipeline
     friend struct subpass;
 
     using uptr = uptr<pipeline>;
-    using list = std::vector<uptr>;
-    using shader_stages = std::vector<vk::PipelineShaderStageCreateInfo>;
+    using list = vector<uptr>;
+    using shader_stages = vector<vk::PipelineShaderStageCreateInfo>;
     using cb_signature = void(vk::CommandBuffer);
 
     explicit pipeline();
@@ -69,10 +69,10 @@ private:
     vk::UniquePipelineLayout layout_;
 
     create_info info_;
-    std::vector<vk::VertexInputBindingDescription> vertex_input_bindings_ = {};
-    std::vector<vk::VertexInputAttributeDescription> vertex_input_attributes_ = {};
-    std::vector<vk::PipelineColorBlendAttachmentState> color_blend_attachments_ = {};
-    std::vector<vk::DynamicState> dynamic_states_ = {};
+    vector<vk::VertexInputBindingDescription> vertex_input_bindings_ = {};
+    vector<vk::VertexInputAttributeDescription> vertex_input_attributes_ = {};
+    vector<vk::PipelineColorBlendAttachmentState> color_blend_attachments_ = {};
+    vector<vk::DynamicState> dynamic_states_ = {};
 
     shader_stages shader_stages_{};
 

@@ -8,7 +8,7 @@
 namespace ban {
 namespace vk_utils {
 bool is_device_suitable(const vk::PhysicalDevice device, const vk::SurfaceKHR surface,
-    const std::vector<cstr>& device_extens)
+    const vector<cstr>& device_extens)
 {
     const auto indices = get_queue_family_info(device, surface);
     const auto supports_ext = check_device_extensions(device, device_extens);
@@ -24,8 +24,7 @@ bool is_device_suitable(const vk::PhysicalDevice device, const vk::SurfaceKHR su
     return indices.has_values() && supports_ext && swapchain_valid;
 }
 
-bool check_device_extensions(
-    const vk::PhysicalDevice device, const std::vector<cstr>& device_extens)
+bool check_device_extensions(const vk::PhysicalDevice device, const vector<cstr>& device_extens)
 {
     const auto extensions = device.enumerateDeviceExtensionProperties();
 
@@ -38,7 +37,7 @@ bool check_device_extensions(
     });
 }
 
-bool check_validation_layers(const std::vector<cstr>& validation_layers)
+bool check_validation_layers(const vector<cstr>& validation_layers)
 {
     auto const layers = vk::enumerateInstanceLayerProperties();
 
@@ -51,7 +50,7 @@ bool check_validation_layers(const std::vector<cstr>& validation_layers)
     });
 }
 
-bool check_instance_extensions(const std::vector<cstr>& instance_extens)
+bool check_instance_extensions(const vector<cstr>& instance_extens)
 {
     const auto extensions = vk::enumerateInstanceExtensionProperties();
 

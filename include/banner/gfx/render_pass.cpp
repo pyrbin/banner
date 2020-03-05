@@ -71,9 +71,9 @@ void render_pass::create_render_pass()
 {
     const auto device = &swapchain_->get_device()->vk();
 
-    std::vector<vk::SubpassDescription> subpasses;
+    vector<vk::SubpassDescription> subpasses;
     std::transform(subpasses_.begin(), subpasses_.end(), std::back_inserter(subpasses),
-        [&](subpass::uptr& pass) { return pass->vk(); });
+        [&](uptr<subpass>& pass) { return pass->vk(); });
 
     if (vk_render_pass_) {
         vk_render_pass_.release();
@@ -93,8 +93,11 @@ void render_pass::create_framebuffers()
 
     framebuffers_.clear();
     framebuffers_.resize(0);
+
     for (auto& img_view : swapchain_->get_data().views) {
-        std::vector<vk::ImageView> framebuffer_attachments = { img_view.get() };
+
+        vector<vk::ImageView> framebuffer_attachments = { img_view.get() };
+
         framebuffers_.push_back(
             device->createFramebufferUnique({ {}, vk(), u32(framebuffer_attachments.size()),
                 framebuffer_attachments.data(), extent_.width, extent_.height, 1 }));

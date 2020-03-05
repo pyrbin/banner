@@ -39,8 +39,8 @@ struct queue_family_info
 struct surface_info
 {
     const vk::SurfaceCapabilitiesKHR capabilities;
-    const std::vector<vk::SurfaceFormatKHR> formats;
-    const std::vector<vk::PresentModeKHR> present_modes;
+    const vector<vk::SurfaceFormatKHR> formats;
+    const vector<vk::PresentModeKHR> present_modes;
 };
 
 /**
@@ -55,23 +55,22 @@ struct vulkan_gpu
  *
  */
 bool is_device_suitable(const vk::PhysicalDevice device, const vk::SurfaceKHR surface,
-    const std::vector<cstr>& device_extens);
+    const vector<cstr>& device_extens);
 
 /**
  *
  */
-bool check_device_extensions(
-    const vk::PhysicalDevice device, const std::vector<cstr>& device_extens);
+bool check_device_extensions(const vk::PhysicalDevice device, const vector<cstr>& device_extens);
 
 /**
  *
  */
-bool check_validation_layers(const std::vector<cstr>& validation_layers);
+bool check_validation_layers(const vector<cstr>& validation_layers);
 
 /**
  *
  */
-bool check_instance_extensions(const std::vector<cstr>& instance_extens);
+bool check_instance_extensions(const vector<cstr>& instance_extens);
 
 inline constexpr bool success(vk::Result result)
 {

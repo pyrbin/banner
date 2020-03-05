@@ -17,8 +17,8 @@ struct swapchain
 
     struct swapchain_data
     {
-        std::vector<vk::Image> images;
-        std::vector<vk::UniqueImageView> views;
+        vector<vk::Image> images;
+        vector<vk::UniqueImageView> views;
     };
 
     vk::ResultValue<u32> aquire_image(

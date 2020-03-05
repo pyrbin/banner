@@ -13,8 +13,8 @@ struct device
 
     struct options
     {
-        std::vector<cstr> extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-        std::vector<cstr> layers{ "VK_LAYER_KHRONOS_validation" };
+        vector<cstr> extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+        vector<cstr> layers{ "VK_LAYER_KHRONOS_validation" };
     };
 
     explicit device(

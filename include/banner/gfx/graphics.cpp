@@ -10,8 +10,8 @@
 
 namespace ban {
 
-const std::vector<cstr> graphics::device_extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-const std::vector<cstr> graphics::validation_layers{ "VK_LAYER_KHRONOS_validation" };
+const vector<cstr> graphics::device_extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+const vector<cstr> graphics::validation_layers{ "VK_LAYER_KHRONOS_validation" };
 
 graphics::graphics(window* window)
     : window_{ window }

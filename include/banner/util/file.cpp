@@ -4,7 +4,7 @@
 #include <banner/util/file.hpp>
 
 namespace ban {
-std::vector<char> read_file(str_ref filename)
+vector<char> read_file(str_ref filename)
 {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
@@ -13,7 +13,7 @@ std::vector<char> read_file(str_ref filename)
     }
 
     size_t file_size = file.tellg();
-    std::vector<char> buffer(file_size);
+    vector<char> buffer(file_size);
 
     if (file_size > 0) {
         file.seekg(0, std::ios::beg);

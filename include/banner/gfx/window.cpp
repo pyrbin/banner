@@ -202,9 +202,9 @@ vk::SurfaceKHR window::create_surface(vk::Instance instance) const
     return static_cast<vk::SurfaceKHR>(surface);
 }
 
-std::vector<cstr> window::get_instance_ext() const
+vector<cstr> window::get_instance_ext() const
 {
-    std::vector<cstr> extensions;
+    vector<cstr> extensions;
 
     u32 extension_count{ 0 };
     cstr* extension_names;

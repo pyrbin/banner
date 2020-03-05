@@ -15,8 +15,8 @@ struct window;
 class graphics
 {
 public:
-    static const std::vector<cstr> validation_layers;
-    static const std::vector<cstr> device_extensions;
+    static const vector<cstr> validation_layers;
+    static const vector<cstr> device_extensions;
 
     graphics(window* window);
     ~graphics();

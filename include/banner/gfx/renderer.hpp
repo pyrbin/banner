@@ -10,8 +10,8 @@
 
 namespace ban {
 
-using cmd_buffers = std::vector<vk::CommandBuffer>;
-using fences = std::vector<vk::Fence>;
+using cmd_buffers = vector<vk::CommandBuffer>;
+using fences = vector<vk::Fence>;
 
 struct renderer
 {
@@ -46,7 +46,7 @@ struct renderer
     auto get_current() const { return current_; };
     auto get_current_buffers()
     {
-        std::vector<vk::CommandBuffer> v{};
+        vector<vk::CommandBuffer> v{};
         std::transform(tasks_.begin(), tasks_.end(), std::back_inserter(v),
             [i = current_](task* t) { return t->cmd_buffers[i]; });
         return v;

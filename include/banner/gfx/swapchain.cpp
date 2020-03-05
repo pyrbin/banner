@@ -5,7 +5,7 @@
 #include <banner/gfx/vk_utils.hpp>
 
 namespace ban {
-inline vk::SurfaceFormatKHR choose_format(const std::vector<vk::SurfaceFormatKHR>& formats)
+inline vk::SurfaceFormatKHR choose_format(const vector<vk::SurfaceFormatKHR>& formats)
 {
     for (const auto& f : formats) {
         if (f.format == vk::Format::eB8G8R8A8Srgb &&
@@ -16,7 +16,7 @@ inline vk::SurfaceFormatKHR choose_format(const std::vector<vk::SurfaceFormatKHR
     return formats[0];
 }
 
-inline vk::PresentModeKHR choose_present_mode(const std::vector<vk::PresentModeKHR>& modes)
+inline vk::PresentModeKHR choose_present_mode(const vector<vk::PresentModeKHR>& modes)
 {
     for (const auto& mode : modes) {
         if (mode == vk::PresentModeKHR::eMailbox) {

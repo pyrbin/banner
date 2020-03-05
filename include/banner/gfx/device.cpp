@@ -9,7 +9,7 @@ namespace ban {
 device::device(const vk::PhysicalDevice& gpu, const vk::SurfaceKHR surface, const options opts)
 
 {
-    std::vector<vk::DeviceQueueCreateInfo> queue_infos;
+    vector<vk::DeviceQueueCreateInfo> queue_infos;
 
     const auto indices = vk_utils::get_queue_family_info(gpu, surface);
     const std::unordered_set<u32> unique_family_info{ indices.graphics_family.value(),

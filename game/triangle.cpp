@@ -1,4 +1,4 @@
-#include <banner/banner.hpp>
+﻿#include <banner/banner.hpp>
 
 #define _CRTDBG_MAP_ALLOC
 #include <crtdbg.h>
@@ -8,7 +8,7 @@ using namespace ban;
 
 int main()
 {
-    window* wnd = new ban::window("My window :)", { 800, 600 }, "icon.png");
+    window* wnd = new ban::window("Triangle /\\", { 800, 600 }, "icon.png");
 
 
     graphics* gr = new graphics(wnd);

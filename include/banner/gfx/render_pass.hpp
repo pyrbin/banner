@@ -13,9 +13,7 @@ struct pipeline;
 struct subpass
 {
     friend class render_pass;
-
-    using uptr = uptr<subpass>;
-    using list = std::vector<uptr>;
+    using list = vector<uptr<subpass>>;
 
     explicit subpass()
         : description_{}
@@ -65,10 +63,10 @@ private:
     render_pass* owner{ nullptr };
     bool activated_{ false };
 
-    std::vector<vk::AttachmentReference> color_attachments_;
+    vector<vk::AttachmentReference> color_attachments_;
     vk::AttachmentReference resolve_attachment_;
     vk::AttachmentReference depth_stencil_attachment_;
-    std::vector<u32> preserve_attachments_;
+    vector<u32> preserve_attachments_;
 
     vk::SubpassDescription description_;
     pipeline::list pipelines_;
@@ -78,9 +76,9 @@ struct render_pass
 {
     friend class renderer;
 
-    using framebuffers = std::vector<vk::UniqueFramebuffer>;
-    using dependencies = std::vector<vk::SubpassDependency>;
-    using attachments = std::vector<vk::AttachmentDescription>;
+    using framebuffers = vector<vk::UniqueFramebuffer>;
+    using dependencies = vector<vk::SubpassDependency>;
+    using attachments = vector<vk::AttachmentDescription>;
 
     struct attachment
     {
