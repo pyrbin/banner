@@ -4,9 +4,9 @@
 #include <stb_image.h>
 
 #include <banner/defs.hpp>
+#include <banner/gfx/vk_utils.hpp>
 #include <banner/gfx/window.hpp>
 #include <banner/util/debug.hpp>
-#include <banner\gfx\vk_utils.hpp>
 
 namespace ban {
 window::window(const std::string& title, vec2 size, str_ref icon_path, bool fullscreen)
@@ -37,7 +37,6 @@ void window::create_window(str_ref title, vec2 size)
     glfwSetWindowUserPointer(inner_, this);
 
     // Event handling
-
     glfwSetFramebufferSizeCallback(inner_, [](window_inner* wnd, i32 w, i32 h) {
         auto window = to_window(wnd);
 
@@ -177,16 +176,6 @@ v2 window::get_mouse_pos() const
     f64 w, h;
     glfwGetCursorPos(inner_, &w, &h);
     return { w, h };
-}
-
-void window::show_mouse_cursor() const
-{
-    glfwSetInputMode(inner_, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-}
-
-void window::hide_mouse_cursor() const
-{
-    glfwSetInputMode(inner_, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
 
 vec2 window::get_framebuffer_size() const

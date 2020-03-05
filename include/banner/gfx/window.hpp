@@ -37,9 +37,6 @@ struct window
     void set_mouse_pos(const v2& pos);
     v2 get_mouse_pos() const;
 
-    void show_mouse_cursor() const;
-    void hide_mouse_cursor() const;
-
     v2 get_framebuffer_size() const;
 
     void set_fullscreen(bool status = true);
