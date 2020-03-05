@@ -23,6 +23,8 @@ public:
 
     auto get_swap() { return swapchain_.get(); }
     auto get_device() { return device_.get(); }
+    auto get_memory() { return memory_.get(); }
+
     vk::ShaderModule load_shader(str_ref filename);
     void reload_swapchain();
 

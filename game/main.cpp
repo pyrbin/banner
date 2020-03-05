@@ -19,9 +19,7 @@ int main()
     {
         engine = new bnr::engine({ "(:^o)-|--<", { 800, 600 }, "icon.png" });
 
-        auto device = engine->graphics()->get_device();
         auto ctx = engine->graphics();
-
 
         engine->on_init.connect([&]() {
             engine->world()->create<v2>();
@@ -29,6 +27,11 @@ int main()
         });
 
         engine->on_init.connect([&]() {
+            const std::vector<vertex> vertices = { { { 0.0f, -0.5f },
+                                                       { 1.0f, 0.0f, 0.0f } },
+                { { 0.5f, 0.5f }, { 0.0f, 1.0f, 0.0f } },
+                { { -0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f } } };
+
             auto pipeline = new bnr::pipeline();
             pipeline->add_color_blend_attachment();
             pipeline->add_vertex("main", ctx->load_shader("shaders/shader.vert.spv"));
@@ -38,8 +41,6 @@ int main()
             };
             engine->default_pass()->add(pipeline);
         });
-
-        engine->on_update.connect([&]() {});
 
         engine->run();
     }

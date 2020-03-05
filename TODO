@@ -1,9 +1,41 @@
-[ todo ]
+[ todo/notes ]
 
-- memory cleanup of vulkan objects
+- simplify render technique
+  guidelines
+    -> window
+	-> graphics (context) -> swapchain & device
+	-> renderer -> cmd_pool & cmd_buffers
+	-> render_passes
+		-> subpasses
+			-> pipelines
 
-- initial engine class (@see liblava app.hpp for inspiration)
-- cleaner shader loading
+    the graphics ctx object is sent between each class (not some using device, some using swapchain etc)
+	order of destruction is bottom to top (pipelines -> subpass etc...)
+	all resources are bound to a ctx, buffers & images uses ctx VMA to allocate memory
+	use vk() to return raw vulkan.hpp object.
+	vulkan object are prefixed vk_ in their corresponding wrapper.
+	never pass pure vk objects, always pass the wrapper.
+
+  engine design: 
+	user can override certain event functions
+
+	engine->load = [&](){}
+	engine->init = [&](){}
+
+	engine->pre_update = [&](){}
+	engine->update = [&](){}
+	engine->post_update = [&](){}
+
+	engine->render = [&](){}
+	engine->teardown = [&](){}
+
+
+	
+- follow https://vulkan-tutorial.com/Vertex_buffers/Vertex_buffer_creation to completion
+
+- read following:
+	https://renderdoc.org/vulkan-in-30-minutes.html
+	https://www.jeremyong.com/c++/vulkan/graphics/rendering/2018/03/26/how-to-learn-vulkan/
 
 - lookup deps for model rendering & input?
 - render a model
@@ -11,6 +43,7 @@
 
 - fix validation errors
 - replace vulkan_checks with runtime errors
+- cleaner shader loading
 
 [ extras ]
 

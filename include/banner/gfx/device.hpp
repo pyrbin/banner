@@ -1,7 +1,5 @@
 #pragma once
 
-#include <vector>
-
 #include <banner/core/types.hpp>
 #include <vulkan/vulkan.hpp>
 
@@ -17,8 +15,8 @@ struct device
         vector<cstr> layers{ "VK_LAYER_KHRONOS_validation" };
     };
 
-    explicit device(
-        const vk::PhysicalDevice& device, const vk::SurfaceKHR surface, const options opts);
+    explicit device(const vk::PhysicalDevice& device, const vk::SurfaceKHR surface,
+        const options opts);
 
     auto vk() const { return vk_device_.get(); }
     auto get_gpu() const { return gpu_; }
