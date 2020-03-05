@@ -24,6 +24,8 @@ public:
     auto get_swap() { return swapchain_.get(); }
     auto get_device() { return device_.get(); }
 
+    void reload_swapchain();
+
 private:
     window* window_;
 

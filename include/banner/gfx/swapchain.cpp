@@ -117,18 +117,21 @@ void swapchain::create_imageviews()
     }
 }
 
-void swapchain::resize(vk::Extent2D extent)
+void swapchain::resize(const uv2& size)
 {
     device_->vk().waitIdle();
 
-    extent_ = extent;
+    extent_ = { size.x, size.y };
     create_vk_swapchain();
 
     on_recreate.fire();
 }
 
-vk::ResultValue<u32> swapchain::aquire_image(vk::Semaphore sem, vk::Fence fen, u32 timeout)
+vk::ResultValue<u32> swapchain::aquire_image(vk::Semaphore sem, vk::Fence fence, u32 timeout)
 {
-    return device_->vk().acquireNextImageKHR(vk(), timeout, sem, fen);
+    if (fence)
+        device_->vk().waitForFences(fence, true, timeout);
+
+    return device_->vk().acquireNextImageKHR(vk(), timeout, sem, fence);
 }
 } // namespace ban

@@ -11,15 +11,17 @@ renderer::task::task(device* device, task::fn fn, vk::CommandPool pool, u32 coun
         { pool, vk::CommandBufferLevel::ePrimary, count });
 }
 
-renderer::renderer(swapchain* swapchain)
-    : swapchain_{ swapchain }
-    , device_{ swapchain->get_device() }
+renderer::renderer(graphics* graphics)
+    : graphics_{ graphics }
+    , device_{ graphics->get_device() }
+    , swapchain_{ graphics->get_swap() }
 
 {
     // Create command pools
     for (u32 i = 0; i < swapchain_->get_image_count(); i++) {
         cmd_pools_.push_back(device_->vk().createCommandPoolUnique(
-            { vk::CommandPoolCreateFlags(), device_->get_queues().present_index }));
+            { vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
+                device_->get_queues().present_index }));
     }
 
     // Create sync objects
@@ -56,23 +58,42 @@ auto renderer::wait(u32 idx) const
     return swapchain_->get_device()->vk().waitForFences(fences_[idx], true, -1);
 }
 
-bool renderer::aquire()
+auto renderer::fence_reset(u32 idx) const
+{
+    return swapchain_->get_device()->vk().resetFences(fences_[idx]);
+}
+
+void renderer::update()
+{
+    if (!aquire_next_image())
+        return;
+
+    process_tasks();
+    end_frame();
+}
+
+bool renderer::aquire_next_image()
 {
     if (!vk_utils::success(wait(current_)))
         return false;
 
-    auto image_index = swapchain_->aquire_image(sync_.aquire.get(), nullptr, -1);
+    auto aquire_result = swapchain_->aquire_image(sync_.aquire.get());
 
-    if (!vk_utils::success(image_index)) {
+    if (aquire_result.result == vk::Result::eErrorOutOfDateKHR) {
+        graphics_->reload_swapchain();
+        return false;
+    } else if (!vk_utils::success(aquire_result)) {
         return false;
     }
 
-    current_ = image_index.value;
-    swapchain_->get_device()->vk().resetFences(fences_[current_]);
+    current_ = aquire_result.value;
+
+    fence_reset(current_);
+
     return true;
 }
 
-void renderer::process()
+void renderer::process_tasks()
 {
     device_->vk().resetCommandPool(cmd_pools_[current_].get(), (vk::CommandPoolResetFlagBits)0);
 
@@ -89,7 +110,7 @@ void renderer::process()
     }
 }
 
-void renderer::present()
+void renderer::end_frame()
 {
     auto buffers = get_current_buffers();
 
@@ -116,13 +137,5 @@ void renderer::present()
     present_info.setPResults(nullptr);
 
     VULKAN_CHECK(device_->get_queues().present(present_info));
-}
-
-void renderer::render()
-{
-    if (aquire()) {
-        process();
-        present();
-    }
 }
 } // namespace ban

@@ -22,8 +22,10 @@ struct swapchain
         std::vector<vk::UniqueImageView> views;
     };
 
-    vk::ResultValue<u32> aquire_image(vk::Semaphore sem, vk::Fence fen, u32 timeout);
-    void resize(vk::Extent2D extent);
+    vk::ResultValue<u32> aquire_image(
+        vk::Semaphore sem, vk::Fence fence = nullptr, u32 timeout = u32(-1));
+
+    void resize(const uv2& size);
     signal<void()> on_recreate;
 
     auto vk() const { return vk_swapchain_.get(); }

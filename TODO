@@ -2,20 +2,23 @@
 
 - fix validation errors
 - memory cleanup of vulkan objects
-- window class that wraps glfw window
 - initial engine class (@see liblava app.hpp for inspiration)
 - cleaner shader loading
 
 - lookup deps for model rendering & input?
 - render a model
+- camera & inputs
+
+- replace vulkan_checks with runtime errors
 
 [ extras ]
 
 [ event handler ]
 - event handler using https://blog.keha.dev/posts/cpp20-class-as-non-type-template-param/
 	event_handler<{ "resize", void(u32, u32) }, { "created", void() }>
-	on("resize" | "created", () => {})
+	on("resize" | "created", []((u32, u32 | /* empty */){ /* event cb */ })
 	- [P0732R2] https://en.cppreference.com/w/cpp/compiler_support
+	- references https://github.com/hanickadot/compile-time-regular-expressions
 
 - add imgui
 - fix glw3.dll dependency, currently i just copied the dll to the build folder

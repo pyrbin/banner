@@ -55,14 +55,19 @@ window::~window()
 
 void window::update()
 {
+    glfwPollEvents();
+
+    if (!inner_ || is_minimized()) {
+        return;
+    }
+
+    glfwSwapBuffers(inner_);
+
     if (update_viewport_) {
         update_viewport_ = false;
         const auto buffer_size = get_framebuffer_size();
         on_resize.fire(u16(buffer_size.x), u16(buffer_size.y));
     }
-
-    glfwSwapBuffers(inner_);
-    glfwPollEvents();
 
     on_update.fire();
 }
@@ -90,6 +95,8 @@ void window::set_fullscreen(bool status)
     if (is_fullscreen() == status)
         return;
 
+    fullscreen_ = status;
+
     if (status) {
         monitor_ = glfwGetPrimaryMonitor();
         const auto mode = glfwGetVideoMode(monitor_);
@@ -105,16 +112,15 @@ void window::set_fullscreen(bool status)
     } else {
         monitor_ = nullptr;
 
-        // TODO: not hard code return values
+        // TODO: not hard code reset values
         glfwSetWindowMonitor(inner_, nullptr, 100, 100, 800, 600, 0);
-
         glfwRestoreWindow(inner_);
     }
 }
 
 bool window::is_fullscreen() const
 {
-    return monitor_ != nullptr;
+    return monitor_ != nullptr && fullscreen_;
 }
 
 bool window::is_minimized() const

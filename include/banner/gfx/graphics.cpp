@@ -35,15 +35,8 @@ graphics::~graphics()
 
 void graphics::create_instance()
 {
-    // clang-format off
-    vk::ApplicationInfo application_info
-    {
-        "TD Engine",
-        VK_MAKE_VERSION(1, 0, 0),
-        "No engine",
-        VK_MAKE_VERSION(1, 0, 0),
-        VK_API_VERSION_1_2
-    };
+    vk::ApplicationInfo application_info{ "TD Engine", VK_MAKE_VERSION(1, 0, 0), "No engine",
+        VK_MAKE_VERSION(1, 0, 0), VK_API_VERSION_1_1 };
 
     // Instance extensions
     auto instance_extensions{ window_->get_instance_ext() };
@@ -57,16 +50,9 @@ void graphics::create_instance()
     ASSERT(vk_utils::check_validation_layers(validation_layers),
         "Required validation layers not present!");
 
-    // clang-format off
-    vk::InstanceCreateInfo instance_info
-    {
-        vk::InstanceCreateFlags(),
-        &application_info,
-        u32(validation_layers.size()),
-        validation_layers.data(),
-        u32(instance_extensions.size()),
-        instance_extensions.data()
-    };
+    vk::InstanceCreateInfo instance_info{ vk::InstanceCreateFlags(), &application_info,
+        u32(validation_layers.size()), validation_layers.data(), u32(instance_extensions.size()),
+        instance_extensions.data() };
 
     instance_ = vk::createInstanceUnique(instance_info);
 
@@ -75,17 +61,14 @@ void graphics::create_instance()
     debug::trace("Created vulkan instance ...");
 }
 
-void
-graphics::create_surface()
+void graphics::create_surface()
 {
-    surface_ = vk::UniqueSurfaceKHR(
-        window_->create_surface(instance_.get()), instance_.get());
+    surface_ = vk::UniqueSurfaceKHR(window_->create_surface(instance_.get()), instance_.get());
 
     ASSERT(surface_, "Failed to create surface!");
 }
 
-void
-graphics::create_device()
+void graphics::create_device()
 {
     const auto devices = instance_->enumeratePhysicalDevices();
 
@@ -116,8 +99,8 @@ graphics::create_device()
     }
 
     // Create swapchain
-    swapchain_ = std::make_unique<swapchain>(
-        device_.get(), surface_.get(), window_->get_framebuffer_size());
+    swapchain_ =
+        std::make_unique<swapchain>(device_.get(), surface_.get(), window_->get_framebuffer_size());
 
     ASSERT(swapchain_, "Failed to create swapchain!");
 
@@ -129,14 +112,18 @@ graphics::create_device()
     debug::trace("Initialized vulkan graphics ...");
 }
 
-void
-graphics::resize_swapchain(u16 w, u16 h)
+void graphics::reload_swapchain()
+{
+    auto size = window_->get_framebuffer_size();
+    resize_swapchain(size.x, size.y);
+}
+
+void graphics::resize_swapchain(u16 w, u16 h)
 {
     swapchain_->resize({ w, h });
 }
 
-void
-graphics::create_debugger()
+void graphics::create_debugger()
 {
     using callback_type = PFN_vkDebugUtilsMessengerCallbackEXT;
 

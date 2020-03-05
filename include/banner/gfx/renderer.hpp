@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #include <banner/gfx/device.hpp>
+#include <banner/gfx/graphics.hpp>
 #include <banner/gfx/swapchain.hpp>
 #include <vulkan/vulkan.hpp>
 
@@ -33,12 +34,14 @@ struct renderer
         vk::UniqueSemaphore render{ nullptr };
     };
 
-    explicit renderer(swapchain* swapchain);
+    explicit renderer(graphics* graphics);
     ~renderer();
 
     void add_task(task::fn task);
 
     auto get_device() const { return device_; }
+    auto get_swap() const { return swapchain_; }
+
     auto get_current() const { return current_; };
     auto get_current_buffers()
     {
@@ -48,22 +51,22 @@ struct renderer
         return v;
     };
 
-    auto get_swap() const { return swapchain_; }
-
     auto& get_sync() const { return sync_; }
     auto& get_pool(u32 idx) { return cmd_pools_.at(idx); }
 
-    void render();
+    void update();
     auto wait() const;
     auto wait(u32 idx) const;
+    auto fence_reset(u32 idx) const;
 
 private:
-    bool aquire();
-    void process();
-    void present();
+    bool aquire_next_image();
+    void process_tasks();
+    void end_frame();
 
-    device* device_{ nullptr };
+    graphics* graphics_{ nullptr };
     swapchain* swapchain_{ nullptr };
+    device* device_{ nullptr };
 
     task::list tasks_;
     cmd_pools cmd_pools_;

@@ -8,8 +8,9 @@ using namespace ban;
 int main()
 {
     window* wnd = new ban::window("My window :)", { 800, 600 }, "icon.png");
+
     graphics* gr = new graphics(wnd);
-    renderer* re = new renderer(gr->get_swap());
+    renderer* re = new renderer(gr);
 
     vk::ShaderModule vert_shader_module =
         vk_utils::load_shader("shaders/shader.vert.spv", &gr->get_device()->vk());
@@ -43,7 +44,7 @@ int main()
     //////////////////////////////////////////////////
 
     re->add_task([&](vk::CommandBuffer buff) { pass->process(re->get_current(), buff); });
-    wnd->on_update.connect([&]() { re->render(); });
+    wnd->on_update.connect([&]() { re->update(); });
 
     while (!wnd->should_close()) {
         wnd->update();
