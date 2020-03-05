@@ -32,9 +32,10 @@ struct pipeline
         vk::PipelineDynamicStateCreateInfo dynamic_state{};
     };
 
-    bool ready() const { return !on_process_sig.is_empty() && vk_pipeline_; }
+    bool ready() const { return on_process && vk_pipeline_; }
 
     static vk::PipelineColorBlendAttachmentState default_color_blend_attachment();
+
     void add_color_blend_attachment(
         vk::PipelineColorBlendAttachmentState state = default_color_blend_attachment());
 
@@ -51,11 +52,7 @@ struct pipeline
         add_shader(name, vk::ShaderStageFlagBits::eFragment, module);
     }
 
-    template<typename F>
-    void on_process(F&& cb)
-    {
-        on_process_sig.connect(std::move(cb));
-    }
+    fn<cb_signature> on_process;
 
 private:
     void create(render_pass*);
@@ -63,7 +60,6 @@ private:
     void bind_buffer(vk::CommandBuffer buffer);
     void set_viewport(vk::CommandBuffer buffer, vk::Extent2D extent);
 
-    signal<cb_signature> on_process_sig;
 
     vk::UniquePipeline vk_pipeline_;
     vk::UniquePipelineLayout layout_;

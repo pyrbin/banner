@@ -34,14 +34,25 @@ graphics::~graphics()
         destroy(instance_.get(), debugger_, nullptr);
     }
 
+    for (auto& shader : shader_modules_) {
+        device_->vk().destroyShaderModule(shader);
+    }
+
+    shader_modules_.clear();
     window_->on_resize.disconnect<&graphics::resize_swapchain>(*this);
     window_ = nullptr;
 }
 
+vk::ShaderModule graphics::load_shader(str_ref filename)
+{
+    shader_modules_.push_back(vk_utils::load_shader(filename, &device_->vk()));
+    return shader_modules_.back();
+}
+
 void graphics::create_instance()
 {
-    vk::ApplicationInfo application_info{ "TD Engine", VK_MAKE_VERSION(1, 0, 0), "No engine",
-        VK_MAKE_VERSION(1, 0, 0), VK_API_VERSION_1_2 };
+    vk::ApplicationInfo application_info{ "TD Engine", VK_MAKE_VERSION(1, 0, 0),
+        "No engine", VK_MAKE_VERSION(1, 0, 0), VK_API_VERSION_1_2 };
 
     // Instance extensions
     auto instance_extensions{ window_->get_instance_ext() };
@@ -56,8 +67,8 @@ void graphics::create_instance()
         "Required validation layers not present!");
 
     vk::InstanceCreateInfo instance_info{ vk::InstanceCreateFlags(), &application_info,
-        u32(validation_layers.size()), validation_layers.data(), u32(instance_extensions.size()),
-        instance_extensions.data() };
+        u32(validation_layers.size()), validation_layers.data(),
+        u32(instance_extensions.size()), instance_extensions.data() };
 
     instance_ = vk::createInstanceUnique(instance_info);
 
@@ -68,7 +79,8 @@ void graphics::create_instance()
 
 void graphics::create_surface()
 {
-    surface_ = vk::UniqueSurfaceKHR(window_->create_surface(instance_.get()), instance_.get());
+    surface_ =
+        vk::UniqueSurfaceKHR(window_->create_surface(instance_.get()), instance_.get());
 
     ASSERT(surface_, "Failed to create surface!");
 }
@@ -104,8 +116,8 @@ void graphics::create_device()
     }
 
     // Create swapchain
-    swapchain_ =
-        std::make_unique<swapchain>(device_.get(), surface_.get(), window_->get_framebuffer_size());
+    swapchain_ = std::make_unique<swapchain>(
+        device_.get(), surface_.get(), window_->get_framebuffer_size());
 
     ASSERT(swapchain_, "Failed to create swapchain!");
 

@@ -10,9 +10,18 @@ namespace bnr {
 subpass::ref subpass::add_pipeline(pipeline* pipeline)
 {
     pipelines_.emplace_back(pipeline);
-    on_process.connect<&pipeline::process>(pipeline);
-    on_create.connect<&pipeline::create>(pipeline);
+    if (activated()) {
+        pipeline->create(owner_);
+    }
     return *this;
+}
+
+void subpass::create()
+{
+    activated_ = true;
+    for (auto& pipeline : pipelines_) {
+        pipeline->create(owner_);
+    }
 }
 
 render_pass::render_pass(swapchain* swapchain)
@@ -29,13 +38,22 @@ void render_pass::create()
     swapchain_->on_recreate.connect<&render_pass::create_framebuffers>(*this);
 
     for (auto& subpass : subpasses_) {
-        subpass->on_create.fire(this);
-        subpass->activated_ = true;
+        subpass->create();
     }
 }
 
+render_pass::~render_pass()
+{
+    for (auto& sp : subpasses_) {
+        sp.reset();
+    }
+    subpasses_.clear();
+}
+
+
 void render_pass::process(u32 frame, vk::CommandBuffer buffer)
 {
+
     if (!vk_render_pass_ || subpasses_.size() <= 0)
         return;
 
@@ -57,13 +75,18 @@ void render_pass::add(subpass* subpass)
     subpass->set_render_pass(this);
 }
 
+void render_pass::add(pipeline* pipeline, u32 subpass_idx)
+{
+    subpasses_.at(subpass_idx)->add_pipeline(pipeline);
+}
+
 void render_pass::add(attachment attachment)
 {
     attachment.description_.setFormat(swapchain_->get_format().format);
     attachments_.push_back(attachment.vk());
 }
 
-void render_pass::add(dependency dependency)
+void render_pass::add(subpass::dependency dependency)
 {
     dependencies_.push_back(dependency.vk());
 }

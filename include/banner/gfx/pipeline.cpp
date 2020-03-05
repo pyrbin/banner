@@ -37,8 +37,8 @@ void pipeline::create(render_pass* render_pass)
     vk_pipeline_ = device->vk().createGraphicsPipelineUnique({},
         { {}, u32(shader_stages_.size()), shader_stages_.data(), &vertex_input_state,
             &input_assembly, nullptr, &viewport, &rasterization, &multisample,
-            nullptr /*&depth_stencil*/, &color_blend, nullptr, layout_.get(), render_pass->vk(),
-            0 });
+            nullptr /*&depth_stencil*/, &color_blend, nullptr, layout_.get(),
+            render_pass->vk(), 0 });
 
     ASSERT(vk_pipeline_, "Failed to create pipeline!");
 
@@ -66,7 +66,7 @@ void pipeline::process(vk::CommandBuffer buffer, vk::Extent2D extent)
     if (ready()) {
         set_viewport(buffer, extent);
         bind_buffer(buffer);
-        on_process_sig.fire(buffer);
+        on_process(buffer);
     }
 }
 

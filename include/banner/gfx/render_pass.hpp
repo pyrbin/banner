@@ -12,6 +12,7 @@ struct renderer;
 struct subpass
 {
     friend class render_pass;
+
     using list = vector<uptr<subpass>>;
     using ref = subpass&;
 
@@ -22,6 +23,55 @@ struct subpass
     }
 
     auto vk() const { return description_; }
+    auto activated() const { return activated_; }
+
+    struct dependency
+    {
+        friend class render_pass;
+        using ref = dependency&;
+
+        dependency(vk::SubpassDependency dep = {})
+            : dependency_{ dep }
+        {}
+
+        dependency(u32 src, u32 dst)
+            : dependency_{}
+        {
+            set_subpass(src, dst);
+        }
+
+        auto vk() { return dependency_; }
+
+        ref set_subpass(u32 src, u32 dst)
+        {
+            dependency_.setSrcSubpass(src);
+            dependency_.setDstSubpass(dst);
+            return *this;
+        }
+
+        ref set_stage_mask(vk::PipelineStageFlags src, vk::PipelineStageFlags dst)
+        {
+            dependency_.setSrcStageMask(src);
+            dependency_.setDstStageMask(dst);
+            return *this;
+        }
+
+        ref set_access_mask(vk::AccessFlags src, vk::AccessFlags dst)
+        {
+            dependency_.setSrcAccessMask(src);
+            dependency_.setDstAccessMask(dst);
+            return *this;
+        }
+
+        ref set_flags(vk::DependencyFlags flags)
+        {
+            dependency_.setDependencyFlags(flags);
+            return *this;
+        }
+
+    private:
+        vk::SubpassDependency dependency_;
+    };
 
     ref add_pipeline(pipeline* pipeline);
 
@@ -54,21 +104,21 @@ struct subpass
 
     ref set_render_pass(render_pass* render_pass)
     {
-        owner = render_pass;
+        owner_ = render_pass;
         return *this;
     }
 
+    void create();
+
     void process(vk::CommandBuffer buffer, vk::Extent2D extent)
     {
-        if (activated_)
-            on_process.fire(buffer, extent);
+        for (auto& pipeline : pipelines_) {
+            pipeline->process(buffer, extent);
+        }
     }
 
-    signal<void(render_pass*)> on_create;
-    signal<void(vk::CommandBuffer, vk::Extent2D)> on_process;
-
 private:
-    render_pass* owner{ nullptr };
+    render_pass* owner_{ nullptr };
     bool activated_{ false };
 
     vector<vk::AttachmentReference> color_attachments_;
@@ -136,63 +186,18 @@ struct render_pass
         vk::AttachmentDescription description_;
     };
 
-    struct dependency
-    {
-        friend class render_pass;
-        using ref = dependency&;
-
-        dependency(vk::SubpassDependency dep = {})
-            : dependency_{ dep }
-        {}
-
-        dependency(u32 src, u32 dst)
-            : dependency_{}
-        {
-            set_subpass(src, dst);
-        }
-
-        auto vk() { return dependency_; }
-
-        ref set_subpass(u32 src, u32 dst)
-        {
-            dependency_.setSrcSubpass(src);
-            dependency_.setDstSubpass(dst);
-            return *this;
-        }
-
-        ref set_stage_mask(vk::PipelineStageFlags src, vk::PipelineStageFlags dst)
-        {
-            dependency_.setSrcStageMask(src);
-            dependency_.setDstStageMask(dst);
-            return *this;
-        }
-
-        ref set_access_mask(vk::AccessFlags src, vk::AccessFlags dst)
-        {
-            dependency_.setSrcAccessMask(src);
-            dependency_.setDstAccessMask(dst);
-            return *this;
-        }
-
-        ref set_flags(vk::DependencyFlags flags)
-        {
-            dependency_.setDependencyFlags(flags);
-            return *this;
-        }
-
-    private:
-        vk::SubpassDependency dependency_;
-    };
-
     explicit render_pass(swapchain* swapchain);
+    ~render_pass();
 
     auto vk() const { return vk_render_pass_.get(); }
     auto get_clear_color() const { return clear_value_; }
     auto get_swap() const { return swapchain_; }
+    auto get_subpass(u32 idx) const { return subpasses_.at(idx).get(); }
 
     void add(subpass* subpass);
     void add(attachment attachment);
-    void add(dependency dependency);
+    void add(subpass::dependency dependency);
+    void add(pipeline* pipeline, u32 subpass_idx = 0);
 
     void set_clear_color(std::array<f32, 4> values)
     {

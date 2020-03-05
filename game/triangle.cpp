@@ -36,7 +36,7 @@ int main()
         pipe->add_color_blend_attachment();
         pipe->add_vertex("main", vert_shader_module);
         pipe->add_fragment("main", frag_shader_module);
-        pipe->on_process([&](vk::CommandBuffer cmd_buf) { cmd_buf.draw(3, 1, 0, 0); });
+        pipe->on_process = [&](vk::CommandBuffer cmd_buf) { cmd_buf.draw(3, 1, 0, 0); };
 
         sub->add_pipeline(pipe);
         pass->add(sub);

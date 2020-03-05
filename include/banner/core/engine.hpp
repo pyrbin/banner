@@ -35,7 +35,7 @@ struct engine
     struct runtime
     {
         timer timer;
-        ms offset;
+        ms offset{ 0 };
     };
 
     explicit engine(engine::config cfg);

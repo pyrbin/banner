@@ -12,13 +12,13 @@ default_render_pass::default_render_pass(graphics* gfx)
                 vk::AttachmentLoadOp::eDontCare, vk::AttachmentStoreOp::eDontCare)
             .set_layout({}, vk::ImageLayout::ePresentSrcKHR));
 
-    subpass sub;
-    sub.set_color_attachment({ 0, vk::ImageLayout::eColorAttachmentOptimal });
+    auto sub = new subpass();
+    sub->set_color_attachment({ 0, vk::ImageLayout::eColorAttachmentOptimal });
     // sub.set_depth_stencil_attachment({ 1,
     // vk::ImageLayout::eDepthStencilAttachmentOptimal });
-    render_pass_->add(&sub);
+    render_pass_->add(sub);
 
-    render_pass_->add(render_pass::dependency(VK_SUBPASS_EXTERNAL, 0)
+    render_pass_->add(subpass::dependency(VK_SUBPASS_EXTERNAL, 0)
                           .set_stage_mask(vk::PipelineStageFlagBits::eBottomOfPipe,
                               vk::PipelineStageFlagBits::eColorAttachmentOutput)
                           .set_access_mask(vk::AccessFlagBits::eMemoryRead,
@@ -26,7 +26,7 @@ default_render_pass::default_render_pass(graphics* gfx)
                                   vk::AccessFlagBits::eColorAttachmentWrite));
 
     render_pass_->add(
-        render_pass::dependency(0, VK_SUBPASS_EXTERNAL)
+        subpass::dependency(0, VK_SUBPASS_EXTERNAL)
             .set_stage_mask(vk::PipelineStageFlagBits::eColorAttachmentOutput,
                 vk::PipelineStageFlagBits::eBottomOfPipe)
             .set_access_mask(vk::AccessFlagBits::eColorAttachmentRead |
@@ -40,9 +40,29 @@ default_render_pass::~default_render_pass() {}
 
 engine::engine(engine::config cfg)
     : cfg{ cfg }
-{}
+{
 
-engine::~engine() {}
+    window_ =
+        make_uptr<bnr::window>(cfg.name, cfg.window_size, cfg.icon_path, cfg.fullscreen);
+    graphics_ = make_uptr<bnr::graphics>(window_.get());
+    renderer_ = make_uptr<bnr::renderer>(graphics_.get());
+    default_pass_ = make_uptr<bnr::default_render_pass>(graphics_.get());
+    world_ = make_uptr<bnr::world>(cfg.world_size);
+}
+
+engine::~engine()
+{
+    /* Free renderer */
+    renderer_.reset();
+    /* Free render passes */
+    default_pass_.reset();
+    /* Free graphics context*/
+    graphics_.reset();
+    /* Free window/input related*/
+    window_.reset();
+    /* Rest ... */
+    world_.reset();
+}
 
 void engine::run()
 {
@@ -53,17 +73,12 @@ void engine::run()
 
 void engine::load()
 {
-    window_ =
-        make_uptr<bnr::window>(cfg.name, cfg.window_size, cfg.icon_path, cfg.fullscreen);
-    graphics_ = make_uptr<bnr::graphics>(window_.get());
-    renderer_ = make_uptr<bnr::renderer>(graphics_.get());
-    // default_pass_ = make_uptr<bnr::default_render_pass>(graphics_.get());
 
-    // auto pass_ptr = default_pass_->get_pass();
+    auto pass_ptr = default_pass_->get_pass();
 
-    // renderer_->add_task([&, pass_ptr](vk::CommandBuffer buffer) {
-    //    pass_ptr->process(renderer_->get_current(), buffer);
-    //});
+    renderer_->add_task([&, pass_ptr](vk::CommandBuffer buffer) {
+        pass_ptr->process(renderer_->get_current(), buffer);
+    });
 
     window_->on_render.connect<&bnr::renderer::render>(*renderer_.get());
 
@@ -72,8 +87,6 @@ void engine::load()
 
 void engine::init()
 {
-    world_ = make_uptr<bnr::world>(cfg.world_size);
-
     on_init.fire();
 
     runtime.timer.restart();
