@@ -10,22 +10,22 @@
 #include <vulkan/vulkan.hpp>
 
 namespace ban {
-struct platform;
+struct window;
 
 class graphics
 {
 public:
-    static const std::vector<const char*> validation_layers;
-    static const std::vector<const char*> device_extensions;
+    static const std::vector<cstr> validation_layers;
+    static const std::vector<cstr> device_extensions;
 
-    graphics(platform* platform);
+    graphics(window* window);
     ~graphics();
 
     auto get_swap() { return swapchain_.get(); }
     auto get_device() { return device_.get(); }
 
 private:
-    platform* platform_;
+    window* window_;
 
     vk::UniqueInstance instance_;
     vk::UniqueSurfaceKHR surface_;

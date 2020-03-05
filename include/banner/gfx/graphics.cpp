@@ -3,25 +3,24 @@
 #include <memory>
 #include <numeric>
 
-#include <banner/core/platform.hpp>
 #include <banner/defs.hpp>
 #include <banner/gfx/graphics.hpp>
 #include <banner/gfx/memory.hpp>
+#include <banner/gfx/window.hpp>
 
 namespace ban {
-
-const std::vector<const char*> graphics::device_extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+const std::vector<cstr> graphics::device_extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME,
     VK_EXT_PIPELINE_CREATION_FEEDBACK_EXTENSION_NAME };
-const std::vector<const char*> graphics::validation_layers{ "VK_LAYER_KHRONOS_validation" };
+const std::vector<cstr> graphics::validation_layers{ "VK_LAYER_KHRONOS_validation" };
 
-graphics::graphics(platform* platform)
-    : platform_{ platform }
+graphics::graphics(window* window)
+    : window_{ window }
 {
     create_instance();
     create_debugger();
     create_device();
 
-    platform_->on_resize.connect<&graphics::resize_swapchain>(this);
+    window_->on_resize.connect<&graphics::resize_swapchain>(*this);
 }
 
 graphics::~graphics()
@@ -47,7 +46,7 @@ void graphics::create_instance()
     };
 
     // Instance extensions
-    auto instance_extensions{ platform_->get_instance_extensions() };
+    auto instance_extensions{ window_->get_instance_ext() };
 
     // Debug util extension
     instance_extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -80,7 +79,7 @@ void
 graphics::create_surface()
 {
     surface_ = vk::UniqueSurfaceKHR(
-        platform_->create_surface(instance_.get()), instance_.get());
+        window_->create_surface(instance_.get()), instance_.get());
 
     ASSERT(surface_, "Failed to create surface!");
 }
@@ -118,7 +117,7 @@ graphics::create_device()
 
     // Create swapchain
     swapchain_ = std::make_unique<swapchain>(
-        device_.get(), surface_.get(), platform_->get_framebuffer_extent());
+        device_.get(), surface_.get(), window_->get_framebuffer_size());
 
     ASSERT(swapchain_, "Failed to create swapchain!");
 

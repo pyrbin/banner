@@ -13,7 +13,7 @@ struct swapchain
 {
     using uptr = std::unique_ptr<swapchain>;
 
-    explicit swapchain(device* device, vk::SurfaceKHR surface, vk::Extent2D extent);
+    explicit swapchain(device* device, vk::SurfaceKHR surface, const uv2& size);
     ~swapchain();
 
     struct swapchain_data

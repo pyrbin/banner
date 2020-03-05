@@ -1,4 +1,4 @@
-[todo]
+[ todo ]
 
 - fix validation errors
 - memory cleanup of vulkan objects
@@ -8,6 +8,14 @@
 
 - lookup deps for model rendering & input?
 - render a model
+
+[ extras ]
+
+[ event handler ]
+- event handler using https://blog.keha.dev/posts/cpp20-class-as-non-type-template-param/
+	event_handler<{ "resize", void(u32, u32) }, { "created", void() }>
+	on("resize" | "created", () => {})
+	- [P0732R2] https://en.cppreference.com/w/cpp/compiler_support
 
 - add imgui
 - fix glw3.dll dependency, currently i just copied the dll to the build folder

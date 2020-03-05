@@ -55,23 +55,23 @@ struct vulkan_gpu
  *
  */
 bool is_device_suitable(const vk::PhysicalDevice device, const vk::SurfaceKHR surface,
-    const std::vector<const char*>& device_extens);
+    const std::vector<cstr>& device_extens);
 
 /**
  *
  */
 bool check_device_extensions(
-    const vk::PhysicalDevice device, const std::vector<const char*>& device_extens);
+    const vk::PhysicalDevice device, const std::vector<cstr>& device_extens);
 
 /**
  *
  */
-bool check_validation_layers(const std::vector<const char*>& validation_layers);
+bool check_validation_layers(const std::vector<cstr>& validation_layers);
 
 /**
  *
  */
-bool check_instance_extensions(const std::vector<const char*>& instance_extens);
+bool check_instance_extensions(const std::vector<cstr>& instance_extens);
 
 inline constexpr bool success(vk::Result result)
 {

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <banner/core/types.hpp>
 #include <nano_function.hpp>
 #include <nano_observer.hpp>
 #include <nano_signal_slot.hpp>

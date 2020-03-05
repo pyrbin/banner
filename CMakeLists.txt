@@ -7,7 +7,7 @@
 project(banner VERSION 0.0.1 LANGUAGES CXX)
 
 file(GLOB BANNER_PROJECT_FILES
-
+    include/banner/util/stb.cpp
     include/banner/util/*.hpp
     include/banner/util/*.cpp
 
@@ -53,6 +53,9 @@ target_include_directories(${PROJECT_NAME} PUBLIC extern/realm/include)
 
 # nano-signal-slot
 target_include_directories(${PROJECT_NAME} PUBLIC extern/nano-signal-slot)
+
+# stb (file-loader)
+target_include_directories(${PROJECT_NAME} PUBLIC extern/stb)
 
 # dl_libs
 target_link_libraries(${PROJECT_NAME} ${CMAKE_DL_LIBS})

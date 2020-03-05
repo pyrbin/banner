@@ -38,15 +38,15 @@ struct pipeline
     void add_color_blend_attachment(
         vk::PipelineColorBlendAttachmentState state = default_color_blend_attachment());
 
-    void add_shader(const char* name, vk::ShaderStageFlagBits flag, vk::ShaderModule module)
+    void add_shader(cstr name, vk::ShaderStageFlagBits flag, vk::ShaderModule module)
     {
         shader_stages_.push_back({ {}, flag, std::move(module), name });
     }
-    void add_vertex(const char* name, vk::ShaderModule& module)
+    void add_vertex(cstr name, vk::ShaderModule& module)
     {
         add_shader(name, vk::ShaderStageFlagBits::eVertex, module);
     }
-    void add_fragment(const char* name, vk::ShaderModule& module)
+    void add_fragment(cstr name, vk::ShaderModule& module)
     {
         add_shader(name, vk::ShaderStageFlagBits::eFragment, module);
     }

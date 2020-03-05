@@ -7,8 +7,8 @@ using namespace ban;
 
 int main()
 {
-    platform* pl = new platform("BANNER");
-    graphics* gr = new graphics(pl);
+    window* wnd = new ban::window("My window :)", { 800, 600 }, "icon.png");
+    graphics* gr = new graphics(wnd);
     renderer* re = new renderer(gr->get_swap());
 
     vk::ShaderModule vert_shader_module =
@@ -43,6 +43,9 @@ int main()
     //////////////////////////////////////////////////
 
     re->add_task([&](vk::CommandBuffer buff) { pass->process(re->get_current(), buff); });
-    pl->on_update.connect([&]() { re->render(); });
-    pl->start_loop();
+    wnd->on_update.connect([&]() { re->render(); });
+
+    while (!wnd->should_close()) {
+        wnd->update();
+    }
 }

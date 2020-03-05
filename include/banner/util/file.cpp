@@ -4,10 +4,8 @@
 #include <banner/util/file.hpp>
 
 namespace ban {
-
 std::vector<char> read_file(const std::string& filename)
 {
-
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
     if (!file.is_open()) {
@@ -25,6 +23,4 @@ std::vector<char> read_file(const std::string& filename)
     file.close();
     return buffer;
 }
-
-
 } // namespace ban
