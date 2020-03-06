@@ -2,54 +2,52 @@
 #include <banner/gfx/vk_utils.hpp>
 
 namespace bnr {
-renderer::task::task(device* device, task::fn fn, vk::CommandPool pool, u32 count)
+renderer::task::task(bnr::device* device, task::fn fn, vk::CommandPool pool, u32 count)
     : process{ fn }
 {
     // Allocate command buffers
     cmd_buffers.resize(count);
-    cmd_buffers =
-        device->vk().allocateCommandBuffers({ pool, vk::CommandBufferLevel::ePrimary, count });
+    cmd_buffers = device->vk().allocateCommandBuffers(
+        { pool, vk::CommandBufferLevel::ePrimary, count });
 }
 
-void renderer::task::free(device* device, vk::CommandPool pool)
+void renderer::task::free(bnr::device* device, vk::CommandPool pool)
 {
     device->vk().freeCommandBuffers(pool, cmd_buffers);
 }
 
-renderer::renderer(graphics* graphics)
-    : graphics_{ graphics }
-    , device_{ graphics->get_device() }
-    , swapchain_{ graphics->get_swap() }
+renderer::renderer(graphics* ctx)
+    : ctx_{ ctx }
 
 {
     // Create command pool
-    cmd_pool =
-        (device_->vk().createCommandPool({ vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
-            device_->get_queues().present_index }));
+    cmd_pool = (device()->vk().createCommandPool(
+        { vk::CommandPoolCreateFlagBits::eResetCommandBuffer,
+            device()->queue().present_index }));
 
     // Create sync objects
-    for (u32 i = 0; i < swapchain_->get_image_count(); i++) {
+    for (u32 i = 0; i < swapchain()->image_count(); i++) {
         vk::FenceCreateInfo info = { vk::FenceCreateFlagBits::eSignaled };
-        flight_fences_.push_back(device_->vk().createFence(info));
+        flight_fences_.push_back(device()->vk().createFence(info));
     }
 
-    sync_.aquire = device_->vk().createSemaphoreUnique({});
-    sync_.render = device_->vk().createSemaphoreUnique({});
+    sync_.aquire = device()->vk().createSemaphoreUnique({});
+    sync_.render = device()->vk().createSemaphoreUnique({});
 }
 
 auto renderer::wait() const
 {
-    return swapchain_->get_device()->vk().waitForFences(flight_fences_, true, -1);
+    return device()->vk().waitForFences(flight_fences_, true, -1);
 }
 
 auto renderer::wait(u32 idx) const
 {
-    return swapchain_->get_device()->vk().waitForFences(flight_fences_[idx], true, -1);
+    return device()->vk().waitForFences(flight_fences_[idx], true, -1);
 }
 
-auto renderer::fence_reset(u32 idx) const
+auto renderer::reset_fence(u32 idx) const
 {
-    return swapchain_->get_device()->vk().resetFences(flight_fences_[idx]);
+    return device()->vk().resetFences(flight_fences_[idx]);
 }
 
 renderer::~renderer()
@@ -57,14 +55,14 @@ renderer::~renderer()
     wait();
 
     for (auto& task : tasks_) {
-        task->free(device_, cmd_pool);
+        task->free(device(), cmd_pool);
         delete task;
     }
 
-    device_->vk().destroyCommandPool(cmd_pool);
+    device()->vk().destroyCommandPool(cmd_pool);
 
     for (u32 i{ 0 }; i < flight_fences_.size(); i++) {
-        device_->vk().destroyFence(flight_fences_[i]);
+        device()->vk().destroyFence(flight_fences_[i]);
     }
 
     flight_fences_.clear();
@@ -74,7 +72,8 @@ renderer::~renderer()
 void renderer::add_task(task::fn task)
 {
     // Create task
-    tasks_.push_back(new renderer::task(device_, task, cmd_pool, swapchain_->get_image_count()));
+    tasks_.push_back(
+        new renderer::task(device(), task, cmd_pool, swapchain()->image_count()));
 }
 
 void renderer::render()
@@ -94,10 +93,10 @@ bool renderer::aquire_next_image()
     if (!vk_utils::success(wait(current_)))
         return false;
 
-    auto aquire_result = swapchain_->aquire_image(sync_.aquire.get());
+    auto aquire_result = swapchain()->aquire_image(sync_.aquire.get());
 
     if (aquire_result.result == vk::Result::eErrorOutOfDateKHR) {
-        graphics_->reload_swapchain();
+        ctx()->reload_swapchain();
         return false;
     } else if (!vk_utils::success(aquire_result)) {
         return false;
@@ -105,14 +104,14 @@ bool renderer::aquire_next_image()
 
     current_ = aquire_result.value;
 
-    fence_reset(current_);
+    reset_fence(current_index());
 
     return true;
 }
 
 void renderer::process_tasks()
 {
-    device_->vk().resetCommandPool(cmd_pool, (vk::CommandPoolResetFlagBits)0);
+    device()->vk().resetCommandPool(cmd_pool, (vk::CommandPoolResetFlagBits)0);
 
     for (auto& task : tasks_) {
         auto& [proc, buffs] = *task;
@@ -131,7 +130,7 @@ void renderer::process_tasks()
 
 void renderer::end_frame()
 {
-    auto buffers = get_current_buffers();
+    auto buffers = current_buffers();
 
     // Submit stage
     vk::SubmitInfo submit_info;
@@ -144,17 +143,17 @@ void renderer::end_frame()
     submit_info.setSignalSemaphoreCount(1);
     submit_info.setPSignalSemaphores(&sync_.render.get());
 
-    device_->get_queues().submit(submit_info, flight_fences_[current_]);
+    device()->queue().submit(submit_info, flight_fences_[current_]);
 
     // Present stage
     vk::PresentInfoKHR present_info;
     present_info.setPImageIndices(&current_);
     present_info.setSwapchainCount(1);
-    present_info.setPSwapchains(&swapchain_->vk());
+    present_info.setPSwapchains(&swapchain()->vk());
     present_info.setWaitSemaphoreCount(1);
     present_info.setPWaitSemaphores(&sync_.render.get());
     present_info.setPResults(nullptr);
 
-    VULKAN_CHECK(device_->get_queues().present(present_info));
+    VULKAN_CHECK(device()->queue().present(present_info));
 }
 } // namespace bnr

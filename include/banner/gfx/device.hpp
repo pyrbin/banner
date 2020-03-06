@@ -7,8 +7,6 @@ namespace bnr {
 struct device
 {
 
-    struct queues;
-
     struct options
     {
         vector<cstr> extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
@@ -19,51 +17,55 @@ struct device
         const options opts);
 
     auto vk() const { return vk_device_.get(); }
-    auto get_gpu() const { return gpu_; }
+    auto physical() const { return vk_physical_; }
 
-    const auto& get_queues() const { return *queues_.get(); }
-    const auto& get_features() { return features_; }
-    const auto& get_props() { return props_; }
-
-    struct queues
+    struct queue_data
     {
-        inline queues(const device* device, u32 gidx, u32 pidx)
+        inline queue_data(const device* device, u32 gidx, u32 pidx)
             : graphics_queue{ device->vk().getQueue(gidx, 0) }
             , present_queue{ device->vk().getQueue(pidx, 0) }
             , graphics_index{ gidx }
             , present_index{ pidx }
         {}
 
-        const vk::Queue graphics_queue;
-        const vk::Queue present_queue;
+        auto& graphics() { return graphics_queue; }
+        auto& present() { return present_queue; }
 
         const u32 graphics_index;
         const u32 present_index;
 
-        [[nodiscard]] void submit(vk::SubmitInfo info, vk::Fence fence) const
+        void submit(vk::SubmitInfo info, vk::Fence fence) const
         {
             return graphics_queue.submit(info, fence);
         }
 
-        [[nodiscard]] vk::Result present(vk::PresentInfoKHR info) const
+        vk::Result present(vk::PresentInfoKHR info) const
         {
             return present_queue.presentKHR(info);
         }
 
-        [[nodiscard]] void wait() const noexcept
+        void wait() const noexcept
         {
             graphics_queue.waitIdle();
             present_queue.waitIdle();
         }
 
-        [[nodiscard]] bool is_same() const { return graphics_index == present_index; }
+        bool is_same() const { return graphics_index == present_index; }
+
+    private:
+        const vk::Queue graphics_queue;
+        const vk::Queue present_queue;
     };
 
+    const auto& queue() const { return *queue_.get(); }
+    const auto& features() { return features_; }
+    const auto& props() { return props_; }
+
 private:
-    vk::PhysicalDevice gpu_;
+    vk::PhysicalDevice vk_physical_;
     vk::PhysicalDeviceFeatures features_;
     vk::PhysicalDeviceMemoryProperties props_;
     vk::UniqueDevice vk_device_;
-    uptr<queues> queues_;
+    uptr<queue_data> queue_;
 };
 } // namespace bnr

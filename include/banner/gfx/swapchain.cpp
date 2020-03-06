@@ -26,7 +26,8 @@ inline vk::PresentModeKHR choose_present_mode(const vector<vk::PresentModeKHR>& 
     return vk::PresentModeKHR::eFifoRelaxed;
 }
 
-vk::Extent2D choose_extent(const vk::SurfaceCapabilitiesKHR& capabilities, vk::Extent2D extent)
+vk::Extent2D choose_extent(
+    const vk::SurfaceCapabilitiesKHR& capabilities, vk::Extent2D extent)
 {
     if (capabilities.currentExtent.width != UINT32_MAX) {
         return capabilities.currentExtent;
@@ -39,7 +40,7 @@ vk::Extent2D choose_extent(const vk::SurfaceCapabilitiesKHR& capabilities, vk::E
     }
 }
 
-swapchain::swapchain(device* device, vk::SurfaceKHR surface, const uv2& size)
+swapchain::swapchain(bnr::device* device, vk::SurfaceKHR surface, const uv2& size)
 {
     surface_ = surface;
     device_ = device;
@@ -58,14 +59,15 @@ swapchain::~swapchain()
 
 void swapchain::create_vk_swapchain()
 {
-    auto [capabilities, formats, modes] = vk_utils::get_surface_info(device_->get_gpu(), surface_);
+    auto [capabilities, formats, modes] =
+        vk_utils::get_surface_info(device_->physical(), surface_);
 
     mode_ = choose_present_mode(modes);
     format_ = choose_format(formats);
     extent_ = choose_extent(capabilities, extent_);
 
-    auto image_count =
-        std::min<u32>(std::max<u32>(capabilities.minImageCount, 2), capabilities.maxImageCount);
+    auto image_count = std::min<u32>(
+        std::max<u32>(capabilities.minImageCount, 2), capabilities.maxImageCount);
 
     auto old_swapchain = vk_swapchain_.get();
 
@@ -135,7 +137,8 @@ void swapchain::resize(const uv2& size)
     on_recreate.fire();
 }
 
-vk::ResultValue<u32> swapchain::aquire_image(vk::Semaphore sem, vk::Fence fence, u32 timeout)
+vk::ResultValue<u32> swapchain::aquire_image(
+    vk::Semaphore sem, vk::Fence fence, u32 timeout)
 {
     if (fence)
         device_->vk().waitForFences(fence, true, timeout);

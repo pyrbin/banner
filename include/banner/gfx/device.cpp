@@ -6,7 +6,8 @@
 #include <banner/gfx/vk_utils.hpp>
 
 namespace bnr {
-device::device(const vk::PhysicalDevice& gpu, const vk::SurfaceKHR surface, const options opts)
+device::device(
+    const vk::PhysicalDevice& gpu, const vk::SurfaceKHR surface, const options opts)
 
 {
     vector<vk::DeviceQueueCreateInfo> queue_infos;
@@ -21,17 +22,17 @@ device::device(const vk::PhysicalDevice& gpu, const vk::SurfaceKHR surface, cons
         queue_infos.push_back({ {}, idx, 1, &priority });
     }
 
-    gpu_ = gpu;
-    features_ = gpu_.getFeatures();
-    props_ = gpu_.getMemoryProperties();
+    vk_physical_ = gpu;
+    features_ = vk_physical_.getFeatures();
+    props_ = vk_physical_.getMemoryProperties();
 
     vk::DeviceCreateInfo device_info{ vk::DeviceCreateFlags(), u32(queue_infos.size()),
         queue_infos.data(), u32(opts.layers.size()), opts.layers.data(),
         u32(opts.extensions.size()), opts.extensions.data(), &features_ };
 
-    vk_device_ = gpu_.createDeviceUnique(device_info);
+    vk_device_ = vk_physical_.createDeviceUnique(device_info);
 
-    queues_ = std::make_unique<queues>(
+    queue_ = std::make_unique<device::queue_data>(
         this, indices.graphics_family.value(), indices.present_family.value());
 }
 

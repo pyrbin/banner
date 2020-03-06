@@ -2,6 +2,7 @@
 
 #include <banner/defs.hpp>
 #include <banner/gfx/device.hpp>
+#include <banner/gfx/graphics.hpp>
 #include <banner/gfx/pipeline.hpp>
 #include <banner/gfx/render_pass.hpp>
 #include <banner/gfx/swapchain.hpp>
@@ -11,7 +12,7 @@ subpass::ref subpass::add_pipeline(pipeline* pipeline)
 {
     pipelines_.emplace_back(pipeline);
     if (activated()) {
-        pipeline->create(owner_);
+        pipeline->create(this);
     }
     return *this;
 }
@@ -20,12 +21,12 @@ void subpass::create()
 {
     activated_ = true;
     for (auto& pipeline : pipelines_) {
-        pipeline->create(owner_);
+        pipeline->create(this);
     }
 }
 
-render_pass::render_pass(swapchain* swapchain)
-    : swapchain_{ swapchain }
+render_pass::render_pass(graphics* ctx)
+    : ctx_{ ctx }
 {
     set_clear_color({ 0.13f, 0.03f, 0.11f, 1 });
 }
@@ -35,7 +36,7 @@ void render_pass::create()
     create_render_pass();
     create_framebuffers();
 
-    swapchain_->on_recreate.connect<&render_pass::create_framebuffers>(*this);
+    ctx()->swapchain()->on_recreate.connect<&render_pass::create_framebuffers>(*this);
 
     for (auto& subpass : subpasses_) {
         subpass->create();
@@ -63,13 +64,13 @@ void render_pass::process(u32 frame, vk::CommandBuffer buffer)
     buffer.beginRenderPass(&begin_info, vk::SubpassContents::eInline);
 
     for (auto& subpass : subpasses_) {
-        subpass->process(buffer, extent_);
+        subpass->process(buffer, { extent_.width, extent_.height });
     }
 
     buffer.endRenderPass();
 }
 
-void render_pass::add(subpass* subpass)
+void render_pass::add(bnr::subpass* subpass)
 {
     subpasses_.emplace_back(std::move(subpass));
     subpass->set_render_pass(this);
@@ -82,7 +83,7 @@ void render_pass::add(pipeline* pipeline, u32 subpass_idx)
 
 void render_pass::add(attachment attachment)
 {
-    attachment.description_.setFormat(swapchain_->get_format().format);
+    attachment.description_.setFormat(ctx()->swapchain()->format().format);
     attachments_.push_back(attachment.vk());
 }
 
@@ -93,11 +94,11 @@ void render_pass::add(subpass::dependency dependency)
 
 void render_pass::create_render_pass()
 {
-    const auto device = &swapchain_->get_device()->vk();
+    const auto device = &ctx()->device()->vk();
 
     vector<vk::SubpassDescription> subpasses;
     std::transform(subpasses_.begin(), subpasses_.end(), std::back_inserter(subpasses),
-        [&](uptr<subpass>& pass) { return pass->vk(); });
+        [&](uptr<bnr::subpass>& pass) { return pass->description(); });
 
     if (vk_render_pass_) {
         vk_render_pass_.release();
@@ -111,14 +112,14 @@ void render_pass::create_render_pass()
 }
 void render_pass::create_framebuffers()
 {
-    const auto device = &swapchain_->get_device()->vk();
+    const auto device = &ctx()->device()->vk();
 
-    extent_ = swapchain_->get_extent();
+    extent_ = ctx()->swapchain()->extent();
 
     framebuffers_.clear();
     framebuffers_.resize(0);
 
-    for (auto& img_view : swapchain_->get_data().views) {
+    for (auto& img_view : ctx()->swapchain()->data().views) {
         vector<vk::ImageView> framebuffer_attachments = { img_view.get() };
 
         framebuffers_.push_back(device->createFramebufferUnique(

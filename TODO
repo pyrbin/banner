@@ -1,21 +1,5 @@
 [ todo/notes ]
 
-- simplify render technique
-  guidelines
-    -> window
-	-> graphics (context) -> swapchain & device
-	-> renderer -> cmd_pool & cmd_buffers
-	-> render_passes
-		-> subpasses
-			-> pipelines
-
-    the graphics ctx object is sent between each class (not some using device, some using swapchain etc)
-	order of destruction is bottom to top (pipelines -> subpass etc...)
-	all resources are bound to a ctx, buffers & images uses ctx VMA to allocate memory
-	use vk() to return raw vulkan.hpp object.
-	vulkan object are prefixed vk_ in their corresponding wrapper.
-	never pass pure vk objects, always pass the wrapper.
-
   engine design: 
 	user can override certain event functions
 

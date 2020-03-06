@@ -28,16 +28,16 @@ struct swapchain
     signal<void()> on_recreate;
 
     auto vk() const { return vk_swapchain_.get(); }
-    auto get_device() { return device_; }
+    auto device() { return device_; }
 
-    const auto& get_format() const { return format_; }
-    const auto& get_extent() const { return extent_; }
+    const auto& format() const { return format_; }
+    const auto& extent() const { return extent_; }
 
-    auto get_image_count() const { return u32(data_.images.size()); }
-    const auto& get_data() const { return data_; }
+    auto image_count() const { return u32(data_.images.size()); }
+    const auto& data() const { return data_; }
 
 private:
-    device* device_;
+    bnr::device* device_;
     vk::SurfaceKHR surface_;
 
     vk::SurfaceFormatKHR format_;

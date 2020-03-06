@@ -10,12 +10,10 @@
 
 namespace bnr {
 
-using cmd_buffers = vector<vk::CommandBuffer>;
-using fences = vector<vk::Fence>;
-
 struct renderer
 {
-    using uptr = uptr<renderer>;
+    using cmd_buffers = vector<vk::CommandBuffer>;
+    using fences = vector<vk::Fence>;
 
     struct task
     {
@@ -29,22 +27,24 @@ struct renderer
         void free(device*, vk::CommandPool);
     };
 
-    struct sync
+    struct synchronization
     {
         vk::UniqueSemaphore aquire{ nullptr };
         vk::UniqueSemaphore render{ nullptr };
     };
 
-    explicit renderer(graphics* graphics);
+    explicit renderer(graphics* ctx);
     ~renderer();
 
     void add_task(task::fn task);
 
-    auto get_device() const { return device_; }
-    auto get_swap() const { return swapchain_; }
+    auto ctx() const { return ctx_; }
+    auto device() const { return ctx_->device(); }
+    auto swapchain() const { return ctx_->swapchain(); }
 
-    auto get_current() const { return current_; };
-    auto get_current_buffers()
+    u32 current_index() const { return current_; };
+
+    auto current_buffers()
     {
         vector<vk::CommandBuffer> v{};
         std::transform(tasks_.begin(), tasks_.end(), std::back_inserter(v),
@@ -52,28 +52,26 @@ struct renderer
         return v;
     };
 
-    auto& get_sync() const { return sync_; }
-    auto& get_pool() { return cmd_pool; }
+    auto& sync() const { return sync_; }
+    auto& pool() { return cmd_pool; }
 
     void render();
     auto wait() const;
     auto wait(u32 idx) const;
-    auto fence_reset(u32 idx) const;
+    auto reset_fence(u32 idx) const;
 
 private:
     bool aquire_next_image();
     void process_tasks();
     void end_frame();
 
-    graphics* graphics_{ nullptr };
-    swapchain* swapchain_{ nullptr };
-    device* device_{ nullptr };
+    graphics* ctx_{ nullptr };
 
     task::list tasks_;
     vk::CommandPool cmd_pool;
 
     fences flight_fences_;
-    sync sync_;
+    synchronization sync_;
 
     u32 current_{ 0 };
 };

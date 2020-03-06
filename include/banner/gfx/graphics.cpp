@@ -104,7 +104,7 @@ void graphics::create_device()
     for (const auto& dev : devices) {
         if (vk_utils::is_device_suitable(dev, surface_.get(), device_extensions)) {
             // Create logical device
-            device_ = std::make_unique<device>(dev, surface_.get(), opts);
+            device_ = std::make_unique<bnr::device>(dev, surface_.get(), opts);
             break;
         }
     }
@@ -116,22 +116,22 @@ void graphics::create_device()
     }
 
     // Create swapchain
-    swapchain_ = std::make_unique<swapchain>(
-        device_.get(), surface_.get(), window_->get_framebuffer_size());
+    swapchain_ = std::make_unique<bnr::swapchain>(
+        device_.get(), surface_.get(), window_->framebuffer_size());
 
     ASSERT(swapchain_, "Failed to create swapchain!");
 
     swapchain_->on_recreate.connect([&]() { debug::log("Recreated swapchain"); });
 
     // Initializing VMA
-    memory_ = std::make_unique<memory>(device_.get());
+    memory_ = std::make_unique<bnr::memory>(device_.get());
 
     debug::trace("Initialized vulkan graphics ...");
 }
 
 void graphics::reload_swapchain()
 {
-    auto size = window_->get_framebuffer_size();
+    auto size = window_->framebuffer_size();
     resize_swapchain(size.x, size.y);
 }
 

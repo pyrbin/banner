@@ -7,7 +7,7 @@ memory::memory(device* device)
     // clang-format off
     VmaAllocatorCreateInfo info
     {
-        .physicalDevice = device->get_gpu(),
+        .physicalDevice = device->physical(),
         .device = device->vk()
     };
 

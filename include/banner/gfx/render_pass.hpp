@@ -5,7 +5,8 @@
 #include <vulkan/vulkan.hpp>
 
 namespace bnr {
-struct swapchain;
+
+struct graphics;
 struct render_pass;
 struct renderer;
 
@@ -22,7 +23,8 @@ struct subpass
         description_.setPipelineBindPoint(vk::PipelineBindPoint::eGraphics);
     }
 
-    auto vk() const { return description_; }
+    auto description() const { return description_; }
+    auto render_pass() const { return pass_; }
     auto activated() const { return activated_; }
 
     struct dependency
@@ -102,23 +104,23 @@ struct subpass
         return *this;
     }
 
-    ref set_render_pass(render_pass* render_pass)
+    ref set_render_pass(bnr::render_pass* render_pass)
     {
-        owner_ = render_pass;
+        pass_ = render_pass;
         return *this;
     }
 
     void create();
 
-    void process(vk::CommandBuffer buffer, vk::Extent2D extent)
+    void process(vk::CommandBuffer buffer, uv2 size)
     {
         for (auto& pipeline : pipelines_) {
-            pipeline->process(buffer, extent);
+            pipeline->process(buffer, size);
         }
     }
 
 private:
-    render_pass* owner_{ nullptr };
+    bnr::render_pass* pass_{ nullptr };
     bool activated_{ false };
 
     vector<vk::AttachmentReference> color_attachments_;
@@ -186,15 +188,17 @@ struct render_pass
         vk::AttachmentDescription description_;
     };
 
-    explicit render_pass(swapchain* swapchain);
+    explicit render_pass(graphics* ctx);
     ~render_pass();
 
     auto vk() const { return vk_render_pass_.get(); }
-    auto get_clear_color() const { return clear_value_; }
-    auto get_swap() const { return swapchain_; }
-    auto get_subpass(u32 idx) const { return subpasses_.at(idx).get(); }
+    auto ctx() const { return ctx_; }
+    auto subpass(u32 idx) const { return subpasses_.at(idx).get(); }
 
-    void add(subpass* subpass);
+    auto& extent() const { return extent_; }
+    auto& clear_color() const { return clear_value_; }
+
+    void add(bnr::subpass* subpass);
     void add(attachment attachment);
     void add(subpass::dependency dependency);
     void add(pipeline* pipeline, u32 subpass_idx = 0);
@@ -211,9 +215,9 @@ private:
     void create_render_pass();
     void create_framebuffers();
 
-    swapchain* swapchain_;
-    vk::UniqueRenderPass vk_render_pass_;
+    graphics* ctx_;
 
+    vk::UniqueRenderPass vk_render_pass_;
     vk::Extent2D extent_;
     vk::ClearValue clear_value_;
 

@@ -11,10 +11,10 @@ struct render_pass;
 
 struct default_render_pass
 {
-    default_render_pass(graphics* gfx);
+    default_render_pass(graphics* ctx);
     ~default_render_pass();
 
-    auto get_pass() { return render_pass_.get(); }
+    auto pass() { return render_pass_.get(); }
 
 private:
     uptr<render_pass> render_pass_;
@@ -45,7 +45,7 @@ struct engine
     auto renderer() { return renderer_.get(); }
     auto graphics() { return graphics_.get(); }
     auto world() { return world_.get(); }
-    auto default_pass() { return default_pass_->get_pass(); }
+    auto default_pass() { return default_pass_->pass(); }
 
     const config cfg;
     engine::runtime runtime;

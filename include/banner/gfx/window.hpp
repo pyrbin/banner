@@ -16,30 +16,31 @@ struct window
     using window_inner = GLFWwindow;
     using window_monitor = GLFWmonitor;
 
-    explicit window(str_ref title, vec2 size, str_ref icon_path = "", bool fullscreen = false);
+    explicit window(
+        str_ref title, vec2 size, str_ref icon_path = "", bool fullscreen = false);
     ~window();
 
-    window_inner* get_inner() const { return inner_; }
+    window_inner* glfw() const { return glfw_; }
     static window* to_window(GLFWwindow* inner);
 
+    auto& title() const { return title_; }
     void set_title(str_ref text);
-    auto& get_title() const { return title_; }
 
     void set_icon(str_ref filename);
 
+    uv2 window_size() const;
     void set_window_size(const uv2& size);
-    uv2 get_window_size() const;
 
+    uv2 window_pos() const;
     void set_window_pos(const uv2& size);
-    uv2 get_window_pos() const;
 
+    v2 mouse_pos() const;
     void set_mouse_pos(const v2& pos);
-    v2 get_mouse_pos() const;
 
-    v2 get_framebuffer_size() const;
+    v2 framebuffer_size() const;
 
-    void set_fullscreen(bool status = true);
     bool is_fullscreen() const;
+    void set_fullscreen(bool status = true);
 
     bool is_minimized() const;
     bool is_maximized() const;
@@ -68,7 +69,7 @@ private:
     bool update_viewport_{ false };
     bool fullscreen_{ false };
 
-    window_inner* inner_{ nullptr };
+    window_inner* glfw_{ nullptr };
     window_monitor* monitor_{ nullptr };
 };
 } // namespace bnr

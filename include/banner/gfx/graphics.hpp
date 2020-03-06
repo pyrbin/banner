@@ -21,9 +21,9 @@ public:
     graphics(window* window);
     ~graphics();
 
-    auto get_swap() { return swapchain_.get(); }
-    auto get_device() { return device_.get(); }
-    auto get_memory() { return memory_.get(); }
+    auto device() { return device_.get(); }
+    auto swapchain() { return swapchain_.get(); }
+    auto memory() { return memory_.get(); }
 
     vk::ShaderModule load_shader(str_ref filename);
     void reload_swapchain();
@@ -34,9 +34,9 @@ private:
     vk::UniqueInstance instance_;
     vk::UniqueSurfaceKHR surface_;
 
-    uptr<device> device_;
-    uptr<swapchain> swapchain_;
-    uptr<memory> memory_;
+    uptr<bnr::device> device_;
+    uptr<bnr::swapchain> swapchain_;
+    uptr<bnr::memory> memory_;
 
     // Temp storage of shaders
     vector<vk::ShaderModule> shader_modules_;

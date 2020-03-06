@@ -3,7 +3,7 @@
 
 namespace bnr {
 default_render_pass::default_render_pass(graphics* gfx)
-    : render_pass_{ make_uptr<render_pass>(gfx->get_swap()) }
+    : render_pass_{ make_uptr<render_pass>(gfx) }
 {
     render_pass_->add(
         render_pass::attachment()
@@ -74,10 +74,9 @@ void engine::run()
 void engine::load()
 {
 
-    auto pass_ptr = default_pass_->get_pass();
 
-    renderer_->add_task([&, pass_ptr](vk::CommandBuffer buffer) {
-        pass_ptr->process(renderer_->get_current(), buffer);
+    renderer_->add_task([&](vk::CommandBuffer buffer) {
+        default_pass_->pass()->process(renderer_->current_index(), buffer);
     });
 
     window_->on_render.connect<&bnr::renderer::render>(*renderer_.get());

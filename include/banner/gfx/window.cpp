@@ -32,13 +32,13 @@ void window::create_window(str_ref title, vec2 size)
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
-    inner_ = glfwCreateWindow(size.x, size.y, title_.c_str(), nullptr, nullptr);
+    glfw_ = glfwCreateWindow(size.x, size.y, title_.c_str(), nullptr, nullptr);
 
-    glfwMakeContextCurrent(inner_);
-    glfwSetWindowUserPointer(inner_, this);
+    glfwMakeContextCurrent(glfw_);
+    glfwSetWindowUserPointer(glfw_, this);
 
     // Event handling
-    glfwSetFramebufferSizeCallback(inner_, [](window_inner* wnd, i32 w, i32 h) {
+    glfwSetFramebufferSizeCallback(glfw_, [](window_inner* wnd, i32 w, i32 h) {
         auto window = to_window(wnd);
 
         if (!window)
@@ -50,8 +50,8 @@ void window::create_window(str_ref title, vec2 size)
 
 window::~window()
 {
-    glfwDestroyWindow(inner_);
-    inner_ = nullptr;
+    glfwDestroyWindow(glfw_);
+    glfw_ = nullptr;
     monitor_ = nullptr;
     // TODO: don't call init/terminate from window
     glfwTerminate();
@@ -64,15 +64,15 @@ void window::handle_events()
 
 void window::render()
 {
-    if (!inner_ || is_minimized()) {
+    if (!glfw_ || is_minimized()) {
         return;
     }
 
-    glfwSwapBuffers(inner_);
+    glfwSwapBuffers(glfw_);
 
     if (update_viewport_) {
         update_viewport_ = false;
-        const auto buffer_size = get_framebuffer_size();
+        const auto buffer_size = framebuffer_size();
         on_resize.fire(u16(buffer_size.x), u16(buffer_size.y));
     }
 
@@ -81,12 +81,12 @@ void window::render()
 
 bool window::should_close() const
 {
-    return glfwWindowShouldClose(inner_);
+    return glfwWindowShouldClose(glfw_);
 }
 
 bool window::is_attri_set(int attr) const
 {
-    return glfwGetWindowAttrib(inner_, attr) == 1;
+    return glfwGetWindowAttrib(glfw_, attr) == 1;
 }
 
 template<int hint>
@@ -115,13 +115,14 @@ void window::set_fullscreen(bool status)
         set_hint<GLFW_AUTO_ICONIFY>(GLFW_FALSE);
 
         // switch to full screen
-        glfwSetWindowMonitor(inner_, monitor_, 0, 0, mode->width, mode->height, mode->refreshRate);
+        glfwSetWindowMonitor(
+            glfw_, monitor_, 0, 0, mode->width, mode->height, mode->refreshRate);
     } else {
         monitor_ = nullptr;
 
         // TODO: not hard code reset values
-        glfwSetWindowMonitor(inner_, nullptr, 100, 100, 800, 600, 0);
-        glfwRestoreWindow(inner_);
+        glfwSetWindowMonitor(glfw_, nullptr, 100, 100, 800, 600, 0);
+        glfwRestoreWindow(glfw_);
     }
 }
 
@@ -143,7 +144,7 @@ bool window::is_maximized() const
 void window::set_title(str_ref title)
 {
     title_ = title;
-    glfwSetWindowTitle(inner_, title_.c_str());
+    glfwSetWindowTitle(glfw_, title_.c_str());
 }
 
 void window::set_icon(str_ref filename)
@@ -151,57 +152,57 @@ void window::set_icon(str_ref filename)
     i32 w, h;
     bytes bytes{ stbi_load(filename.c_str(), &w, &h, 0, 4) };
     GLFWimage image{ w, h, (uc8*)bytes };
-    glfwSetWindowIcon(inner_, 1, { &image });
+    glfwSetWindowIcon(glfw_, 1, { &image });
     stbi_image_free(image.pixels);
 }
 
 void window::set_window_pos(const uv2& size)
 {
-    glfwSetWindowPos(inner_, (size.x), (size.y));
+    glfwSetWindowPos(glfw_, (size.x), (size.y));
 }
 
-uv2 window::get_window_pos() const
+bnr::uv2 window::window_pos() const
 {
     i32 w, h;
-    glfwGetWindowPos(inner_, &w, &h);
+    glfwGetWindowPos(glfw_, &w, &h);
     return { w, h };
 }
 
 void window::set_window_size(const uv2& size)
 {
-    glfwSetWindowSize(inner_, (size.x), (size.y));
+    glfwSetWindowSize(glfw_, (size.x), (size.y));
 }
 
-uv2 window::get_window_size() const
+bnr::uv2 window::window_size() const
 {
     i32 w, h;
-    glfwGetWindowSize(inner_, &w, &h);
+    glfwGetWindowSize(glfw_, &w, &h);
     return { w, h };
 }
 
 void window::set_mouse_pos(const v2& pos)
 {
-    glfwSetCursorPos(inner_, pos.x, pos.y);
+    glfwSetCursorPos(glfw_, pos.x, pos.y);
 }
 
-v2 window::get_mouse_pos() const
+v2 window::mouse_pos() const
 {
     f64 w, h;
-    glfwGetCursorPos(inner_, &w, &h);
+    glfwGetCursorPos(glfw_, &w, &h);
     return { w, h };
 }
 
-vec2 window::get_framebuffer_size() const
+vec2 window::framebuffer_size() const
 {
     f64 w, h;
-    glfwGetFramebufferSize(inner_, reinterpret_cast<int*>(&w), reinterpret_cast<int*>(&h));
+    glfwGetFramebufferSize(glfw_, reinterpret_cast<int*>(&w), reinterpret_cast<int*>(&h));
     return { w, h };
 }
 
 vk::SurfaceKHR window::create_surface(vk::Instance instance) const
 {
     VkSurfaceKHR surface{ nullptr };
-    VULKAN_CHECK(vk::Result(glfwCreateWindowSurface(instance, inner_, nullptr, &surface)));
+    VULKAN_CHECK(vk::Result(glfwCreateWindowSurface(instance, glfw_, nullptr, &surface)));
     return static_cast<vk::SurfaceKHR>(surface);
 }
 

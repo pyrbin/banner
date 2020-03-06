@@ -32,7 +32,12 @@ struct pipeline
         vk::PipelineDynamicStateCreateInfo dynamic_state{};
     };
 
-    bool ready() const { return on_process && vk_pipeline_; }
+    auto vk() { return vk_pipeline_.get(); }
+    auto layout() { return vk_layout_.get(); }
+    auto subpass() { return subpass_; }
+
+    auto ready() const { return on_process && vk_pipeline_; }
+    void set_subpass(bnr::subpass* subpass) { subpass_ = subpass; }
 
     static vk::PipelineColorBlendAttachmentState default_color_blend_attachment();
 
@@ -55,14 +60,15 @@ struct pipeline
     fn<cb_signature> on_process;
 
 private:
-    void create(render_pass*);
-    void process(vk::CommandBuffer buffer, vk::Extent2D extent);
+    void create(bnr::subpass*);
+    void process(vk::CommandBuffer buffer, uv2 extent);
     void bind_buffer(vk::CommandBuffer buffer);
-    void set_viewport(vk::CommandBuffer buffer, vk::Extent2D extent);
-
+    void set_viewport(vk::CommandBuffer buffer, uv2 extent);
 
     vk::UniquePipeline vk_pipeline_;
-    vk::UniquePipelineLayout layout_;
+    vk::UniquePipelineLayout vk_layout_;
+
+    bnr::subpass* subpass_;
 
     create_info info_;
     vector<vk::VertexInputBindingDescription> vertex_input_bindings_ = {};

@@ -1,4 +1,5 @@
 #include <banner/gfx/device.hpp>
+#include <banner/gfx/graphics.hpp>
 #include <banner/gfx/pipeline.hpp>
 #include <banner/gfx/render_pass.hpp>
 #include <banner/gfx/swapchain.hpp>
@@ -22,23 +23,25 @@ pipeline::pipeline()
     info_.viewport.setPViewports(&viewport_);
 }
 
-void pipeline::create(render_pass* render_pass)
+void pipeline::create(bnr::subpass* subpass_ptr)
 {
-    const auto device = render_pass->get_swap()->get_device();
-    const auto extent = render_pass->get_swap()->get_extent();
+    set_subpass(subpass_ptr);
 
-    set_viewport(nullptr, extent);
+    const auto device = subpass()->render_pass()->ctx()->device();
+    const auto extent = subpass()->render_pass()->extent();
+
+    set_viewport(nullptr, { extent.width, extent.height });
 
     const auto [viewport, rasterization, multisample, depth_stencil, input_assembly,
         vertex_input_state, color_blend, dynamic_state] = info_;
 
-    layout_ = device->vk().createPipelineLayoutUnique({});
+    vk_layout_ = device->vk().createPipelineLayoutUnique({});
 
     vk_pipeline_ = device->vk().createGraphicsPipelineUnique({},
         { {}, u32(shader_stages_.size()), shader_stages_.data(), &vertex_input_state,
             &input_assembly, nullptr, &viewport, &rasterization, &multisample,
-            nullptr /*&depth_stencil*/, &color_blend, nullptr, layout_.get(),
-            render_pass->vk(), 0 });
+            nullptr /*&depth_stencil*/, &color_blend, nullptr, vk_layout_.get(),
+            subpass()->render_pass()->vk(), 0 });
 
     ASSERT(vk_pipeline_, "Failed to create pipeline!");
 
@@ -61,22 +64,22 @@ void pipeline::add_color_blend_attachment(vk::PipelineColorBlendAttachmentState 
     info_.color_blend.setPAttachments(color_blend_attachments_.data());
 }
 
-void pipeline::process(vk::CommandBuffer buffer, vk::Extent2D extent)
+void pipeline::process(vk::CommandBuffer buffer, uv2 size)
 {
     if (ready()) {
-        set_viewport(buffer, extent);
+        set_viewport(buffer, size);
         bind_buffer(buffer);
         on_process(buffer);
     }
 }
 
-void pipeline::set_viewport(vk::CommandBuffer buffer, vk::Extent2D extent)
+void pipeline::set_viewport(vk::CommandBuffer buffer, uv2 size)
 {
     // viewport
-    viewport_ = { 0.f, 0.f, f32(extent.width), f32(extent.height), 0.f, 1.f };
+    viewport_ = { 0.f, 0.f, f32(size.x), f32(size.y), 0.f, 1.f };
 
     // scissor
-    scissor_ = { { 0, 0 }, extent };
+    scissor_ = { { 0, 0 }, { size.x, size.y } };
 
     if (buffer) {
         buffer.setViewport(0, viewport_);

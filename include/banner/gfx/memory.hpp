@@ -10,7 +10,7 @@ struct memory
     explicit memory(device* device);
     ~memory();
 
-    VmaAllocator get() const { return vma_allocator_; }
+    VmaAllocator allocator() const { return vma_allocator_; }
 
 private:
     VmaAllocator vma_allocator_;

@@ -22,12 +22,12 @@ struct queue_family_info
     std::optional<u32> graphics_family;
     std::optional<u32> present_family;
 
-    [[nodiscard]] bool is_same() const
+    bool is_same() const
     {
         return has_values() && graphics_family.value() == present_family.value();
     }
 
-    [[nodiscard]] bool has_values() const
+    bool has_values() const
     {
         return graphics_family.has_value() && present_family.has_value();
     }
@@ -44,14 +44,6 @@ struct surface_info
 };
 
 /**
- * @brief Synchronization
- */
-struct vulkan_gpu
-{
-    // Device info
-};
-
-/**
  *
  */
 bool is_device_suitable(const vk::PhysicalDevice device, const vk::SurfaceKHR surface,
@@ -60,7 +52,8 @@ bool is_device_suitable(const vk::PhysicalDevice device, const vk::SurfaceKHR su
 /**
  *
  */
-bool check_device_extensions(const vk::PhysicalDevice device, const vector<cstr>& device_extens);
+bool check_device_extensions(
+    const vk::PhysicalDevice device, const vector<cstr>& device_extens);
 
 /**
  *
@@ -92,7 +85,8 @@ queue_family_info get_queue_family_info(
 /**
  *
  */
-surface_info get_surface_info(const vk::PhysicalDevice device, const vk::SurfaceKHR surface);
+surface_info get_surface_info(
+    const vk::PhysicalDevice device, const vk::SurfaceKHR surface);
 
 /**
  *
