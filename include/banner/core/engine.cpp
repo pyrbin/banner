@@ -81,12 +81,16 @@ void engine::load()
 
     window_->on_render.connect<&bnr::renderer::render>(*renderer_.get());
 
-    on_load.fire();
+    if (on_load)
+        on_load();
 }
 
 void engine::init()
 {
-    on_init.fire();
+
+
+    if (on_init)
+        on_init();
 
     runtime.timer.restart();
     update();
@@ -112,8 +116,17 @@ void engine::update()
 
         while (offset >= cfg.timestep) {
             offset -= cfg.timestep;
+
+            if (on_pre_update)
+                on_pre_update();
+
             world_->update();
-            on_update.fire();
+
+            if (on_update)
+                on_update();
+
+            if (on_post_update)
+                on_post_update();
         }
 
         auto alpha = (f64)offset.count() / cfg.timestep.count();
@@ -130,12 +143,15 @@ bool engine::handle_events()
 
 void engine::render()
 {
+
     window_->render();
-    on_render.fire();
+    if (on_render)
+        on_render();
 }
 
 void engine::teardown()
 {
-    on_teardown.fire();
+    if (on_teardown)
+        on_teardown();
 }
 } // namespace bnr

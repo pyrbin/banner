@@ -53,11 +53,15 @@ struct engine
     void run();
     void stop();
 
-    signal<void()> on_load;
-    signal<void()> on_init;
-    signal<void()> on_update;
-    signal<void()> on_render;
-    signal<void()> on_teardown;
+    fn<void()> on_load;
+    fn<void()> on_init;
+
+    fn<void()> on_pre_update;
+    fn<void()> on_update;
+    fn<void()> on_post_update;
+
+    fn<void()> on_render;
+    fn<void()> on_teardown;
 
 private:
     void load();
