@@ -15,6 +15,3 @@ target_link_libraries(test PUBLIC banner)
 
 add_executable(clear clear.cpp)
 target_link_libraries(clear PUBLIC banner)
-
-add_executable(triangle triangle.cpp)
-target_link_libraries(triangle PUBLIC banner)

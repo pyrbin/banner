@@ -18,6 +18,8 @@ int main()
 
     {
         engine = new bnr::engine({ "(:^o)-|--<", { 800, 600 }, "icon.png" });
+        bnr::buffer* buffer;
+
         auto pipeline = new bnr::pipeline();
 
         engine->on_init = [&]() {
@@ -28,13 +30,34 @@ int main()
             // Init triangle pipeline
             auto ctx = engine->graphics();
             pipeline->add_color_blend_attachment();
-            pipeline->add_vertex("main", ctx->load_shader("shaders/shader.vert.spv"));
-            pipeline->add_fragment("main", ctx->load_shader("shaders/shader.frag.spv"));
-            pipeline->on_process = [&](vk::CommandBuffer cmd_buf) {
-                cmd_buf.draw(3, 1, 0, 0);
+            pipeline->set_vertex_input_bindings(
+                { { 0, sizeof(vertex), vk::VertexInputRate::eVertex } });
+
+            pipeline->set_vertex_input_attributes(
+                { { 0u, 0u, vk::Format::eR32G32Sfloat, offsetof(vertex, pos) },
+                    { 1u, 0u, vk::Format::eR32G32B32Sfloat, offsetof(vertex, color) } });
+
+            pipeline->add_vertex_shader(
+                "main", ctx->load_shader("shaders/shader.vert.spv"));
+
+            pipeline->add_fragment_shader(
+                "main", ctx->load_shader("shaders/shader.frag.spv"));
+
+            // Create buffer
+            const std::vector<vertex> vertices{ { { 0.0f, -0.5f }, { 1.0f, 0.0f, 0.0f } },
+                { { 0.5f, 0.5f }, { 0.0f, 1.0f, 0.0f } },
+                { { -0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f } } };
+
+            buffer = new bnr::buffer(ctx, vk::BufferUsageFlagBits::eVertexBuffer,
+                (bytes)vertices.data(), u32(vertices.size() * sizeof(vertex)));
+
+            pipeline->on_process = [&, buffer](vk::CommandBuffer cmd_buf) {
+                buffer->draw(cmd_buf, vertices);
             };
             engine->default_pass()->add(pipeline);
         };
+
+        engine->on_teardown = [&]() { delete buffer; };
 
         engine->run();
     }

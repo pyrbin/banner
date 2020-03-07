@@ -19,6 +19,7 @@
 #include <banner/gfx/pipeline.hpp>
 #include <banner/gfx/render_pass.hpp>
 #include <banner/gfx/renderer.hpp>
+#include <banner/gfx/res/buffer.hpp>
 #include <banner/gfx/res/vertex.hpp>
 #include <banner/gfx/swapchain.hpp>
 #include <banner/gfx/vk_utils.hpp>

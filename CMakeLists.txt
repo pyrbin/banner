@@ -17,6 +17,10 @@ file(GLOB BANNER_PROJECT_FILES
     include/banner/gfx/vma.hpp
     include/banner/gfx/*.hpp
     include/banner/gfx/*.cpp
+    include/banner/gfx/res/*.cpp
+    include/banner/gfx/res/*.hpp
+
+
 )
 
 add_library(${PROJECT_NAME} STATIC ${BANNER_PROJECT_FILES})

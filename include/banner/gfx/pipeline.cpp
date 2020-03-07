@@ -64,6 +64,27 @@ void pipeline::add_color_blend_attachment(vk::PipelineColorBlendAttachmentState 
     info_.color_blend.setPAttachments(color_blend_attachments_.data());
 }
 
+
+void pipeline::set_vertex_input_bindings(
+    const vector<vk::VertexInputBindingDescription>& bindings)
+{
+    vertex_input_bindings_ = { bindings };
+    info_.vertex_input_state.setVertexBindingDescriptionCount(
+        vertex_input_bindings_.size());
+    info_.vertex_input_state.setPVertexBindingDescriptions(vertex_input_bindings_.data());
+}
+
+
+void pipeline::set_vertex_input_attributes(
+    const vector<vk::VertexInputAttributeDescription>& descriptions)
+{
+    vertex_input_attributes_ = { descriptions };
+    info_.vertex_input_state.setVertexAttributeDescriptionCount(
+        vertex_input_attributes_.size());
+    info_.vertex_input_state.setPVertexAttributeDescriptions(
+        vertex_input_attributes_.data());
+}
+
 void pipeline::process(vk::CommandBuffer buffer, uv2 size)
 {
     if (ready()) {

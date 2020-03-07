@@ -65,6 +65,12 @@ bool check_validation_layers(const vector<cstr>& validation_layers);
  */
 bool check_instance_extensions(const vector<cstr>& instance_extens);
 
+
+inline constexpr bool success(VkResult result)
+{
+    return result == VK_SUCCESS;
+}
+
 inline constexpr bool success(vk::Result result)
 {
     return result == vk::Result::eSuccess;

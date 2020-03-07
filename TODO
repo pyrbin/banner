@@ -1,19 +1,4 @@
 [ todo/notes ]
-
-  engine design: 
-	user can override certain event functions
-
-	engine->load = [&](){}
-	engine->init = [&](){}
-
-	engine->pre_update = [&](){}
-	engine->update = [&](){}
-	engine->post_update = [&](){}
-
-	engine->render = [&](){}
-	engine->teardown = [&](){}
-
-
 	
 - follow https://vulkan-tutorial.com/Vertex_buffers/Vertex_buffer_creation to completion
 

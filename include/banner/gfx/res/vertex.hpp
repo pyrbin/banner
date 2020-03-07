@@ -1,6 +1,9 @@
 #pragma once
 
+#include <array>
+
 #include <banner/core/types.hpp>
+#include <vulkan/vulkan.hpp>
 
 namespace bnr {
 struct vertex
@@ -10,5 +13,6 @@ struct vertex
     v2 pos;
     v3 color;
 };
+
 
 } // namespace bnr
