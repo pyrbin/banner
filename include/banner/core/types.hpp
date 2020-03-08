@@ -86,6 +86,4 @@ inline auto make_uptr(Args&&... args) -> std::unique_ptr<T>
 {
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
-
-
 } // namespace bnr

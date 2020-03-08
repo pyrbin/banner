@@ -41,7 +41,6 @@ default_render_pass::~default_render_pass() {}
 engine::engine(engine::config cfg)
     : cfg{ cfg }
 {
-
     window_ =
         make_uptr<bnr::window>(cfg.name, cfg.window_size, cfg.icon_path, cfg.fullscreen);
     graphics_ = make_uptr<bnr::graphics>(window_.get());
@@ -52,16 +51,9 @@ engine::engine(engine::config cfg)
 
 engine::~engine()
 {
-    /* Free renderer */
-    renderer_.reset();
-    /* Free render passes */
-    default_pass_.reset();
-    /* Free graphics context*/
-    graphics_.reset();
-    /* Free window/input related*/
-    window_.reset();
-    /* Rest ... */
-    world_.reset();
+    if (window_) {
+        teardown();
+    }
 }
 
 void engine::run()
@@ -69,12 +61,13 @@ void engine::run()
     load();
     init();
     update();
+    if (stop_engine_) {
+        teardown();
+    }
 }
 
 void engine::load()
 {
-
-
     renderer_->add_task([&](vk::CommandBuffer buffer) {
         default_pass_->pass()->process(renderer_->current_index(), buffer);
     });
@@ -87,16 +80,10 @@ void engine::load()
 
 void engine::init()
 {
-
-
     if (on_init)
         on_init();
 
     runtime.timer.restart();
-    update();
-    if (stop_engine_) {
-        teardown();
-    }
 }
 
 void engine::update()
@@ -143,7 +130,6 @@ bool engine::handle_events()
 
 void engine::render()
 {
-
     window_->render();
     if (on_render)
         on_render();
@@ -151,7 +137,20 @@ void engine::render()
 
 void engine::teardown()
 {
+    /* Free renderer */
+    renderer_.reset();
+    /* Free render passes */
+    default_pass_.reset();
+
     if (on_teardown)
         on_teardown();
+
+    /* Free graphics context*/
+    graphics_.reset();
+
+    /* Free window/input related*/
+    window_.reset();
+    /* Rest ... */
+    world_.reset();
 }
 } // namespace bnr
