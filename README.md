@@ -1,4 +1,4 @@
-<a href="#"><img id="#logo" align="left" src="logo.png" width="150" height="150" style="margin-right: 15px;"></a>
+<a href="#"><img id="#logo" align="left" src="banner.svg" width="150" height="150" style="margin-right: 15px;"></a>
 
 ## banner
 
