@@ -1,19 +1,36 @@
-<h1 align="center">banner (temp name) </h1>
-<p align="center">A <b>WIP</b> 3D game engine using vulkan & glfw. Written in C++20/17.</p>
+<a href="#"><img id="#logo" align="left" src="logo.png" width="200" style="margin-right: 15px"></a>
 
-### Table of Contents
+## banner
 
-- [Introduction](#introduction)
+**banner** is a **WIP** 3D **game engine** using **vulkan** & glfw. Written in **C++20/17**.
 
-## Introduction
-Currently following this [guide](https://www.youtube.com/watch?v=3lwC5WgcNDk) to get started.
 
-TODO:
+**C++20** • **Vulkan** • **3D** • **Keywords...**
 
-create some simple flow of the program
+#### Table of Contents
 
-world_update() -> render_loop
+- [Features](#Features)
+- [API](#API)
 
+## Features
+
+- feature #1
+- feature #2
+- feature #3
+- ...
+
+## API
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae.
+
+```cpp
+#include <stdio.h>
+
+int main()
+{
+    puts("hello world");
+}
+```
 
 ## Developer
 
@@ -21,9 +38,11 @@ world_update() -> render_loop
   <tbody>
     <tr>
       <td align="center" valign="top">
-        <img width="100" height="100" src="https://github.com/pyrbin.png?s=150">
-        <br>
-        <a href="https://github.com/pyrbin">pyrbin</a>
+        <a href="https://github.com/pyrbin">
+            <img width="100" height="100" src="https://github.com/pyrbin.png?s=150">
+            <br>
+            pyrbin
+        </a>
       </td>
      </tr>
   </tbody>
