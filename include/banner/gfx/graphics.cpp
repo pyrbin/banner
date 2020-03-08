@@ -9,24 +9,22 @@
 #include <banner/gfx/window.hpp>
 
 namespace bnr {
-
 const vector<cstr> graphics::device_extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 const vector<cstr> graphics::validation_layers{ "VK_LAYER_KHRONOS_validation" };
 
 graphics::graphics(window* window)
     : window_{ window }
 {
-
     create_instance();
     create_debugger();
     create_device();
+    create_pool();
 
     window_->on_resize.connect<&graphics::resize_swapchain>(*this);
 }
 
 graphics::~graphics()
 {
-
     // Destroy debugger
     if (debugger_) {
         const auto destroy = PFN_vkDestroyDebugUtilsMessengerEXT(
@@ -39,8 +37,9 @@ graphics::~graphics()
     }
 
     shader_modules_.clear();
+
     window_->on_resize.disconnect<&graphics::resize_swapchain>(*this);
-    window_ = nullptr;
+    transfer_pool_.reset();
 }
 
 vk::ShaderModule graphics::load_shader(str_ref filename)
@@ -127,6 +126,30 @@ void graphics::create_device()
     memory_ = std::make_unique<bnr::memory>(device_.get());
 
     debug::trace("Initialized vulkan graphics ...");
+}
+
+void graphics::create_pool()
+{
+    // TODO: get a special index for transfer operations
+    transfer_pool_ = (device()->vk().createCommandPoolUnique(
+        { vk::CommandPoolCreateFlagBits::eTransient, device()->queue().graphics_index }));
+}
+
+void graphics::command(fn<void(vk::CommandBuffer)>&& callback)
+{
+    auto cmd_buffer = device()->vk().allocateCommandBuffers(
+        { transfer_pool_.get(), vk::CommandBufferLevel::ePrimary, 1 })[0];
+
+    cmd_buffer.begin({ vk::CommandBufferUsageFlagBits::eOneTimeSubmit });
+    callback(cmd_buffer);
+    cmd_buffer.end();
+
+    vk::SubmitInfo submit_info;
+    submit_info.setCommandBufferCount(1);
+    submit_info.setPCommandBuffers(&cmd_buffer);
+    device()->queue().submit(submit_info, nullptr);
+    device()->queue().graphics().waitIdle();
+    device()->vk().freeCommandBuffers(transfer_pool_.get(), cmd_buffer);
 }
 
 void graphics::reload_swapchain()

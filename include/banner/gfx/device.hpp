@@ -6,7 +6,6 @@
 namespace bnr {
 struct device
 {
-
     struct options
     {
         vector<cstr> extensions{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
@@ -28,8 +27,8 @@ struct device
             , present_index{ pidx }
         {}
 
-        auto& graphics() { return graphics_queue; }
-        auto& present() { return present_queue; }
+        auto& graphics() const { return graphics_queue; }
+        auto& present() const { return present_queue; }
 
         const u32 graphics_index;
         const u32 present_index;

@@ -25,6 +25,8 @@ public:
     auto swapchain() { return swapchain_.get(); }
     auto memory() { return memory_.get(); }
 
+    void command(fn<void(vk::CommandBuffer)>&&);
+
     vk::ShaderModule load_shader(str_ref filename);
     void reload_swapchain();
 
@@ -33,6 +35,7 @@ private:
 
     vk::UniqueInstance instance_;
     vk::UniqueSurfaceKHR surface_;
+    vk::UniqueCommandPool transfer_pool_;
 
     uptr<bnr::device> device_;
     uptr<bnr::swapchain> swapchain_;
@@ -44,6 +47,7 @@ private:
     void create_instance();
     void create_surface();
     void create_device();
+    void create_pool();
 
     void resize_swapchain(u16 w, u16 h);
 

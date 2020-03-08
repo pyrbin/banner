@@ -44,16 +44,17 @@ int main()
                 "main", ctx->load_shader("shaders/shader.frag.spv"));
 
             // Create buffer
-            const std::vector<vertex> vertices{ { { 0.0f, -0.5f }, { 1.0f, 0.0f, 0.0f } },
+            const std::vector<vertex> vertices{ { { 0.0f, -0.5f }, { 1.0f, 1.0f, 1.0f } },
                 { { 0.5f, 0.5f }, { 0.0f, 1.0f, 0.0f } },
                 { { -0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f } } };
 
-            buffer = new bnr::buffer(ctx, vk::BufferUsageFlagBits::eVertexBuffer,
-                (bytes)vertices.data(), u32(vertices.size() * sizeof(vertex)));
+            buffer = new bnr::buffer(
+                ctx, (bytes)vertices.data(), u32(vertices.size() * sizeof(vertex)));
 
             pipeline->on_process = [&, buffer](vk::CommandBuffer cmd_buf) {
-                buffer->draw(cmd_buf, vertices);
+                buffer->draw(cmd_buf);
             };
+
             engine->default_pass()->add(pipeline);
         };
 
