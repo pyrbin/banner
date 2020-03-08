@@ -18,7 +18,6 @@ int main()
 
     {
         engine = new bnr::engine({ "(:^o)-|--<", { 800, 600 }, "icon.png" });
-        bnr::buffer* buffer;
 
         auto pipeline = new bnr::pipeline();
 
@@ -43,22 +42,14 @@ int main()
             pipeline->add_fragment_shader(
                 "main", ctx->load_shader("shaders/shader.frag.spv"));
 
-            // Create buffer
-            const std::vector<vertex> vertices{ { { 0.0f, -0.5f }, { 1.0f, 1.0f, 1.0f } },
-                { { 0.5f, 0.5f }, { 0.0f, 1.0f, 0.0f } },
-                { { -0.5f, 0.5f }, { 0.0f, 0.0f, 1.0f } } };
+            auto mesh = make_quad(ctx);
 
-            buffer = new bnr::buffer(
-                ctx, (bytes)vertices.data(), u32(vertices.size() * sizeof(vertex)));
-
-            pipeline->on_process = [&, buffer](vk::CommandBuffer cmd_buf) {
-                buffer->draw(cmd_buf);
+            pipeline->on_process = [&, mesh](vk::CommandBuffer cmd_buf) {
+                mesh->draw(cmd_buf);
             };
 
             engine->default_pass()->add(pipeline);
         };
-
-        engine->on_teardown = [&]() { delete buffer; };
 
         engine->run();
     }

@@ -5,7 +5,6 @@
 #include <banner/core/types.hpp>
 #include <banner/gfx/memory.hpp>
 #include <banner/gfx/res/resource.hpp>
-#include <banner/gfx/res/vertex.hpp>
 #include <vulkan/vulkan.hpp>
 
 namespace bnr {
