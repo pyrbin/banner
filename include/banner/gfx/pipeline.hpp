@@ -61,6 +61,8 @@ struct pipeline
         add_shader(name, vk::ShaderStageFlagBits::eFragment, module);
     }
 
+    void set_descriptor(vector<vk::DescriptorSetLayoutBinding> bindings);
+
     fn<cb_signature> on_process;
 
 private:
@@ -71,6 +73,7 @@ private:
 
     vk::UniquePipeline vk_pipeline_;
     vk::UniquePipelineLayout vk_layout_;
+    vk::UniqueDescriptorSetLayout descriptor_layout_;
 
     bnr::subpass* subpass_;
 

@@ -9,8 +9,8 @@ mesh_primitive::mesh_primitive(graphics* ctx, type mesh_type)
 
 {
     if (data_.has_vertices()) {
-        buffer_vertices_ =
-            std::make_unique<buffer>(ctx_, data_.vertices.data(), data_.vertices_size());
+        buffer_vertices_ = std::make_unique<buffer>(ctx_, data_.vertices.data(),
+            data_.vertices_size(), vk::BufferUsageFlagBits::eVertexBuffer, false);
     }
     if (data_.has_indices()) {
         buffer_indices_ = std::make_unique<buffer>(ctx_, data_.indices.data(),

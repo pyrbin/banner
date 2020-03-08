@@ -1,6 +1,8 @@
 [ todo/notes ]
 	
-- follow https://vulkan-tutorial.com/Vertex_buffers/Vertex_buffer_creation to completion
+- follow https://vulkan-tutorial.com/Uniform_buffers/Descriptor_layout_and_buffer to completion
+	- better buffer abstraction (util func?)
+	- create camera view using liblava method combined with tutorial 
 
 - read following:
 	https://renderdoc.org/vulkan-in-30-minutes.html

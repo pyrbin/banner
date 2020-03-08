@@ -15,7 +15,8 @@ struct buffer : resource
     using list = vector<buffer>;
 
     explicit buffer(graphics* ctx, const void* data, u32 size,
-        vk::BufferUsageFlagBits usage = vk::BufferUsageFlagBits::eVertexBuffer);
+        vk::BufferUsageFlagBits usage = vk::BufferUsageFlagBits::eVertexBuffer,
+        bool gpu_only = true);
 
     ~buffer();
 

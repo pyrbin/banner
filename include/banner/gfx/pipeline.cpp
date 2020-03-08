@@ -35,7 +35,8 @@ void pipeline::create(bnr::subpass* subpass_ptr)
     const auto [viewport, rasterization, multisample, depth_stencil, input_assembly,
         vertex_input_state, color_blend, dynamic_state] = info_;
 
-    vk_layout_ = device->vk().createPipelineLayoutUnique({});
+    vk_layout_ = device->vk().createPipelineLayoutUnique(
+        { {}, descriptor_layout_ ? 1u : 0u, &descriptor_layout_.get() });
 
     vk_pipeline_ = device->vk().createGraphicsPipelineUnique({},
         { {}, u32(shader_stages_.size()), shader_stages_.data(), &vertex_input_state,
@@ -46,6 +47,13 @@ void pipeline::create(bnr::subpass* subpass_ptr)
     ASSERT(vk_pipeline_, "Failed to create pipeline!");
 
     debug::log("Created a pipeline!");
+}
+
+void pipeline::set_descriptor(vector<vk::DescriptorSetLayoutBinding> bindings)
+{
+    descriptor_layout_ =
+        subpass()->render_pass()->ctx()->device()->vk().createDescriptorSetLayoutUnique(
+            { {}, u32(bindings.size()), bindings.data() });
 }
 
 vk::PipelineColorBlendAttachmentState pipeline::default_color_blend_attachment()
@@ -64,7 +72,6 @@ void pipeline::add_color_blend_attachment(vk::PipelineColorBlendAttachmentState 
     info_.color_blend.setPAttachments(color_blend_attachments_.data());
 }
 
-
 void pipeline::set_vertex_input_bindings(
     const vector<vk::VertexInputBindingDescription>& bindings)
 {
@@ -73,7 +80,6 @@ void pipeline::set_vertex_input_bindings(
         vertex_input_bindings_.size());
     info_.vertex_input_state.setPVertexBindingDescriptions(vertex_input_bindings_.data());
 }
-
 
 void pipeline::set_vertex_input_attributes(
     const vector<vk::VertexInputAttributeDescription>& descriptions)

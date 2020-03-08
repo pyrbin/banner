@@ -5,6 +5,8 @@
 namespace bnr {
 using vk_utils::success;
 
+// TODO: buffer cpu/gpu abstraction can be more clean/simple
+
 std::tuple<vk::Buffer, VmaAllocation> buffer::create_transfer(
     graphics* ctx, const void* data, u32 size, vk::BufferUsageFlagBits usage)
 {
@@ -39,7 +41,8 @@ std::tuple<vk::Buffer, VmaAllocation> buffer::create_transfer(
     return std::make_tuple(buffer, allocation);
 }
 
-buffer::buffer(graphics* ctx, const void* data, u32 size, vk::BufferUsageFlagBits usage)
+buffer::buffer(graphics* ctx, const void* data, u32 size, vk::BufferUsageFlagBits usage,
+    bool gpu_only)
     : ctx_{ ctx }
 {
     auto allocator = ctx_->memory()->allocator();
@@ -48,7 +51,7 @@ buffer::buffer(graphics* ctx, const void* data, u32 size, vk::BufferUsageFlagBit
         usage | vk::BufferUsageFlagBits::eTransferDst, vk::SharingMode::eExclusive };
 
     VmaAllocationCreateInfo allocation_create_info{
-        .usage{ VMA_MEMORY_USAGE_GPU_ONLY },
+        .usage{ gpu_only ? VMA_MEMORY_USAGE_GPU_ONLY : VMA_MEMORY_USAGE_CPU_ONLY },
     };
 
     if (!success(vmaCreateBuffer(allocator,
@@ -57,7 +60,7 @@ buffer::buffer(graphics* ctx, const void* data, u32 size, vk::BufferUsageFlagBit
         debug::fatal("Failed to create buffer!");
     }
 
-    if (data) {
+    if (data && gpu_only) {
         auto [staging_buffer, staging_allocation] =
             buffer::create_transfer(ctx_, data, size, usage);
 
@@ -67,6 +70,11 @@ buffer::buffer(graphics* ctx, const void* data, u32 size, vk::BufferUsageFlagBit
         });
 
         vmaDestroyBuffer(allocator, staging_buffer, staging_allocation);
+    } else if (data) {
+        void* mapped_data;
+        vmaMapMemory(allocator, allocation_, &mapped_data);
+        memcpy(mapped_data, data, size);
+        vmaUnmapMemory(allocator, allocation_);
     }
 
     descriptor_.buffer = vk_buffer_;
