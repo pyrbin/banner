@@ -1,11 +1,11 @@
-<a href="#"><img id="#logo" align="left" src="logo.png" width="200" style="margin-right: 15px"></a>
+<a href="#"><img id="#logo" align="left" src="logo.png" width="150" height="150" style="margin-right: 15px;"></a>
 
 ## banner
 
 **banner** is a **WIP** 3D **game engine** using **vulkan** & glfw. Written in **C++20/17**.
 
-
 **C++20** • **Vulkan** • **3D** • **Keywords...**
+
 
 #### Table of Contents
 
