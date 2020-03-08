@@ -20,19 +20,17 @@ struct buffer : resource
 
     ~buffer();
 
-    static std::tuple<vk::Buffer, VmaAllocation> create_transfer(graphics* ctx,
-        const void* data, u32 size,
-        vk::BufferUsageFlagBits usage = vk::BufferUsageFlagBits::eVertexBuffer);
-
     auto vk() const { return vk_buffer_; }
     auto ctx() { return ctx_; }
 
     auto valid() const { return (bool)vk_buffer_; }
     auto size() const { return descriptor_.range; }
 
-    void draw(vk::CommandBuffer buf);
-
 private:
+    static std::tuple<vk::Buffer, VmaAllocation> buffer::allocate_vk_buffer(graphics* ctx,
+        const void* data, u32 size, vk::BufferUsageFlags usage, bool mapped,
+        VmaMemoryUsage memory_usage);
+
     graphics* ctx_;
 
     vk::Buffer vk_buffer_;

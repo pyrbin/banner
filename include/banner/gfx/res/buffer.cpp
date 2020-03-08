@@ -5,76 +5,31 @@
 namespace bnr {
 using vk_utils::success;
 
-// TODO: buffer cpu/gpu abstraction can be more clean/simple
-
-std::tuple<vk::Buffer, VmaAllocation> buffer::create_transfer(
-    graphics* ctx, const void* data, u32 size, vk::BufferUsageFlagBits usage)
-{
-    vk::Buffer buffer;
-    VmaAllocation allocation;
-    const auto allocator = ctx->memory()->allocator();
-
-    VmaAllocationCreateInfo allocation_create_info{
-        .flags{ VMA_ALLOCATION_CREATE_MAPPED_BIT },
-        .usage{ VMA_MEMORY_USAGE_CPU_ONLY },
-    };
-
-    vk::BufferCreateInfo buffer_create_info{ {}, size,
-        usage | vk::BufferUsageFlagBits::eTransferSrc, vk::SharingMode::eExclusive };
-
-    if (!success(vmaCreateBuffer(allocator,
-            reinterpret_cast<VkBufferCreateInfo*>(&buffer_create_info),
-            &allocation_create_info, reinterpret_cast<VkBuffer*>(&buffer), &allocation,
-            nullptr))) {
-        debug::fatal("Failed to create staging buffer!");
-    }
-
-    void* mapped{};
-
-    if (!success(vmaMapMemory(allocator, allocation, &mapped))) {
-        debug::fatal("Failed to map staging buffer!");
-    }
-
-    memcpy(mapped, data, u32(size));
-    vmaUnmapMemory(allocator, allocation);
-
-    return std::make_tuple(buffer, allocation);
-}
-
 buffer::buffer(graphics* ctx, const void* data, u32 size, vk::BufferUsageFlagBits usage,
     bool gpu_only)
     : ctx_{ ctx }
 {
-    auto allocator = ctx_->memory()->allocator();
+    auto allocator = ctx->memory()->allocator();
+    auto mem_usage = gpu_only ? VMA_MEMORY_USAGE_GPU_ONLY : VMA_MEMORY_USAGE_CPU_ONLY;
 
-    vk::BufferCreateInfo create_info{ {}, size,
-        usage | vk::BufferUsageFlagBits::eTransferDst, vk::SharingMode::eExclusive };
+    auto [buffer, alloc] = buffer::allocate_vk_buffer(ctx, data, size,
+        (usage | vk::BufferUsageFlagBits::eTransferDst), gpu_only, mem_usage);
 
-    VmaAllocationCreateInfo allocation_create_info{
-        .usage{ gpu_only ? VMA_MEMORY_USAGE_GPU_ONLY : VMA_MEMORY_USAGE_CPU_ONLY },
-    };
-
-    if (!success(vmaCreateBuffer(allocator,
-            reinterpret_cast<VkBufferCreateInfo*>(&create_info), &allocation_create_info,
-            reinterpret_cast<VkBuffer*>(&vk_buffer_), &allocation_, &allocation_info_))) {
-        debug::fatal("Failed to create buffer!");
-    }
+    vk_buffer_ = buffer;
+    allocation_ = alloc;
 
     if (data && gpu_only) {
-        auto [staging_buffer, staging_allocation] =
-            buffer::create_transfer(ctx_, data, size, usage);
+
+        auto [staging_buffer, staging_alloc] = buffer::allocate_vk_buffer(ctx, data, size,
+            (usage | vk::BufferUsageFlagBits::eTransferSrc), false,
+            VMA_MEMORY_USAGE_CPU_ONLY);
 
         ctx_->command([&](vk::CommandBuffer buff) {
             vk::BufferCopy region{ 0u, 0u, size };
             buff.copyBuffer(staging_buffer, vk_buffer_, region);
         });
 
-        vmaDestroyBuffer(allocator, staging_buffer, staging_allocation);
-    } else if (data) {
-        void* mapped_data;
-        vmaMapMemory(allocator, allocation_, &mapped_data);
-        memcpy(mapped_data, data, size);
-        vmaUnmapMemory(allocator, allocation_);
+        vmaDestroyBuffer(allocator, staging_buffer, staging_alloc);
     }
 
     descriptor_.buffer = vk_buffer_;
@@ -87,9 +42,43 @@ buffer::~buffer()
     vmaDestroyBuffer(ctx()->memory()->allocator(), vk_buffer_, allocation_);
 }
 
-void buffer::draw(vk::CommandBuffer buffer)
+std::tuple<vk::Buffer, VmaAllocation> buffer::allocate_vk_buffer(graphics* ctx,
+    const void* data, u32 size, vk::BufferUsageFlags usage, bool mapped,
+    VmaMemoryUsage memory_usage)
 {
-    buffer.bindVertexBuffers(0, vk(), vk::DeviceSize(0));
-    buffer.draw(3, 1, 0, 0);
+    vk::Buffer buffer;
+    VmaAllocation allocation;
+
+    auto allocator = ctx->memory()->allocator();
+
+    VmaAllocationCreateInfo allocation_create_info{
+        .flags{ VMA_ALLOCATION_CREATE_MAPPED_BIT },
+        .usage{ memory_usage },
+    };
+
+    vk::BufferCreateInfo buffer_create_info{ {}, size, usage,
+        vk::SharingMode::eExclusive };
+
+
+    if (!success(vmaCreateBuffer(allocator,
+            reinterpret_cast<VkBufferCreateInfo*>(&buffer_create_info),
+            &allocation_create_info, reinterpret_cast<VkBuffer*>(&buffer), &allocation,
+            nullptr))) {
+        debug::fatal("Failed to create staging buffer!");
+    }
+
+    if (data && !mapped) {
+        void* tmp{};
+        if (!success(vmaMapMemory(allocator, allocation, &tmp))) {
+            debug::fatal("Failed to map staging buffer!");
+        }
+
+        memcpy(tmp, data, u32(size));
+        vmaUnmapMemory(allocator, allocation);
+    }
+
+    return std::make_tuple(buffer, allocation);
 }
+
+
 } // namespace bnr

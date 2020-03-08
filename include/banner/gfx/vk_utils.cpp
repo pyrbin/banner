@@ -4,6 +4,7 @@
 #include <banner/defs.hpp>
 #include <banner/gfx/vk_utils.hpp>
 #include <banner/util/file.hpp>
+#include <banner/gfx/graphics.hpp>
 
 namespace bnr {
 namespace vk_utils {

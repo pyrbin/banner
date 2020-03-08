@@ -13,6 +13,9 @@
     }
 
 namespace bnr {
+
+struct graphics;
+
 namespace vk_utils {
 /**
  * @brief Queue family info
